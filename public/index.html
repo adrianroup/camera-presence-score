@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Camera Presence Score™ — An Audience From Anywhere</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --orange:#E8501A;--orange-dark:#CC2200;--orange-dim:rgba(232,80,26,0.35);
+  --bg:#080808;--surface:#111111;--surface2:#181818;
+  --border:rgba(255,255,255,0.08);--border-orange:rgba(232,80,26,0.4);
+  --text:#ffffff;--text-sec:rgba(255,255,255,0.6);--text-muted:rgba(255,255,255,0.35);
+  --red:#E24B4A;--green:#639922;--amber:#EF9F27;--blue:#378ADD;
+}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;}
+.screen{min-height:100vh;width:100%;display:none;flex-direction:column;align-items:center;opacity:0;transition:opacity 0.4s ease;}
+.screen.visible{opacity:1;}
+.header{text-align:center;margin-bottom:40px;padding-top:40px;}
+.header-logo{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;}
+.header-logo span{color:var(--orange);}
+.header-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(32px,6vw,52px);font-weight:900;letter-spacing:0.02em;text-transform:uppercase;line-height:0.95;}
+.header-title em{font-style:normal;color:var(--orange);}
+
+/* ── UPLOAD ── */
+#screenUpload{padding:0 20px 60px;}
+.main{width:100%;max-width:580px;display:flex;flex-direction:column;align-items:center;}
+.headline{font-family:'Barlow Condensed',sans-serif;font-size:clamp(22px,4vw,30px);font-weight:800;text-transform:uppercase;letter-spacing:0.04em;text-align:center;margin-bottom:8px;}
+.subline{font-size:16px;font-style:italic;color:var(--text-sec);text-align:center;margin-bottom:32px;line-height:1.5;}
+.upload-zone{width:100%;min-height:280px;border:2px dashed var(--border-orange);border-radius:12px;background:var(--surface);position:relative;cursor:pointer;transition:border-color 0.2s,background 0.2s;animation:breathe 3s ease-in-out infinite;overflow:hidden;margin-bottom:20px;display:flex;align-items:center;justify-content:center;}
+.upload-zone:hover{border-color:var(--orange);background:var(--surface2);animation:none;}
+.upload-zone.drag-over{border-color:var(--orange);border-style:solid;background:rgba(232,80,26,0.06);animation:none;}
+.upload-zone.has-image{border-style:solid;border-color:var(--orange);animation:none;cursor:default;}
+.upload-zone.has-error{border-color:var(--red);border-style:solid;animation:none;}
+@keyframes breathe{0%,100%{border-color:rgba(232,80,26,0.3);}50%{border-color:rgba(232,80,26,0.75);}}
+.uz-default{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;gap:14px;width:100%;}
+.uz-icon{opacity:0.5;}
+.uz-label{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;}
+.uz-sub{font-size:14px;color:var(--text-muted);line-height:1.5;}
+.uz-paste-hint{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font-size:13px;font-family:'Barlow Condensed',sans-serif;letter-spacing:0.08em;color:var(--text-muted);}
+kbd{background:rgba(255,255,255,0.1);border-radius:4px;padding:2px 6px;font-family:'Barlow Condensed',sans-serif;font-size:12px;color:var(--text-sec);}
+.uz-divider{font-size:12px;color:var(--text-muted);letter-spacing:0.1em;}
+.uz-btn{background:var(--orange);color:#fff;border:none;border-radius:4px;padding:11px 28px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:background 0.15s;}
+.uz-btn:hover{background:var(--orange-dark);}
+.uz-preview{display:none;flex-direction:column;align-items:center;width:100%;height:100%;padding:16px;gap:12px;}
+.uz-preview-img-wrap{width:100%;flex:1;display:flex;align-items:center;justify-content:center;min-height:180px;overflow:hidden;border-radius:6px;background:rgba(0,0,0,0.3);}
+.uz-preview-img-wrap img{max-width:100%;max-height:220px;object-fit:contain;border-radius:4px;}
+.uz-preview-meta{display:flex;align-items:center;justify-content:space-between;width:100%;gap:12px;}
+.uz-file-info{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
+.uz-file-name{font-size:13px;color:var(--text-sec);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.uz-file-size{font-size:12px;color:var(--text-muted);flex-shrink:0;}
+.uz-change-btn{background:transparent;border:1px solid var(--border);border-radius:4px;padding:6px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.08em;color:var(--text-muted);cursor:pointer;flex-shrink:0;transition:border-color 0.15s,color 0.15s;}
+.uz-change-btn:hover{border-color:var(--orange);color:var(--orange);}
+.uz-error{display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;gap:16px;}
+.uz-error-msg{font-size:16px;line-height:1.5;}
+.uz-error-sub{font-size:13px;color:var(--text-muted);}
+.uz-retry-btn{background:transparent;border:1px solid var(--red);border-radius:4px;padding:8px 20px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);cursor:pointer;}
+.drag-overlay{display:none;position:absolute;inset:0;background:rgba(232,80,26,0.08);border-radius:10px;align-items:center;justify-content:center;pointer-events:none;}
+.drag-overlay.show{display:flex;}
+.drag-overlay-text{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;letter-spacing:0.1em;text-transform:uppercase;color:var(--orange);}
+.analyse-btn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:4px;padding:16px 28px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;transition:background 0.15s;margin-bottom:16px;box-shadow:4px 4px 0 rgba(204,34,0,0.3);}
+.analyse-btn:hover:not(:disabled){background:var(--orange-dark);}
+.analyse-btn:disabled{background:rgba(232,80,26,0.2);color:rgba(255,255,255,0.3);cursor:not-allowed;box-shadow:none;}
+.small-print{font-size:12px;color:var(--text-muted);text-align:center;line-height:1.6;margin-bottom:40px;}
+.criteria-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-bottom:40px;}
+.criteria-pill{background:var(--surface);border:0.5px solid var(--border);border-radius:6px;padding:10px 8px;text-align:center;}
+.criteria-pill-icon{font-size:18px;display:block;margin-bottom:4px;}
+.criteria-pill-label{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);}
+.footer{font-size:11px;color:var(--text-muted);text-align:center;letter-spacing:0.06em;}
+#fileInput{display:none;}
+
+/* ── EMAIL GATE SCREEN ── */
+#screenEmailGate{padding:0 20px 60px;justify-content:flex-start;}
+.gate-wrap{width:100%;max-width:480px;display:flex;flex-direction:column;align-items:center;padding-bottom:40px;}
+.gate-icon{font-size:48px;margin-bottom:16px;}
+.gate-heading{font-family:'Barlow Condensed',sans-serif;font-size:clamp(24px,5vw,34px);font-weight:900;text-transform:uppercase;letter-spacing:0.04em;text-align:center;margin-bottom:8px;}
+.gate-sub{font-size:15px;font-style:italic;color:var(--text-sec);text-align:center;line-height:1.6;margin-bottom:32px;max-width:380px;}
+.gate-form{width:100%;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
+.gate-field{display:flex;flex-direction:column;gap:6px;}
+.gate-label{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-muted);}
+.gate-input{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:13px 16px;font-family:'Barlow',sans-serif;font-size:16px;color:var(--text);outline:none;transition:border-color 0.15s;width:100%;}
+.gate-input:focus{border-color:var(--orange);}
+.gate-input::placeholder{color:var(--text-muted);}
+.gate-submit{width:100%;background:var(--orange);color:#fff;border:none;border-radius:4px;padding:16px 28px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;box-shadow:4px 4px 0 rgba(204,34,0,0.3);transition:background 0.15s;margin-top:4px;}
+.gate-submit:hover:not(:disabled){background:var(--orange-dark);}
+.gate-submit:disabled{background:rgba(232,80,26,0.3);cursor:not-allowed;box-shadow:none;}
+.gate-small{font-size:12px;color:var(--text-muted);text-align:center;line-height:1.6;}
+.gate-error{display:none;padding:10px 14px;background:rgba(226,75,74,0.1);border:1px solid rgba(226,75,74,0.3);border-radius:4px;font-size:13px;color:var(--red);text-align:center;margin-top:4px;}
+
+/* Email sent state */
+.gate-sent{display:none;flex-direction:column;align-items:center;text-align:center;width:100%;}
+.gate-sent-icon{font-size:56px;margin-bottom:16px;}
+.gate-sent-heading{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;color:var(--green);}
+.gate-sent-copy{font-size:15px;color:var(--text-sec);line-height:1.65;margin-bottom:8px;max-width:380px;}
+.gate-sent-email{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;color:var(--orange);margin-bottom:24px;}
+.gate-resend{background:transparent;border:1px solid var(--border);border-radius:4px;padding:10px 24px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:border-color 0.15s,color 0.15s;}
+.gate-resend:hover{border-color:var(--orange);color:var(--orange);}
+
+/* Uses remaining badge */
+.uses-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(99,153,34,0.1);border:1px solid rgba(99,153,34,0.3);border-radius:20px;padding:5px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;color:var(--green);margin-bottom:24px;}
+
+/* No uses left */
+.gate-paywall{display:none;flex-direction:column;align-items:center;text-align:center;width:100%;}
+.gate-paywall-heading{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;color:var(--orange);}
+.gate-paywall-copy{font-size:15px;color:var(--text-sec);line-height:1.65;margin-bottom:24px;max-width:380px;}
+.gate-paywall-btn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:4px;padding:16px 28px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;box-shadow:4px 4px 0 rgba(204,34,0,0.3);transition:background 0.15s;}
+.gate-paywall-btn:hover{background:var(--orange-dark);}
+
+/* ── LOADING ── */
+#screenLoading{padding:0 20px 60px;justify-content:flex-start;}
+.loading-wrap{width:100%;max-width:580px;display:flex;flex-direction:column;align-items:center;padding-bottom:40px;}
+.scan-container{width:100%;max-width:420px;aspect-ratio:16/10;position:relative;border-radius:8px;overflow:hidden;margin-bottom:32px;background:#000;}
+.scan-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.18;}
+.scan-dark-overlay{position:absolute;inset:0;background:rgba(8,8,8,0.55);}
+.scan-corner{position:absolute;width:22px;height:22px;border-color:var(--orange);border-style:solid;}
+.scan-corner.tl{top:12px;left:12px;border-width:2px 0 0 2px;}.scan-corner.tr{top:12px;right:12px;border-width:2px 2px 0 0;}
+.scan-corner.bl{bottom:12px;left:12px;border-width:0 0 2px 2px;}.scan-corner.br{bottom:12px;right:12px;border-width:0 2px 2px 0;}
+.scan-line{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent 0%,rgba(232,80,26,0.4) 20%,#E8501A 50%,rgba(232,80,26,0.4) 80%,transparent 100%);top:0;animation:scanSweep 2.4s ease-in-out infinite;}
+@keyframes scanSweep{0%{top:8%;opacity:0;}8%{opacity:1;}92%{opacity:1;}100%{top:92%;opacity:0;}}
+.scan-line::before,.scan-line::after{content:'';position:absolute;top:50%;transform:translateY(-50%);width:5px;height:5px;background:var(--orange);border-radius:50%;}
+.scan-line::before{left:0;}.scan-line::after{right:0;}
+.scan-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(232,80,26,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(232,80,26,0.05) 1px,transparent 1px);background-size:40px 30px;}
+.scan-label{position:absolute;bottom:10px;right:14px;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(232,80,26,0.7);animation:blinkLabel 1.2s ease-in-out infinite;}
+@keyframes blinkLabel{0%,100%{opacity:0.4;}50%{opacity:1;}}
+.loading-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(20px,4vw,26px);font-weight:800;text-transform:uppercase;letter-spacing:0.06em;text-align:center;margin-bottom:28px;}
+.loading-steps{width:100%;display:flex;flex-direction:column;gap:0;}
+.loading-step{display:flex;align-items:flex-start;gap:14px;padding:12px 16px;border-radius:6px;opacity:0;transform:translateY(8px);transition:opacity 0.4s ease,transform 0.4s ease,background 0.3s;}
+.loading-step.active{opacity:1;transform:translateY(0);background:rgba(232,80,26,0.06);}
+.loading-step.done{opacity:1;transform:translateY(0);background:transparent;}
+.step-indicator{width:20px;height:20px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.step-spinner{width:16px;height:16px;border:2px solid rgba(232,80,26,0.2);border-top-color:var(--orange);border-radius:50%;animation:spin 0.8s linear infinite;display:none;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.step-check{width:16px;height:16px;display:none;}
+.step-text-wrap{flex:1;}
+.step-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:2px;}
+.step-copy{font-family:'Barlow',sans-serif;font-size:14px;font-style:italic;color:var(--text-sec);line-height:1.45;}
+.loading-step.active .step-label{color:var(--orange);}.loading-step.active .step-copy{color:var(--text);}.loading-step.active .step-spinner{display:block;}
+.loading-step.done .step-label{color:var(--text-muted);}.loading-step.done .step-copy{color:var(--text-muted);}.loading-step.done .step-check{display:block;}
+.loading-complete{display:none;margin-top:24px;width:100%;padding:16px 20px;background:rgba(99,153,34,0.1);border:1px solid rgba(99,153,34,0.3);border-radius:6px;text-align:center;}
+.loading-complete-text{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);}
+.see-score-btn{display:inline-block;margin-top:14px;background:var(--green);color:#fff;border:none;border-radius:4px;padding:12px 28px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:opacity 0.15s;}
+.see-score-btn:hover{opacity:0.88;}
+
+/* ── SCORE REVEAL ── */
+#screenReveal{padding:0 20px 60px;justify-content:flex-start;}
+.reveal-wrap{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;padding-bottom:40px;}
+.gauge-section{display:flex;flex-direction:column;align-items:center;margin-bottom:28px;}
+.gauge-outer{position:relative;width:220px;height:220px;}
+.gauge-svg{width:220px;height:220px;transform:rotate(-90deg);}
+.gauge-track{fill:none;stroke:rgba(255,255,255,0.07);stroke-width:14;stroke-linecap:round;}
+.gauge-fill{fill:none;stroke-width:14;stroke-linecap:round;stroke-dasharray:565;stroke-dashoffset:565;transition:stroke-dashoffset 0.05s linear,stroke 0.3s ease;}
+.gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.gauge-number{font-family:'Barlow Condensed',sans-serif;font-size:62px;font-weight:900;line-height:1;letter-spacing:-0.02em;transition:color 0.3s ease;}
+.gauge-denom{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:600;color:var(--text-muted);letter-spacing:0.06em;margin-top:-2px;}
+@keyframes heartbeat{0%{transform:scale(1);}25%{transform:scale(1.045);}50%{transform:scale(0.975);}75%{transform:scale(1.02);}100%{transform:scale(1);}}
+.gauge-outer.pulse{animation:heartbeat 0.55s ease-in-out forwards;}
+.tier-badge{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;padding:5px 16px;border-radius:20px;margin-bottom:16px;opacity:0;transform:translateY(6px);transition:opacity 0.5s ease,transform 0.5s ease;}
+.tier-badge.show{opacity:1;transform:translateY(0);}
+.verdict-block{text-align:center;width:100%;opacity:0;transform:translateY(8px);transition:opacity 0.5s ease,transform 0.5s ease;margin-bottom:32px;}
+.verdict-block.show{opacity:1;transform:translateY(0);}
+.verdict-name{font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,5vw,36px);font-weight:900;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:14px;}
+.verdict-copy{font-family:'Barlow',sans-serif;font-size:16px;font-style:italic;color:var(--text-sec);line-height:1.65;max-width:440px;margin:0 auto;}
+.char-placeholder{width:100px;height:100px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin-bottom:28px;opacity:0;transform:scale(0.85);transition:opacity 0.5s ease,transform 0.5s ease;}
+.char-placeholder.show{opacity:1;transform:scale(1);}
+.char-placeholder-text{font-size:11px;color:var(--text-muted);text-align:center;line-height:1.4;font-family:'Barlow Condensed',sans-serif;letter-spacing:0.06em;text-transform:uppercase;}
+.next-btn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:4px;padding:16px 28px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;box-shadow:4px 4px 0 rgba(204,34,0,0.3);margin-bottom:16px;opacity:0;transition:opacity 0.5s ease,background 0.15s;}
+.next-btn.show{opacity:1;}
+.next-btn:hover{background:var(--orange-dark);}
+.scan-again-btn{background:transparent;border:1px solid var(--border);border-radius:4px;padding:10px 24px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;margin-bottom:40px;transition:border-color 0.15s,color 0.15s;}
+.scan-again-btn:hover{border-color:var(--orange);color:var(--orange);}
+.dev-panel{width:100%;background:rgba(255,255,255,0.03);border:1px dashed rgba(255,255,255,0.12);border-radius:8px;padding:14px 16px;margin-top:8px;}
+.dev-panel-label{font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:10px;}
+.dev-tier-row{display:flex;gap:8px;flex-wrap:wrap;}
+.dev-tier-btn{flex:1;min-width:80px;padding:8px 6px;background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.08em;color:rgba(255,255,255,0.4);cursor:pointer;text-align:center;transition:all 0.15s;}
+.dev-tier-btn:hover,.dev-tier-btn.active{border-color:var(--orange);background:rgba(232,80,26,0.1);color:var(--orange);}
+.dev-tier-scores{font-size:10px;color:rgba(255,255,255,0.2);margin-top:4px;}
+
+/* ══════════════════════════════════════════
+   SCREEN 4: CRITERIA BREAKDOWN
+══════════════════════════════════════════ */
+#screenBreakdown{padding:0 20px 60px;justify-content:flex-start;}
+.breakdown-wrap{width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center;padding-bottom:40px;}
+
+/* Score summary bar at top of breakdown */
+.breakdown-summary{
+  width:100%;display:flex;align-items:center;gap:16px;
+  background:var(--surface);border:0.5px solid var(--border-orange);
+  border-radius:8px;padding:14px 18px;margin-bottom:28px;
+}
+.breakdown-score-circle{
+  width:56px;height:56px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  border:3px solid var(--orange);
+}
+.breakdown-score-num{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;}
+.breakdown-summary-text{flex:1;}
+.breakdown-tier-name{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px;}
+.breakdown-tier-sub{font-size:13px;color:var(--text-muted);}
+
+/* Section header */
+.breakdown-section-label{
+  width:100%;
+  font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;
+  letter-spacing:0.22em;text-transform:uppercase;color:var(--text-muted);
+  margin-bottom:12px;padding-bottom:8px;
+  border-bottom:0.5px solid var(--border);
+}
+
+/* Criteria cards grid */
+.criteria-grid{
+  width:100%;display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;margin-bottom:28px;
+}
+.criteria-card{
+  background:var(--surface);border:0.5px solid var(--border);
+  border-radius:8px;padding:14px 16px;
+  opacity:0;transform:translateY(6px);
+  transition:opacity 0.35s ease,transform 0.35s ease;
+}
+.criteria-card.show{opacity:1;transform:translateY(0);}
+.criteria-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.criteria-card-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-sec);}
+.criteria-card-score{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;color:var(--text);}
+/* Score bar */
+.criteria-bar-track{height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;margin-bottom:10px;}
+.criteria-bar-fill{height:100%;border-radius:2px;width:0;transition:width 0.7s cubic-bezier(0.22,0.61,0.36,1);}
+/* Voice comment */
+.criteria-comment{font-family:'Barlow',sans-serif;font-size:12px;font-style:italic;color:var(--text-muted);line-height:1.5;}
+.criteria-hint{font-family:'Barlow',sans-serif;font-size:12px;color:var(--orange);line-height:1.5;margin-top:6px;padding-top:6px;border-top:0.5px solid rgba(232,80,26,0.2);}
+
+/* Audio test card */
+.audio-card{
+  background:var(--surface);border:0.5px solid var(--border);
+  border-radius:8px;padding:14px 16px;
+  opacity:0;transform:translateY(6px);
+  transition:opacity 0.35s ease,transform 0.35s ease;
+}
+.audio-card.show{opacity:1;transform:translateY(0);}
+.audio-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.audio-card-label{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-sec);}
+.audio-card-status{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;}
+.audio-card-prompt{font-family:'Barlow',sans-serif;font-size:12px;font-style:italic;color:var(--text-muted);line-height:1.5;margin-bottom:10px;}
+.audio-card-sentence{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.04em;color:var(--text);background:rgba(255,255,255,0.05);border-radius:4px;padding:8px 10px;margin-bottom:10px;text-align:center;}
+.audio-record-btn{width:100%;background:rgba(232,80,26,0.15);border:1px solid var(--border-orange);border-radius:4px;padding:9px 14px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--orange);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.audio-record-btn:hover{background:rgba(232,80,26,0.25);}
+.audio-record-btn.recording{background:rgba(226,75,74,0.15);border-color:var(--red);color:var(--red);animation:recordPulse 1s ease-in-out infinite;}
+@keyframes recordPulse{0%,100%{opacity:0.7;}50%{opacity:1;}}
+.audio-record-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0;}
+.audio-result{margin-top:8px;padding:8px 10px;border-radius:4px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;text-align:center;display:none;}
+.audio-result.pass{background:rgba(99,153,34,0.15);border:1px solid rgba(99,153,34,0.4);color:var(--green);}
+.audio-result.fail{background:rgba(226,75,74,0.1);border:1px solid rgba(226,75,74,0.3);color:var(--red);}
+
+/* Book callout */
+.book-callout{
+  width:100%;background:rgba(232,80,26,0.06);
+  border:0.5px solid var(--border-orange);border-radius:8px;
+  padding:16px 18px;margin-bottom:28px;
+  display:flex;gap:14px;align-items:flex-start;
+}
+.book-callout-icon{font-size:20px;flex-shrink:0;margin-top:2px;}
+.book-callout-text{flex:1;}
+.book-callout-heading{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--orange);margin-bottom:4px;}
+.book-callout-copy{font-size:13px;color:var(--text-sec);line-height:1.5;}
+
+/* Action buttons */
+.action-btn{width:100%;background:var(--orange);color:#fff;border:none;border-radius:4px;padding:16px 28px;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;cursor:pointer;box-shadow:4px 4px 0 rgba(204,34,0,0.3);transition:background 0.15s;margin-bottom:12px;}
+.action-btn:hover{background:var(--orange-dark);}
+.action-btn.secondary{background:transparent;border:1px solid var(--border);color:var(--text-muted);box-shadow:none;font-size:14px;padding:12px 24px;}
+.action-btn.secondary:hover{border-color:var(--orange);color:var(--orange);}
+
+/* ══════════════════════════════════════════
+   SCREEN 5: RING LIGHT FAIL
+══════════════════════════════════════════ */
+#screenRingLight{padding:0 20px 60px;justify-content:flex-start;}
+.disq-wrap{width:100%;max-width:520px;display:flex;flex-direction:column;align-items:center;padding-bottom:40px;}
+
+/* Flashing warning header */
+.disq-warning-bar{
+  width:100%;padding:14px 20px;
+  background:#1A0000;border:2px solid var(--red);border-radius:8px;
+  display:flex;align-items:center;justify-content:center;gap:12px;
+  margin-bottom:28px;
+}
+.disq-warning-icon{font-size:22px;animation:flashIcon 0.9s ease-in-out infinite;}
+@keyframes flashIcon{0%,100%{opacity:0.3;}50%{opacity:1;}}
+.disq-warning-text{
+  font-family:'Barlow Condensed',sans-serif;font-size:clamp(18px,4vw,24px);
+  font-weight:900;letter-spacing:0.16em;text-transform:uppercase;
+  color:var(--red);animation:flashText 0.9s ease-in-out infinite;
+}
+@keyframes flashText{0%,100%{opacity:0.4;}50%{opacity:1;}}
+
+/* Ring light illustration area */
+.disq-illustration{
+  width:180px;height:180px;border-radius:50%;
+  background:var(--surface);border:1px solid rgba(226,75,74,0.3);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  margin-bottom:24px;position:relative;overflow:hidden;
+}
+.disq-illustration-ring{
+  position:absolute;width:160px;height:160px;border-radius:50%;
+  border:14px solid transparent;
+  box-shadow:0 0 0 0 rgba(226,75,74,0.6);
+  animation:ringPulse 1.4s ease-in-out infinite;
+}
+@keyframes ringPulse{
+  0%{border-color:rgba(226,75,74,0.15);}
+  50%{border-color:rgba(226,75,74,0.55);}
+  100%{border-color:rgba(226,75,74,0.15);}
+}
+.disq-illustration-face{font-size:64px;position:relative;z-index:1;}
+.disq-eye-rings{
+  position:absolute;top:42px;width:100%;
+  display:flex;justify-content:center;gap:18px;
+  z-index:2;pointer-events:none;
+}
+.disq-eye-ring{
+  width:20px;height:20px;border-radius:50%;
+  border:3px solid rgba(226,75,74,0.9);
+  animation:eyeRingPulse 0.9s ease-in-out infinite;
+}
+@keyframes eyeRingPulse{0%,100%{opacity:0.4;transform:scale(0.85);}50%{opacity:1;transform:scale(1.1);}}
+
+/* Disqualification verdict */
+.disq-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(22px,4vw,30px);font-weight:900;
+  text-transform:uppercase;letter-spacing:0.04em;
+  color:var(--red);text-align:center;margin-bottom:12px;
+}
+.disq-copy{font-size:15px;color:var(--text-sec);line-height:1.65;text-align:center;max-width:420px;margin:0 auto 10px;}
+.disq-sub{font-size:13px;font-style:italic;color:var(--text-muted);text-align:center;max-width:400px;margin:0 auto 28px;}
+.disq-action{width:100%;background:var(--red);color:#fff;border:none;border-radius:4px;padding:16px 28px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;margin-bottom:12px;transition:opacity 0.15s;}
+.disq-action:hover{opacity:0.88;}
+.disq-dismiss{background:transparent;border:1px solid var(--border);border-radius:4px;padding:10px 24px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;transition:border-color 0.15s,color 0.15s;}
+.disq-dismiss:hover{border-color:var(--border-orange);color:var(--text-sec);}
+
+/* ══════════════════════════════════════════
+   SCREEN 6: BACKGROUND BLUR FAIL
+══════════════════════════════════════════ */
+#screenBgBlur{padding:0 20px 60px;justify-content:flex-start;}
+
+/* Dissolving illustration */
+.disq-blur-illustration{
+  width:180px;height:180px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:24px;position:relative;
+}
+.disq-blur-face{font-size:64px;position:relative;z-index:2;}
+.disq-blur-edge{
+  position:absolute;inset:0;border-radius:50%;
+  background:transparent;
+  box-shadow:
+    inset 16px 0 24px 4px rgba(8,8,8,0.9),
+    inset -16px 0 24px 8px rgba(8,8,8,0.7),
+    inset 0 16px 24px 4px rgba(8,8,8,0.5),
+    inset 0 -8px 18px 2px rgba(8,8,8,0.8);
+  animation:blurDissolve 2.2s ease-in-out infinite;
+  z-index:3;pointer-events:none;
+}
+@keyframes blurDissolve{
+  0%,100%{box-shadow:inset 16px 0 24px 4px rgba(8,8,8,0.9),inset -16px 0 24px 8px rgba(8,8,8,0.7),inset 0 16px 24px 4px rgba(8,8,8,0.5),inset 0 -8px 18px 2px rgba(8,8,8,0.8);}
+  50%{box-shadow:inset 28px 0 36px 10px rgba(8,8,8,0.98),inset -8px 0 16px 2px rgba(8,8,8,0.4),inset 0 8px 16px 2px rgba(8,8,8,0.3),inset 0 -24px 36px 10px rgba(8,8,8,0.98);}
+}
+/* Pixel fragments floating off */
+.disq-pixel{
+  position:absolute;width:4px;height:4px;
+  background:rgba(55,138,221,0.5);border-radius:1px;
+  animation:pixelFloat 2.2s ease-in-out infinite;
+}
+.disq-pixel:nth-child(1){top:20px;left:22px;animation-delay:0s;}
+.disq-pixel:nth-child(2){top:35px;left:8px;animation-delay:0.3s;background:rgba(232,80,26,0.4);}
+.disq-pixel:nth-child(3){bottom:25px;right:15px;animation-delay:0.6s;}
+.disq-pixel:nth-child(4){bottom:15px;left:20px;animation-delay:0.9s;background:rgba(239,159,39,0.4);}
+.disq-pixel:nth-child(5){top:50px;right:10px;animation-delay:1.2s;}
+.disq-pixel:nth-child(6){top:15px;right:30px;animation-delay:1.5s;background:rgba(99,153,34,0.4);}
+@keyframes pixelFloat{
+  0%{opacity:0;transform:translate(0,0);}
+  20%{opacity:0.8;}
+  100%{opacity:0;transform:translate(var(--px,8px),var(--py,-20px));}
+}
+.disq-pixel:nth-child(1){--px:-12px;--py:-18px;}
+.disq-pixel:nth-child(2){--px:-16px;--py:-12px;}
+.disq-pixel:nth-child(3){--px:14px;--py:-16px;}
+.disq-pixel:nth-child(4){--px:-10px;--py:-20px;}
+.disq-pixel:nth-child(5){--px:18px;--py:-10px;}
+.disq-pixel:nth-child(6){--px:12px;--py:-22px;}
+
+.disq-solution{
+  width:100%;display:flex;flex-direction:column;gap:10px;
+  margin-bottom:24px;text-align:left;
+}
+.disq-solution-item{
+  display:flex;align-items:flex-start;gap:12px;
+  background:rgba(226,75,74,0.06);border:0.5px solid rgba(226,75,74,0.2);
+  border-radius:6px;padding:12px 14px;
+}
+.disq-solution-num{
+  font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:900;
+  color:var(--red);flex-shrink:0;min-width:18px;margin-top:1px;
+}
+.disq-solution-text{font-size:13px;color:var(--text-sec);line-height:1.55;}
+
+/* Responsive */
+.desktop-only{display:block;}.mobile-only{display:none;}
+@media(max-width:600px){
+  .screen{padding:0 16px 48px!important;}
+  .desktop-only{display:none;}.mobile-only{display:block;}
+  .criteria-grid{grid-template-columns:1fr;}
+  .criteria-row{grid-template-columns:repeat(2,1fr);}
+  .header{margin-bottom:28px;}
+  .gauge-outer{width:190px;height:190px;}
+  .gauge-svg{width:190px;height:190px;}
+  .gauge-number{font-size:52px;}
+}
+</style>
+</head>
+<body>
+
+<!-- SCREEN 1: UPLOAD -->
+<div class="screen" id="screenUpload">
+  <header class="header">
+    <div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div>
+    <div class="header-title">Camera<br>Presence <em>Score™</em></div>
+  </header>
+  <main class="main">
+    <h1 class="headline">The camera has been watching.</h1>
+    <p class="subline">Let's see what it sees before you say a word.</p>
+    <div class="upload-zone" id="uploadZone" onclick="handleZoneClick(event)">
+      <div class="uz-default" id="stateDefault">
+        <svg class="uz-icon" width="52" height="52" viewBox="0 0 52 52" fill="none"><rect x="4" y="14" width="36" height="28" rx="4" stroke="white" stroke-width="2.5" fill="none"/><circle cx="22" cy="28" r="7" stroke="white" stroke-width="2.5" fill="none"/><path d="M40 14 L48 8 L48 44 L40 38" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="22" cy="28" r="3" fill="white" opacity="0.4"/></svg>
+        <p class="uz-label">Drop your screenshot here</p>
+        <p class="uz-sub desktop-only"><span class="uz-paste-hint"><kbd>Ctrl</kbd>+<kbd>V</kbd> to paste &nbsp;·&nbsp; or drag and drop</span></p>
+        <p class="uz-sub mobile-only">Tap to choose from your camera roll</p>
+        <p class="uz-divider">or</p>
+        <button class="uz-btn" type="button">Choose file</button>
+      </div>
+      <div class="uz-preview" id="statePreview">
+        <div class="uz-preview-img-wrap"><img id="previewImg" src="" alt="Your screenshot"/></div>
+        <div class="uz-preview-meta">
+          <div class="uz-file-info"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;"><rect x="1" y="1" width="12" height="12" rx="2" stroke="#639922" stroke-width="1.5"/><path d="M4 7 L6 9 L10 5" stroke="#639922" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="uz-file-name" id="fileName"></span><span class="uz-file-size" id="fileSize"></span></div>
+          <button class="uz-change-btn" type="button" onclick="clearImage(event)">Change</button>
+        </div>
+      </div>
+      <div class="uz-error" id="stateError">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#E24B4A" stroke-width="2.5"/><line x1="20" y1="11" x2="20" y2="23" stroke="#E24B4A" stroke-width="2.5" stroke-linecap="round"/><circle cx="20" cy="29" r="1.5" fill="#E24B4A"/></svg>
+        <p class="uz-error-msg" id="errorMsg">That file type is not supported.</p>
+        <p class="uz-error-sub" id="errorSub">Please upload a JPG, PNG, GIF, or WebP screenshot.</p>
+        <button class="uz-retry-btn" type="button" onclick="clearError(event)">Try again</button>
+      </div>
+      <div class="drag-overlay" id="dragOverlay"><p class="drag-overlay-text">Drop to analyse</p></div>
+    </div>
+    <input type="file" id="fileInput" accept="image/*">
+    <button class="analyse-btn" id="analyseBtn" disabled type="button">Analyse My Setup →</button>
+    <p class="small-print">Your screenshot is analysed by AI and never stored or shared.<br>Scored across 6 criteria · First 3 analyses free with a verified email.</p>
+    <div class="criteria-row">
+      <div class="criteria-pill"><span class="criteria-pill-icon">💡</span><span class="criteria-pill-label">Lighting</span></div>
+      <div class="criteria-pill"><span class="criteria-pill-icon">📷</span><span class="criteria-pill-label">Camera angle</span></div>
+      <div class="criteria-pill"><span class="criteria-pill-icon">🖼</span><span class="criteria-pill-label">Background</span></div>
+      <div class="criteria-pill"><span class="criteria-pill-icon">⬛</span><span class="criteria-pill-label">Framing</span></div>
+      <div class="criteria-pill"><span class="criteria-pill-icon">🎙</span><span class="criteria-pill-label">Audio signal</span></div>
+      <div class="criteria-pill"><span class="criteria-pill-icon">✨</span><span class="criteria-pill-label">Presence</span></div>
+    </div>
+  </main>
+  <footer class="footer">© 2026 An Audience From Anywhere &nbsp;·&nbsp; Adrian Roup &nbsp;·&nbsp; Santa Monica, CA</footer>
+</div>
+
+<!-- SCREEN 1b: EMAIL GATE -->
+<div class="screen" id="screenEmailGate">
+  <header class="header">
+    <div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div>
+    <div class="header-title">Camera<br>Presence <em>Score™</em></div>
+  </header>
+  <div class="gate-wrap">
+
+    <!-- Form state -->
+    <div id="gateFormState" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+      <div class="gate-icon">📧</div>
+      <h2 class="gate-heading">One quick step</h2>
+      <p class="gate-sub">Your first three analyses are free. Enter your name and email to get started — we will send you a verification link.</p>
+      <div class="gate-form" id="gateForm">
+        <div class="gate-field">
+          <label class="gate-label" for="gateName">Your name</label>
+          <input class="gate-input" type="text" id="gateName" placeholder="First name" autocomplete="given-name">
+        </div>
+        <div class="gate-field">
+          <label class="gate-label" for="gateEmail">Email address</label>
+          <input class="gate-input" type="email" id="gateEmail" placeholder="you@example.com" autocomplete="email">
+        </div>
+        <button class="gate-submit" id="gateSubmit" type="button" onclick="handleGateSubmit()">Send verification email →</button>
+        <div class="gate-error" id="gateError"></div>
+      </div>
+      <p class="gate-small">No spam. No marketing. Just your score.<br>We never share or sell your email.</p>
+    </div>
+
+    <!-- Email sent state -->
+    <div class="gate-sent" id="gateSentState">
+      <div class="gate-sent-icon">✉️</div>
+      <div class="gate-sent-heading">Check your email</div>
+      <p class="gate-sent-copy">We sent a verification link to</p>
+      <div class="gate-sent-email" id="gateSentEmail"></div>
+      <p class="gate-sent-copy">Click the link in that email to unlock your three free analyses. It expires in 24 hours.</p>
+      <button class="gate-resend" onclick="resendVerification()">Resend email</button>
+    </div>
+
+    <!-- No uses remaining state -->
+    <div class="gate-paywall" id="gatePaywallState">
+      <div class="gate-icon">🎬</div>
+      <div class="gate-paywall-heading">You have used your three free analyses</div>
+      <p class="gate-paywall-copy">The video course covers everything your scores have been pointing at — step-by-step guidance for every setup and budget. Pre-order now at 50% off, available through May.</p>
+      <button class="gate-paywall-btn" onclick="window.open('https://anaudiencefromanywhere.com','_blank')">Pre-order the course at 50% off →</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- SCREEN 2: LOADING -->
+<div class="screen" id="screenLoading">
+  <header class="header"><div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div><div class="header-title">Camera<br>Presence <em>Score™</em></div></header>
+  <div class="loading-wrap">
+    <div class="scan-container" id="scanContainer"><img class="scan-bg-img" id="scanBgImg" src="" alt=""><div class="scan-dark-overlay"></div><div class="scan-grid"></div><div class="scan-corner tl"></div><div class="scan-corner tr"></div><div class="scan-corner bl"></div><div class="scan-corner br"></div><div class="scan-line"></div><div class="scan-label">Analysing&nbsp;·&nbsp;·&nbsp;·</div></div>
+    <h2 class="loading-title">Analysing your setup&hellip;</h2>
+    <div class="loading-steps" id="loadingSteps"></div>
+    <div class="loading-complete" id="loadingComplete">
+      <div class="loading-complete-text">Score calculated</div>
+      <button class="see-score-btn" id="seeScoreBtn" onclick="handleSeeScore()">See My Score →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: SCORE REVEAL -->
+<div class="screen" id="screenReveal">
+  <header class="header"><div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div><div class="header-title">Camera<br>Presence <em>Score™</em></div></header>
+  <div class="reveal-wrap">
+    <div class="gauge-section"><div class="gauge-outer" id="gaugeOuter"><svg class="gauge-svg" viewBox="0 0 220 220"><circle class="gauge-track" cx="110" cy="110" r="90"/><circle class="gauge-fill" id="gaugeFill" cx="110" cy="110" r="90" stroke="#E8501A"/></svg><div class="gauge-center"><div class="gauge-number" id="gaugeNumber">0</div><div class="gauge-denom">/100</div></div></div></div>
+    <div class="tier-badge" id="tierBadge"></div>
+    <div class="verdict-block" id="verdictBlock"><div class="verdict-name" id="verdictName"></div><div class="verdict-copy" id="verdictCopy"></div></div>
+    <div class="char-placeholder" id="charPlaceholder"><div class="char-placeholder-text">Lottie<br>character<br>here</div></div>
+    <button class="next-btn" id="nextBtn" onclick="goToBreakdown()">See Your Breakdown →</button>
+    <button class="scan-again-btn" onclick="scanAgain()">← Scan a different setup</button>
+    <div class="dev-panel">
+      <div class="dev-panel-label">🔧 Dev test — preview all 5 tiers</div>
+      <div class="dev-tier-row">
+        <button class="dev-tier-btn" onclick="testTier(15,0)">Tier 1<div class="dev-tier-scores">0–29</div></button>
+        <button class="dev-tier-btn" onclick="testTier(40,1)">Tier 2<div class="dev-tier-scores">30–49</div></button>
+        <button class="dev-tier-btn active" onclick="testTier(62,2)">Tier 3<div class="dev-tier-scores">50–69</div></button>
+        <button class="dev-tier-btn" onclick="testTier(77,3)">Tier 4<div class="dev-tier-scores">70–84</div></button>
+        <button class="dev-tier-btn" onclick="testTier(92,4)">Tier 5<div class="dev-tier-scores">85–100</div></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4: CRITERIA BREAKDOWN -->
+<div class="screen" id="screenBreakdown">
+  <header class="header"><div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div><div class="header-title">Camera<br>Presence <em>Score™</em></div></header>
+  <div class="breakdown-wrap">
+    <div class="breakdown-summary" id="breakdownSummary">
+      <div class="breakdown-score-circle" id="breakdownScoreCircle">
+        <span class="breakdown-score-num" id="breakdownScoreNum">62</span>
+      </div>
+      <div class="breakdown-summary-text">
+        <div class="breakdown-tier-name" id="breakdownTierName">Getting There</div>
+        <div class="breakdown-tier-sub">Here is what the camera saw — criterion by criterion.</div>
+      </div>
+    </div>
+    <div class="breakdown-section-label">Criterion by criterion</div>
+    <div class="criteria-grid" id="criteriaGrid"></div>
+    <div class="book-callout">
+      <div class="book-callout-icon">📖</div>
+      <div class="book-callout-text">
+        <div class="book-callout-heading">Want the complete answer?</div>
+        <div class="book-callout-copy">The video course covers everything your score is pointing at — step-by-step guidance for every setup and budget. Pre-order now at 50% off, available through May.</div>
+      </div>
+    </div>
+    <button class="action-btn" onclick="window.open('https://anaudiencefromanywhere.com','_blank')">Pre-order the book →</button>
+    <button class="action-btn secondary" onclick="scanAgain()">← Scan a different setup</button>
+  </div>
+</div>
+
+<!-- SCREEN 5: RING LIGHT FAIL -->
+<div class="screen" id="screenRingLight">
+  <header class="header"><div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div><div class="header-title">Camera<br>Presence <em>Score™</em></div></header>
+  <div class="disq-wrap">
+    <div class="disq-warning-bar">
+      <span class="disq-warning-icon">⚠️</span>
+      <span class="disq-warning-text">Ring Light Fail</span>
+      <span class="disq-warning-icon">⚠️</span>
+    </div>
+    <div class="disq-illustration">
+      <div class="disq-illustration-ring"></div>
+      <div class="disq-illustration-face">😳</div>
+      <div class="disq-eye-rings">
+        <div class="disq-eye-ring"></div>
+        <div class="disq-eye-ring" style="animation-delay:0.15s;"></div>
+      </div>
+    </div>
+    <h2 class="disq-title">Instant Disqualification</h2>
+    <p class="disq-copy">The camera can see two perfect glowing circles in your pupils — or your glasses. So can everyone else on the call. So can their colleagues. So can their colleagues' colleagues.</p>
+    <p class="disq-sub">You are using dentistry equipment to light your face for professional calls. Nobody likes the dentist. Fix it and come back.</p>
+    <p class="disq-sub" style="margin-top:8px;font-style:normal;">The position of your light source relative to your face and camera is a variable to improve. Experiment with moving it off to one side. A quick search on YouTube will show you several approaches.</p>
+    <button class="disq-action" onclick="scanAgain()">Try a different screenshot →</button>
+  </div>
+</div>
+
+<!-- SCREEN 6: BACKGROUND BLUR FAIL -->
+<div class="screen" id="screenBgBlur">
+  <header class="header"><div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div><div class="header-title">Camera<br>Presence <em>Score™</em></div></header>
+  <div class="disq-wrap">
+    <div class="disq-warning-bar">
+      <span class="disq-warning-icon">⚠️</span>
+      <span class="disq-warning-text">Background Blur Fail</span>
+      <span class="disq-warning-icon">⚠️</span>
+    </div>
+    <div class="disq-blur-illustration">
+      <div class="disq-pixel"></div><div class="disq-pixel"></div><div class="disq-pixel"></div>
+      <div class="disq-pixel"></div><div class="disq-pixel"></div><div class="disq-pixel"></div>
+      <div class="disq-blur-face">😱</div>
+      <div class="disq-blur-edge"></div>
+    </div>
+    <h2 class="disq-title">Instant Disqualification</h2>
+    <p class="disq-copy">The background blur has taken your shoulders. Your hair is next.</p>
+    <p class="disq-sub">You are not a floating head. Turn it off, sit in front of something real, and stop asking the software to solve a room problem. Come back when you exist from the neck down.</p>
+    <p class="disq-sub" style="margin-top:8px;font-style:normal;">The background itself — what it is and where you sit relative to it — is a variable to improve.</p>
+    <button class="disq-action" onclick="scanAgain()">Try a different screenshot →</button>
+  </div>
+</div>
+
+
+<!-- SCREEN 7: BRIGHT BACKGROUND FAIL -->
+<div class="screen" id="screenBrightBg">
+  <header class="header"><div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div><div class="header-title">Camera<br>Presence <em>Score™</em></div></header>
+  <div class="disq-wrap">
+    <div class="disq-warning-bar">
+      <span class="disq-warning-icon">⚠️</span>
+      <span class="disq-warning-text">Bright Background Fail</span>
+      <span class="disq-warning-icon">⚠️</span>
+    </div>
+    <div class="disq-blur-illustration">
+      <div class="disq-pixel"></div><div class="disq-pixel"></div><div class="disq-pixel"></div>
+      <div class="disq-pixel"></div><div class="disq-pixel"></div><div class="disq-pixel"></div>
+      <div class="disq-blur-face">🌟</div>
+      <div class="disq-blur-edge"></div>
+    </div>
+    <h2 class="disq-title">Instant Disqualification</h2>
+    <p class="disq-copy">The camera found your background before it found you. Whatever is behind you — the window, the shelving, the very impressive branded backdrop — is brighter than your face.</p>
+    <p class="disq-sub">The camera always chooses the brightest thing in the frame. Right now that is not you. That is your window. Or your shelving. Or your very impressive branded backdrop. Dim it, move away from it, or accept that you are the supporting act in your own call. Fix it and come back.</p>
+    <p class="disq-sub" style="margin-top:8px;font-style:normal;">The brightness of what sits behind you relative to your face is a variable to improve.</p>
+    <button class="disq-action" onclick="scanAgain()">Try a different screenshot →</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// Stage 4 — all API keys are in Vercel environment variables
+// The browser never sees any keys — all sensitive calls go through /api/ routes
+const SUPABASE_URL  = 'https://kqpggbyprotehkmqyvuo.supabase.co';
+const SUPABASE_KEY  = 'sb_publishable_nD0IYm0XRi4ER-Mi1l1Bgg_9k-r3rgi';
+const TOOL_URL      = window.location.href.split('?')[0];
+
+// ═══════════════════════════════════════
+// CONSTANTS & DATA
+// ═══════════════════════════════════════
+const ACCEPTED_TYPES=['image/jpeg','image/png','image/gif','image/webp','image/bmp','image/tiff'];
+const MAX_SIZE_MB=25;
+const STEP_DURATION=1300;
+const CIRCUMFERENCE=565.49;
+
+const LOADING_STEPS=[
+  {label:'Frame scan',   copy:'Looking at what the camera sees before you say a single word.'},
+  {label:'Light check',  copy:'Checking for alien portals in your pupils. The ring light knows what it did.'},
+  {label:'Edge integrity',copy:'Assessing shoulder integrity. Are you all there, or has the background blur taken something?'},
+  {label:'Angle audit',  copy:'Measuring camera authority. Who is looking up at whom?'},
+  {label:'Presence read',copy:'Listening for the husk. Mandela had twenty-seven years. You have this setup.'},
+  {label:'Calculating',  copy:'Running the final numbers. The camera has always been watching. Here is what it found.'},
+];
+
+const TIERS=[
+  {min:0, max:29, name:'The Husk Is Missing', color:'#E24B4A', badge:'Score 0–29',
+   copy:"The camera sees everything. Right now, it's seeing the setup, not the person. Every single thing it's judging is fixable — and the fix starts on page one."},
+  {min:30,max:49, name:'The Work Begins',     color:'#EF9F27', badge:'Score 30–49',
+   copy:"You're being chased. The camera knows it. But the gap between where you are and where you need to be is entirely fixable — and closer than you think."},
+  {min:50,max:69, name:'Getting There',       color:'#BA7517', badge:'Score 50–69',
+   copy:"Solid foundation. A few things are still working against you, and the camera is politely keeping that information to itself. We're not."},
+  {min:70,max:84, name:'The Room Notices',    color:'#378ADD', badge:'Score 70–84',
+   copy:"This is a professional setup. The camera respects you. One or two refinements away from the kind of presence people remember."},
+  {min:85,max:100,name:"You've Found the Husk",color:'#639922',badge:'Score 85–100',
+   copy:"The camera sees someone who owns the room. Mandela would approve. Now stop reading this and go use it."},
+];
+
+// Placeholder criteria data — replaced by real API response in Stage 2a
+const PLACEHOLDER_CRITERIA=[
+  {key:'lighting',   label:'Lighting',        icon:'💡', score:55, comment:"The camera can see your face. It cannot yet find your eyes.", hint:"The relationship between your light source and your camera position is a variable to improve."},
+  {key:'angle',      label:'Camera angle',    icon:'📷', score:70, comment:"Roughly eye level. The authority is almost there.", hint:"The height of the lens relative to your eyes is a variable to improve."},
+  {key:'background', label:'Background',      icon:'🖼', score:60, comment:"Clean but passive. The background is not competing. It is also not helping.", hint:"The brightness of what sits behind you relative to your face is a variable to improve."},
+  {key:'framing',    label:'Framing',         icon:'⬛', score:65, comment:"The face is in the frame. At thumbnail size it is harder to find than it should be.", hint:"The ratio of face to frame is a variable to improve."},
+  {key:'presence',   label:'Overall presence',icon:'✨', score:62, comment:"The camera is partially in the way. The person behind it is visible but not fully available.", hint:"The distance between your eyes and the lens — and what your eyes are looking at — is a variable to improve."},
+];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let currentFile=null, currentDataUrl=null;
+let revealScore=62, revealAnimating=false;
+let currentCriteria=PLACEHOLDER_CRITERIA;
+
+// ═══════════════════════════════════════
+// SCREEN SYSTEM
+// ═══════════════════════════════════════
+function showScreen(el){
+  document.querySelectorAll('.screen').forEach(s=>{s.style.display='none';s.classList.remove('visible');});
+  el.style.display='flex';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('visible')));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════
+// UPLOAD
+// ═══════════════════════════════════════
+function showUploadState(name){
+  ['Default','Preview','Error'].forEach(s=>{document.getElementById('state'+s).style.display=(s===name)?'flex':'none';});
+  uploadZone.classList.toggle('has-image',name==='Preview');
+  uploadZone.classList.toggle('has-error',name==='Error');
+}
+function handleFile(file){
+  if(!file)return;
+  if(!ACCEPTED_TYPES.includes(file.type)){showUploadError('That file type is not supported.','Please upload a JPG, PNG, GIF, or WebP screenshot.');return;}
+  const mb=file.size/1048576;
+  if(mb>MAX_SIZE_MB){showUploadError('That file is too large ('+mb.toFixed(1)+' MB).','Please use a file under '+MAX_SIZE_MB+' MB.');return;}
+  const reader=new FileReader();
+  reader.onload=e=>{currentDataUrl=e.target.result;currentFile=file;document.getElementById('previewImg').src=currentDataUrl;document.getElementById('fileName').textContent=file.name||'screenshot';document.getElementById('fileSize').textContent=fmt(file.size);showUploadState('Preview');analyseBtn.disabled=false;};
+  reader.onerror=()=>showUploadError('Could not read that file.','Please try a different screenshot.');
+  reader.readAsDataURL(file);
+}
+function showUploadError(msg,sub){document.getElementById('errorMsg').textContent=msg;document.getElementById('errorSub').textContent=sub;showUploadState('Error');analyseBtn.disabled=true;currentFile=null;currentDataUrl=null;}
+function clearImage(e){if(e)e.stopPropagation();currentFile=null;currentDataUrl=null;fileInput.value='';document.getElementById('previewImg').src='';showUploadState('Default');analyseBtn.disabled=true;}
+function clearError(e){if(e)e.stopPropagation();showUploadState('Default');}
+function handleZoneClick(e){if(document.getElementById('statePreview').style.display!=='none')return;if(e.target.closest('.uz-retry-btn')||e.target.closest('.uz-change-btn'))return;fileInput.click();}
+function fmt(bytes){if(!bytes)return'';if(bytes<1024)return bytes+' B';if(bytes<1048576)return(bytes/1024).toFixed(1)+' KB';return(bytes/1048576).toFixed(1)+' MB';}
+const uploadZone=document.getElementById('uploadZone');
+const fileInput=document.getElementById('fileInput');
+const analyseBtn=document.getElementById('analyseBtn');
+fileInput.addEventListener('change',e=>{const f=e.target.files[0];if(f)handleFile(f);fileInput.value='';});
+document.addEventListener('paste',e=>{const items=e.clipboardData?.items;if(!items)return;for(const item of items){if(item.type.startsWith('image/')){const f=item.getAsFile();if(f){handleFile(f);break;}}}});
+uploadZone.addEventListener('dragover',e=>{e.preventDefault();uploadZone.classList.add('drag-over');document.getElementById('dragOverlay').classList.add('show');});
+uploadZone.addEventListener('dragleave',e=>{if(!uploadZone.contains(e.relatedTarget)){uploadZone.classList.remove('drag-over');document.getElementById('dragOverlay').classList.remove('show');}});
+uploadZone.addEventListener('drop',e=>{e.preventDefault();uploadZone.classList.remove('drag-over');document.getElementById('dragOverlay').classList.remove('show');const f=e.dataTransfer.files[0];if(f)handleFile(f);});
+analyseBtn.addEventListener('click',()=>{
+  if(!currentDataUrl) return;
+  const session = getSession();
+  if(session && session.verified && session.usesRemaining > 0){
+    startLoading();
+  } else if(session && session.verified && session.usesRemaining <= 0){
+    showGatePaywall();
+    showScreen(document.getElementById('screenEmailGate'));
+  } else {
+    showScreen(document.getElementById('screenEmailGate'));
+  }
+});
+
+// ═══════════════════════════════════════
+// LOADING
+// ═══════════════════════════════════════
+function buildSteps(){
+  const c=document.getElementById('loadingSteps');c.innerHTML='';
+  LOADING_STEPS.forEach((s,i)=>{const d=document.createElement('div');d.className='loading-step';d.id='step-'+i;d.innerHTML=`<div class="step-indicator"><div class="step-spinner" id="sp-${i}"></div><svg class="step-check" id="ck-${i}" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#639922" stroke-width="1.5"/><path d="M5 8 L7 10 L11 6" stroke="#639922" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="step-text-wrap"><div class="step-label">${s.label}</div><div class="step-copy">${s.copy}</div></div>`;c.appendChild(d);});
+}
+function startLoading(){
+  buildSteps();
+  document.getElementById('loadingComplete').style.display='none';
+  document.getElementById('scanBgImg').src=currentDataUrl||'';
+  showScreen(document.getElementById('screenLoading'));
+  // Run animation and API call in parallel
+  runStep(0);
+  callVisionAPI(currentDataUrl);
+}
+
+function startLoadingGated(){
+  // Called from email gate when user is already verified
+  const session = getSession();
+  if(session && session.verified && session.usesRemaining > 0){
+    startLoadingWithDecrement(session.email);
+  } else {
+    startLoading(); // fallback
+  }
+}
+
+// ═══════════════════════════════════════
+// VISION API
+// ═══════════════════════════════════════
+let apiResult = null;
+let apiError  = null;
+let apiDone   = false;
+
+async function callVisionAPI(dataUrl) {
+  apiResult = null; apiError = null; apiDone = false;
+  const base64 = dataUrl.split(',')[1];
+  const mediaType = dataUrl.split(';')[0].split(':')[1] || 'image/jpeg';
+
+
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20000);
+
+  try {
+    const response = await fetch('/api/analyse', {
+      method: 'POST',
+      signal: controller.signal,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageData: base64, mediaType: mediaType })
+    });
+    clearTimeout(timeout);
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error('API error ' + response.status + ': ' + errText.slice(0,200));
+    }
+    const parsed = await response.json();
+    apiResult = parsed;
+  } catch (err) {
+    clearTimeout(timeout);
+    if (err.name === 'AbortError') {
+      apiError = 'timeout';
+    } else {
+      apiError = err.message || 'unknown error';
+    }
+    console.error('Vision API error:', err);
+  } finally {
+    apiDone = true;
+  }
+}
+function runStep(i){if(i>=LOADING_STEPS.length){setTimeout(()=>{document.getElementById('loadingComplete').style.display='block';},400);return;}const el=document.getElementById('step-'+i);el.classList.add('active');setTimeout(()=>{el.classList.remove('active');el.classList.add('done');setTimeout(()=>runStep(i+1),120);},STEP_DURATION);}
+
+// ═══════════════════════════════════════
+// SCORE REVEAL
+// ═══════════════════════════════════════
+function getTier(s){return TIERS.find(t=>s>=t.min&&s<=t.max)||TIERS[0];}
+function scoreColor(s){if(s<=29)return'#E24B4A';if(s<=49)return'#EF9F27';if(s<=69)return'#BA7517';if(s<=84)return'#378ADD';return'#639922';}
+function setGauge(s,anim){
+  const fill=document.getElementById('gaugeFill');
+  fill.style.transition=anim?'stroke-dashoffset 0.05s linear,stroke 0.3s ease':'none';
+  fill.style.strokeDashoffset=CIRCUMFERENCE*(1-s/100);
+  fill.style.stroke=scoreColor(s);
+  document.getElementById('gaugeNumber').textContent=s;
+  document.getElementById('gaugeNumber').style.color=scoreColor(s);
+}
+function easeOutExpo(t){return t===1?1:1-Math.pow(2,-10*t);}
+function animateCount(target,duration,cb){
+  if(revealAnimating)return;revealAnimating=true;
+  const start=performance.now();
+  (function tick(now){const p=Math.min((now-start)/duration,1);const current=Math.round(easeOutExpo(p)*target);setGauge(current,true);if(p<1){requestAnimationFrame(tick);}else{setGauge(target,true);revealAnimating=false;if(cb)cb();};})(performance.now());
+}
+function pulseGauge(){const g=document.getElementById('gaugeOuter');g.classList.remove('pulse');void g.offsetWidth;g.classList.add('pulse');g.addEventListener('animationend',()=>g.classList.remove('pulse'),{once:true});}
+function showRevealElements(s){
+  const tier=getTier(s);
+  setTimeout(()=>{const b=document.getElementById('tierBadge');b.textContent=tier.badge;b.style.background=tier.color+'22';b.style.color=tier.color;b.style.border='1px solid '+tier.color+'55';b.classList.add('show');},100);
+  setTimeout(()=>{document.getElementById('verdictName').textContent=tier.name;document.getElementById('verdictName').style.color=tier.color;document.getElementById('verdictCopy').textContent=tier.copy;document.getElementById('verdictBlock').classList.add('show');},350);
+  setTimeout(()=>{document.getElementById('charPlaceholder').classList.add('show');},550);
+  setTimeout(()=>{document.getElementById('nextBtn').classList.add('show');},750);
+}
+function resetReveal(){['tierBadge','verdictBlock','charPlaceholder','nextBtn'].forEach(id=>document.getElementById(id).classList.remove('show'));setGauge(0,false);revealAnimating=false;}
+function startReveal(score){const s=score!==undefined?score:revealScore;resetReveal();showScreen(document.getElementById('screenReveal'));setTimeout(()=>{animateCount(s,2200,()=>{pulseGauge();showRevealElements(s);});},400);}
+function testTier(score,btnIdx){revealScore=score;document.querySelectorAll('.dev-tier-btn').forEach((b,i)=>b.classList.toggle('active',i===btnIdx));resetReveal();setTimeout(()=>{animateCount(score,2200,()=>{pulseGauge();showRevealElements(score);});},150);}
+
+// ═══════════════════════════════════════
+// CRITERIA BREAKDOWN
+// ═══════════════════════════════════════
+function handleSeeScore() {
+  const btn = document.getElementById('seeScoreBtn');
+  if (!apiDone) {
+    // API still running — show waiting state and poll
+    btn.textContent = 'Calculating…';
+    btn.disabled = true;
+    const poll = setInterval(() => {
+      if (apiDone) {
+        clearInterval(poll);
+        routeResult();
+      }
+    }, 300);
+    return;
+  }
+  routeResult();
+}
+
+function routeResult() {
+  // API timed out or errored
+  if (apiError) {
+    showApiError(apiError);
+    return;
+  }
+  // Validate response structure
+  if (!apiResult || typeof apiResult !== 'object') {
+    showApiError('Unexpected response from AI. Please try again.');
+    return;
+  }
+  // Disqualification routing — validate the disqualification value before accepting
+  if (apiResult.disqualification !== undefined) {
+    const disqValue = String(apiResult.disqualification).toLowerCase().trim();
+    if (disqValue === 'ring_light' || disqValue === 'ring light' || disqValue === 'ringlight') {
+      showScreen(document.getElementById('screenRingLight'));
+      return;
+    }
+    if (disqValue === 'background_blur' || disqValue === 'background blur' || disqValue === 'bgblur') {
+      showScreen(document.getElementById('screenBgBlur'));
+      return;
+    }
+    if (disqValue === 'bright_background' || disqValue === 'bright background' || disqValue === 'brightbg') {
+      showScreen(document.getElementById('screenBrightBg'));
+      return;
+    }
+    // Unknown disqualification value — log it and fall through to normal scoring
+    console.warn('Unknown disqualification value:', apiResult.disqualification, '— continuing to normal scoring');
+  }
+  // Validate score result
+  const score = apiResult.overall;
+  if (typeof score !== 'number' || score < 0 || score > 100) {
+    showApiError('Score out of expected range. Please try again.');
+    return;
+  }
+  // Map criteria to UI format
+  if (apiResult.criteria) {
+    currentCriteria = [
+      {key:'lighting',   label:'Lighting',        icon:'💡', score: Math.round(apiResult.criteria.lighting?.score  || 50), comment: apiResult.criteria.lighting?.comment  || '', hint: apiResult.criteria.lighting?.hint  || ''},
+      {key:'angle',      label:'Camera angle',    icon:'📷', score: Math.round(apiResult.criteria.angle?.score    || 50), comment: apiResult.criteria.angle?.comment    || '', hint: apiResult.criteria.angle?.hint    || ''},
+      {key:'background', label:'Background',      icon:'🖼', score: Math.round(apiResult.criteria.background?.score|| 50), comment: apiResult.criteria.background?.comment|| '', hint: apiResult.criteria.background?.hint|| ''},
+      {key:'framing',    label:'Framing',         icon:'⬛', score: Math.round(apiResult.criteria.framing?.score  || 50), comment: apiResult.criteria.framing?.comment  || '', hint: apiResult.criteria.framing?.hint  || ''},
+      {key:'presence',   label:'Overall presence',icon:'✨', score: Math.round(apiResult.criteria.presence?.score || 50), comment: apiResult.criteria.presence?.comment || '', hint: apiResult.criteria.presence?.hint || ''},
+    ];
+  }
+  revealScore = Math.round(score);
+  startReveal(revealScore);
+}
+
+function showApiError(msg) {
+  const btn = document.getElementById('seeScoreBtn');
+  if (btn) { btn.textContent = 'See My Score →'; btn.disabled = false; }
+  const complete = document.getElementById('loadingComplete');
+  const errDiv = document.getElementById('apiErrorMsg') || document.createElement('div');
+  errDiv.id = 'apiErrorMsg';
+  errDiv.style.cssText = 'margin-top:14px;padding:12px 16px;background:rgba(226,75,74,0.1);border:1px solid rgba(226,75,74,0.3);border-radius:6px;font-size:13px;color:#E24B4A;text-align:center;';
+  errDiv.innerHTML = '⚠️ ' + msg + '<br><span style="color:rgba(255,255,255,0.4);font-size:12px;">Check your API key in the config block at the top of this file, then try again.</span>';
+  if (!document.getElementById('apiErrorMsg')) complete.appendChild(errDiv);
+  else errDiv.innerHTML = '⚠️ ' + msg + '<br><span style="color:rgba(255,255,255,0.4);font-size:12px;">Check your API key in the config block at the top of this file, then try again.</span>';
+}
+
+function goToBreakdown(){
+  buildBreakdown(revealScore, currentCriteria);
+  showScreen(document.getElementById('screenBreakdown'));
+}
+
+function buildBreakdown(score, criteria){
+  const tier=getTier(score);
+  const color=scoreColor(score);
+  // Summary bar
+  document.getElementById('breakdownScoreNum').textContent=score;
+  document.getElementById('breakdownScoreNum').style.color=color;
+  document.getElementById('breakdownScoreCircle').style.borderColor=color;
+  document.getElementById('breakdownTierName').textContent=tier.name;
+  document.getElementById('breakdownTierName').style.color=color;
+  // Cards
+  const grid=document.getElementById('criteriaGrid');
+  grid.innerHTML='';
+  criteria.forEach((c,i)=>{
+    const card=document.createElement('div');
+    card.className='criteria-card';
+    card.id='ccard-'+i;
+    const barColor=c.score>=70?'#639922':c.score>=50?'#EF9F27':'#E24B4A';
+    card.innerHTML=`
+      <div class="criteria-card-header">
+        <span class="criteria-card-label">${c.icon} ${c.label}</span>
+        <span class="criteria-card-score" style="color:${barColor}">${c.score}</span>
+      </div>
+      <div class="criteria-bar-track">
+        <div class="criteria-bar-fill" id="bar-${i}" style="background:${barColor};width:0%"></div>
+      </div>
+      <div class="criteria-comment">${c.comment}</div>
+      ${c.hint ? `<div class="criteria-hint">→ ${c.hint}</div>` : ''}`;
+    grid.appendChild(card);
+    // Staggered reveal
+    setTimeout(()=>{
+      card.classList.add('show');
+      setTimeout(()=>{document.getElementById('bar-'+i).style.width=c.score+'%';},80);
+    }, i*110);
+  });
+
+  // Add audio test card as 6th item
+  setTimeout(()=>{
+    const audioCard = document.createElement('div');
+    audioCard.className = 'audio-card';
+    audioCard.id = 'audioCard';
+    audioCard.innerHTML = `
+      <div class="audio-card-header">
+        <span class="audio-card-label">🎙 Voice clarity</span>
+        <span class="audio-card-status" id="audioStatus" style="color:var(--text-muted)">Not tested</span>
+      </div>
+      <div class="audio-card-prompt">The camera scores what it sees. This scores what it hears. Say the sentence below twice, clearly, at the volume you would use on a call. Try smiling while you speak and see if you can hear the warmth in the playback.</div>
+      <div class="audio-card-sentence">"The quick brown fox wouldn't be caught dead using a ring light."</div>
+      <button class="audio-record-btn" id="audioRecordBtn" onclick="toggleRecording()">
+        <span class="audio-record-dot"></span>
+        <span id="audioRecordLabel">Record</span>
+      </button>
+      <div class="audio-result" id="audioResult"></div>`;
+    grid.appendChild(audioCard);
+    setTimeout(()=>audioCard.classList.add('show'), 80);
+  }, criteria.length * 110 + 200);
+}
+
+// ═══════════════════════════════════════
+// DISQUALIFICATION SCREENS
+// ═══════════════════════════════════════
+function showRingLightFail(){showScreen(document.getElementById('screenRingLight'));}
+function showBgBlurFail(){showScreen(document.getElementById('screenBgBlur'));}
+function scanAgain(){
+  currentFile=null;currentDataUrl=null;fileInput.value='';
+  document.getElementById('previewImg').src='';
+  showUploadState('Default');
+  analyseBtn.disabled=true;
+  // Reset gate form for next submission
+  showGateForm();
+  hideGateError();
+  showScreen(document.getElementById('screenUpload'));
+}
+
+// ═══════════════════════════════════════
+// DEV: expose disq screens for testing
+// ═══════════════════════════════════════
+window._testRingLight=showRingLightFail;
+window._testBgBlur=showBgBlurFail;
+window._testBrightBg=function(){showScreen(document.getElementById('screenBrightBg'));};
+// Email gate dev helpers:
+window._testGate=function(){showScreen(document.getElementById('screenEmailGate'));showGateForm();};
+window._testPaywall=function(){showScreen(document.getElementById('screenEmailGate'));showGatePaywall();};
+window._testVerifiedSession=function(){setSession('test@example.com','Test User',3);console.log('Session set. Reload and click Analyse.');};
+// Test API result routing directly from console:
+// _testApiResult({overall:62, criteria:{lighting:{score:55,comment:"Test"},angle:{score:70,comment:"Test"},background:{score:60,comment:"Test"},framing:{score:65,comment:"Test"},audio:{score:50,comment:"Test"},presence:{score:62,comment:"Test"}}})
+window._testApiResult=function(result){apiResult=result;apiError=null;apiDone=true;routeResult();};
+window._testApiError=function(){apiError='timeout';apiDone=true;showApiError('Request timed out after 15 seconds.');};
+// Disqualification routing tests:
+window._testDisqRingLight=function(){apiResult={disqualification:'ring_light'};apiError=null;apiDone=true;routeResult();};
+window._testDisqBgBlur=function(){apiResult={disqualification:'background_blur'};apiError=null;apiDone=true;routeResult();};
+window._testDisqBrightBg=function(){apiResult={disqualification:'bright_background'};apiError=null;apiDone=true;routeResult();};
+// Borderline test — should NOT disqualify, should score normally:
+window._testBorderline=function(){apiResult={overall:58,criteria:{lighting:{score:55,comment:"Directional light but slightly harsh on one side."},angle:{score:65,comment:"Slightly below eye level — raise the camera half an inch."},background:{score:70,comment:"Clean enough. Not working for you but not against you either."},framing:{score:60,comment:"Eyes sit just below the upper third. Move back slightly."},audio:{score:45,comment:"No external audio equipment visible. The laptop mic is doing the work here."},presence:{score:55,comment:"Present but guarded. The camera can see the hesitation."}}};apiError=null;apiDone=true;routeResult();};
+// Malformed response test — should show error:
+window._testMalformed=function(){apiResult={unexpected:'format',foo:123};apiError=null;apiDone=true;routeResult();};
+// Out of range score test — should show error:
+window._testOutOfRange=function(){apiResult={overall:847,criteria:{}};apiError=null;apiDone=true;routeResult();};
+
+// ═══════════════════════════════════════
+// SESSION MANAGEMENT
+// ═══════════════════════════════════════
+function getSession(){
+  try{
+    const s = sessionStorage.getItem('cps_session');
+    return s ? JSON.parse(s) : null;
+  }catch(e){return null;}
+}
+function setSession(email, name, usesRemaining){
+  sessionStorage.setItem('cps_session', JSON.stringify({
+    email, name, verified:true, usesRemaining, ts: Date.now()
+  }));
+}
+function decrementSession(){
+  const s = getSession();
+  if(s){ s.usesRemaining = Math.max(0, s.usesRemaining-1); sessionStorage.setItem('cps_session', JSON.stringify(s)); }
+}
+
+// ═══════════════════════════════════════
+// SUPABASE HELPERS
+// ═══════════════════════════════════════
+const SB_HEADERS = {
+  'Content-Type':'application/json',
+  'apikey': SUPABASE_KEY,
+  'Authorization': 'Bearer ' + SUPABASE_KEY
+};
+
+async function sbGetUser(email){
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/camera_score_users?email=eq.${encodeURIComponent(email)}&select=*`,
+    { headers: SB_HEADERS }
+  );
+  const data = await res.json();
+  return Array.isArray(data) && data.length > 0 ? data[0] : null;
+}
+
+async function sbCreateUser(email, name, token){
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/camera_score_users`, {
+    method:'POST',
+    headers:{...SB_HEADERS, 'Prefer':'return=representation'},
+    body: JSON.stringify({email, name, verified:false, uses_remaining:3, verification_token:token})
+  });
+  const data = await res.json();
+  return Array.isArray(data) ? data[0] : data;
+}
+
+async function sbVerifyUser(email, token){
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/camera_score_users?email=eq.${encodeURIComponent(email)}&verification_token=eq.${token}`,
+    { headers:{...SB_HEADERS,'Prefer':'return=representation'}, method:'PATCH',
+      body: JSON.stringify({verified:true, verification_token:null}) }
+  );
+  const data = await res.json();
+  return Array.isArray(data) && data.length > 0;
+}
+
+async function sbDecrementUses(email){
+  // Get current count first
+  const user = await sbGetUser(email);
+  if(!user) return;
+  const newCount = Math.max(0, (user.uses_remaining||0) - 1);
+  await fetch(
+    `${SUPABASE_URL}/rest/v1/camera_score_users?email=eq.${encodeURIComponent(email)}`,
+    { method:'PATCH', headers: SB_HEADERS,
+      body: JSON.stringify({uses_remaining: newCount}) }
+  );
+}
+
+async function sbUpdateToken(email, token){
+  await fetch(
+    `${SUPABASE_URL}/rest/v1/camera_score_users?email=eq.${encodeURIComponent(email)}`,
+    { method:'PATCH', headers: SB_HEADERS,
+      body: JSON.stringify({verification_token: token}) }
+  );
+}
+
+// ═══════════════════════════════════════
+// RESEND EMAIL
+// ═══════════════════════════════════════
+function generateToken(){
+  return Array.from(crypto.getRandomValues(new Uint8Array(24)))
+    .map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function sendVerificationEmail(email, name, token){
+  const res = await fetch('/api/send-verification', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, name, token, toolUrl: TOOL_URL })
+  });
+  return res.ok;
+}
+
+// ═══════════════════════════════════════
+// EMAIL GATE UI LOGIC
+// ═══════════════════════════════════════
+let pendingEmail = '';
+let pendingToken = '';
+
+function showGateForm(){ document.getElementById('gateFormState').style.display='flex'; document.getElementById('gateSentState').style.display='none'; document.getElementById('gatePaywallState').style.display='none'; }
+function showGateSent(email){ document.getElementById('gateFormState').style.display='none'; document.getElementById('gateSentState').style.display='flex'; document.getElementById('gatePaywallState').style.display='none'; document.getElementById('gateSentEmail').textContent=email; }
+function showGatePaywall(){ document.getElementById('gateFormState').style.display='none'; document.getElementById('gateSentState').style.display='none'; document.getElementById('gatePaywallState').style.display='flex'; }
+function showGateError(msg){ const el=document.getElementById('gateError'); el.textContent=msg; el.style.display='block'; }
+function hideGateError(){ document.getElementById('gateError').style.display='none'; }
+
+async function handleGateSubmit(){
+  const name = document.getElementById('gateName').value.trim();
+  const email = document.getElementById('gateEmail').value.trim().toLowerCase();
+  if(!email || !email.includes('@')){ showGateError('Please enter a valid email address.'); return; }
+
+  const btn = document.getElementById('gateSubmit');
+  btn.disabled = true; btn.textContent = 'Checking…'; hideGateError();
+
+  try {
+    let user = await sbGetUser(email);
+
+    if(user && user.verified){
+      if(user.uses_remaining <= 0){
+        showGatePaywall();
+        return;
+      }
+      // Already verified — set session and proceed
+      setSession(email, user.name || name, user.uses_remaining);
+      showScreen(document.getElementById('screenUpload'));
+      // Trigger analysis immediately since image is ready
+      startLoadingWithDecrement(email);
+      return;
+    }
+
+    // New user or unverified — generate token and send email
+    pendingEmail = email;
+    pendingToken = generateToken();
+
+    if(!user){
+      await sbCreateUser(email, name, pendingToken);
+    } else {
+      await sbUpdateToken(email, pendingToken);
+    }
+
+    const sent = await sendVerificationEmail(email, name || 'there', pendingToken);
+    if(sent){
+      showGateSent(email);
+    } else {
+      showGateError('Could not send email. Please try again.');
+    }
+  } catch(err) {
+    console.error('Gate error:', err);
+    showGateError('Something went wrong. Please try again.');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Send verification email →';
+  }
+}
+
+async function resendVerification(){
+  if(!pendingEmail) return;
+  pendingToken = generateToken();
+  await sbUpdateToken(pendingEmail, pendingToken);
+  await sendVerificationEmail(pendingEmail, document.getElementById('gateName').value.trim(), pendingToken);
+}
+
+function startLoadingWithDecrement(email){
+  decrementSession();
+  sbDecrementUses(email);
+  startLoading();
+}
+
+// ═══════════════════════════════════════
+// TOKEN VERIFICATION ON PAGE LOAD
+// ═══════════════════════════════════════
+async function checkVerificationToken(){
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('verify');
+  const email = params.get('email');
+  if(!token || !email) return false;
+
+  // Clean URL immediately
+  window.history.replaceState({}, document.title, window.location.pathname);
+
+  try {
+    const verified = await sbVerifyUser(decodeURIComponent(email), token);
+    if(verified){
+      const user = await sbGetUser(decodeURIComponent(email));
+      if(user){
+        setSession(decodeURIComponent(email), user.name || '', user.uses_remaining);
+        // Show upload screen with success banner
+        showScreen(document.getElementById('screenUpload'));
+        showVerifiedBanner(user.uses_remaining);
+        return true;
+      }
+    }
+  } catch(err){ console.error('Token verify error:', err); }
+  return false;
+}
+
+function showVerifiedBanner(uses){
+  const banner = document.createElement('div');
+  banner.style.cssText = 'width:100%;max-width:580px;background:rgba(99,153,34,0.1);border:1px solid rgba(99,153,34,0.3);border-radius:6px;padding:12px 16px;text-align:center;margin-bottom:16px;font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#639922;';
+  banner.textContent = `✓ Email verified — ${uses} free ${uses===1?'analysis':'analyses'} remaining`;
+  const main = document.querySelector('#screenUpload .main');
+  if(main) main.insertBefore(banner, main.firstChild);
+  setTimeout(()=>banner.remove(), 6000);
+}
+
+// ═══════════════════════════════════════
+// AUDIO TEST
+// ═══════════════════════════════════════
+let mediaRecorder = null;
+let audioChunks = [];
+let isRecording = false;
+
+async function toggleRecording() {
+  if (isRecording) {
+    stopRecording();
+  } else {
+    await startRecording();
+  }
+}
+
+async function startRecording() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioChunks = [];
+    mediaRecorder = new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => { if(e.data.size > 0) audioChunks.push(e.data); };
+    mediaRecorder.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      await analyseAudio();
+    };
+    mediaRecorder.start();
+    isRecording = true;
+    const btn = document.getElementById('audioRecordBtn');
+    btn.classList.add('recording');
+    document.getElementById('audioRecordLabel').textContent = 'Stop recording';
+    document.getElementById('audioStatus').textContent = 'Recording...';
+    document.getElementById('audioStatus').style.color = 'var(--red)';
+    // Auto-stop after 20 seconds
+    setTimeout(()=>{ if(isRecording) stopRecording(); }, 20000);
+  } catch(err) {
+    console.error('Microphone error:', err);
+    showAudioError('Microphone access is required for the voice test.');
+  }
+}
+
+function stopRecording() {
+  if (mediaRecorder && isRecording) {
+    mediaRecorder.stop();
+    isRecording = false;
+    const btn = document.getElementById('audioRecordBtn');
+    btn.classList.remove('recording');
+    document.getElementById('audioRecordLabel').textContent = 'Analysing...';
+    btn.disabled = true;
+    document.getElementById('audioStatus').textContent = 'Analysing...';
+    document.getElementById('audioStatus').style.color = 'var(--text-muted)';
+  }
+}
+
+async function analyseAudio() {
+  try {
+    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+    const arrayBuffer = await blob.arrayBuffer();
+    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+
+    const response = await fetch('/api/analyse-audio', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ audioData: base64, mediaType: 'audio/webm' })
+    });
+
+    const parsed = await response.json();
+    showAudioResult(parsed.result === 'pass');
+  } catch(err) {
+    console.error('Audio analysis error:', err);
+    showAudioError('Could not analyse the recording. Please try again.');
+  }
+}
+
+function showAudioResult(pass) {
+  const resultEl = document.getElementById('audioResult');
+  const statusEl = document.getElementById('audioStatus');
+  const btn = document.getElementById('audioRecordBtn');
+  resultEl.style.display = 'block';
+  if (pass) {
+    resultEl.className = 'audio-result pass';
+    resultEl.textContent = '✓ Pass — voice is clear and present';
+    statusEl.textContent = 'Pass';
+    statusEl.style.color = 'var(--green)';
+  } else {
+    resultEl.className = 'audio-result fail';
+    resultEl.textContent = '✗ Fail — clarity is a variable to improve';
+    statusEl.textContent = 'Fail';
+    statusEl.style.color = 'var(--red)';
+  }
+  btn.disabled = false;
+  btn.classList.remove('recording');
+  document.getElementById('audioRecordLabel').textContent = 'Record again';
+}
+
+function showAudioError(msg) {
+  const btn = document.getElementById('audioRecordBtn');
+  if (btn) { btn.disabled = false; document.getElementById('audioRecordLabel').textContent = 'Try again'; }
+  const statusEl = document.getElementById('audioStatus');
+  if (statusEl) { statusEl.textContent = 'Error'; statusEl.style.color = 'var(--red)'; }
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+showUploadState('Default');
+// Check for verification token in URL first
+checkVerificationToken().then(wasVerified => {
+  if(!wasVerified){
+    showScreen(document.getElementById('screenUpload'));
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "camera-presence-score",
+  "version": "1.0.0",
+  "description": "Camera Presence Score tool — An Audience From Anywhere by Adrian Roup",
+  "private": true,
+  "engines": {
+    "node": "18.x"
+  }
+}

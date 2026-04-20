@@ -27,8 +27,9 @@ DO NOT trigger for: natural lens bokeh with clean edges.
 
 DISQUALIFICATION 3 — BRIGHT BACKGROUND FAIL:
 Trigger ONLY if the background is both brighter than the face AND visually distracting or uncontrolled — e.g. blown-out windows, bright walls competing for attention, unmanaged ceiling lights, or illuminated backdrops.
-DO NOT trigger if: the background contains intentional, curated, identity-reinforcing elements (bookshelves, artwork, a designed workspace) where the subject's face remains the clear focal point due to focus differential, framing, or deliberate composition — even if some background elements are similarly bright. Intentional backgrounds used by authors, educators, or professionals to communicate identity are a creative choice, not a mistake.
-The test is not "is the background bright?" but "has the background taken control away from the face?"
+DO NOT trigger if: the background contains intentional, curated, identity-reinforcing elements where ALL THREE are true: (1) background is visibly softer in focus than the face with actual bokeh present; (2) elements reinforce professional identity; (3) face is the brightest sharpest element.
+A bright warm-coloured wall (orange, yellow) behind a sharp in-focus background does NOT qualify for the intentional exception — it is an uncontrolled bright background.
+The test is not "is the background bright?" but "has the background taken control away from the face, and is there genuine intentional composition that justifies it?"
 
 If disqualification detected, return ONLY: {"disqualification": "ring_light"} OR {"disqualification": "background_blur"} OR {"disqualification": "bright_background"}
 Priority if multiple: ring_light > bright_background > background_blur.
@@ -44,7 +45,12 @@ LIGHTING (0–100): Eyes are the game — sclera visible, iris readable, eye mov
 0–39: Severe — eyes hidden or face in shadow.
 Penalties: colour cast on skin -10 to -15; low res laptop webcam -15 to -20; eyes too dark caps at 72; two hard dot catchlights -8 to -12; three or more catchlights -15 to -20.
 CATCHLIGHT RULE: A single catchlight per eye reads as natural — one light source, one reflection. Two catchlights are a notable issue. Three or more catchlights indicate multiple competing light sources and must be named directly in the comment. The fix is to reduce secondary lights to fill-only (significantly dimmer than the key), so one source dominates.
-GLASSES NOTE: If subject wears glasses, assess glare separately. Glare that obstructs the eye = deduct 10–15. Glare visible in corner of lens but not obstructing the eye = minor note only, deduct 3–5. If glasses glare is present, hint should mention: adjusting the angle of the key light to move the reflection, and using a polarizer filter in front of the camera lens to eliminate or reduce reflection.
+GLASSES NOTE: If subject wears glasses, assess glare carefully and precisely. There are three tiers:
+TIER 1 — SEVERE: Glare covers more than 30% of one or both lenses, significantly obscuring the eye behind it. The iris or pupil is not clearly readable through the glare. Deduct 15–20 points. Name it directly: "Glasses glare is obscuring the eyes." This is not a minor issue — it defeats the master principle entirely.
+TIER 2 — MODERATE: Glare is visible across the lens but the eye remains readable beneath it. Deduct 8–12 points. Name it.
+TIER 3 — MINOR: Glare visible only in corner of lens, eye fully readable, not a significant distraction. Deduct 3–5 points. Note only.
+For any tier, hint must mention: adjusting the angle of the key light to move the reflection, and using a polarizer filter in front of the camera lens to eliminate or reduce reflection.
+DO NOT assume a focus differential exists unless you can actually see soft bokeh on background elements. If background elements (books, shelves, furniture, walls) are sharp and in focus, state that clearly — do not invent a focus differential that is not present.
 
 CAMERA ANGLE (0–100):
 85–100: Eye level or just above. Peer, equal, professional.
@@ -58,8 +64,8 @@ BACKGROUND (0–100):
 50–69: Background competes — unmanaged brightness, clutter, or elements drawing eye away from face. Check for silhouette disruption: any background object (shelf edge, picture frame, plant, architectural element) that intersects or protrudes behind the subject's head — deduct 8–12 and name it. This is particularly distracting when the subject is bald or has a smooth head profile.
 25–49: Background dominant over face.
 0–24: Background has taken control entirely.
-Penalties: horizontal line bisecting face at eye level -8 to -12; vertical split frame -10 to -12; clothing/bg colour clash -5 to -8; wide angle distortion -10 to -15; equipment (microphone stand, boom arm, visible cables) obstructing background elements the subject clearly intended to show -5 to -8.
-INTENTIONAL BACKGROUND NOTE: When a background contains curated books, artwork, or professional items that are softly out of focus relative to the face, this is a deliberate compositional choice. Score it in the 70–84 range as a minimum unless a specific penalty applies. Penalise what is genuinely distracting — not what is intentionally present.
+Penalties: horizontal line bisecting face at eye level -8 to -12; vertical split frame -10 to -12; clothing/bg colour clash -5 to -8; wide angle distortion -10 to -15; equipment (microphone stand, boom arm, visible cables) obstructing background elements the subject clearly intended to show -5 to -8; bright warm-coloured wall (orange, yellow, warm white) competing with face brightness -8 to -12.
+INTENTIONAL BACKGROUND RULE: A background may be credited as intentional and identity-reinforcing ONLY if ALL THREE of the following are true: (1) background elements are visibly softer in focus than the subject's face — you can see actual bokeh blur on background elements, not just assume it; (2) the background elements clearly reinforce professional identity (the subject's own books, awards, professional equipment); (3) the face remains the brightest and sharpest element in the frame. If focus differential is not visibly present, do not credit the background as intentional. A sharp bookshelf behind a face is not automatically intentional — it must also be subordinate.
 
 FRAMING (0–100):
 85–100: Face 50–70% of frame, eyes upper third, shoulders visible, centred.

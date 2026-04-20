@@ -947,22 +947,9 @@ function showApiError(msg) {
 function goToBreakdown(){
   buildBreakdown(revealScore, currentCriteria);
   showScreen(document.getElementById('screenBreakdown'));
-  try {
-    const _s = JSON.parse(localStorage.getItem('cps_session') || '{}');
-    if(_s && _s.email && apiResult && apiResult.criteria){
-      sendResultsEmail(_s.email, _s.name || '', revealScore, apiResult.criteria);
-    }
-  } catch(e) {}
-
-async function sendResultsEmail(email, name, overall, criteria){
-  try {
-    await fetch('/api/send-results', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, name, overall, criteria })
-    });
-  } catch(e) {
-    console.warn('Results email failed to send:', e.message);
+  // Send results email — fire and forget, never blocks the UI
+  if(session && session.email && apiResult && apiResult.criteria){
+    sendResultsEmail(session.email, session.name || '', revealScore, apiResult.criteria);
   }
 }
 
@@ -1122,7 +1109,6 @@ async function sbVerifyUser(email, token){
 }
 
 async function sbDecrementUses(email){
-  if(email.toLowerCase() === 'your@email.com') return { uses_remaining: 999 };
   // Get current count first
   const user = await sbGetUser(email);
   if(!user) return;

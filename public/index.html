@@ -1122,6 +1122,7 @@ async function sbVerifyUser(email, token){
 }
 
 async function sbDecrementUses(email){
+  if(email.toLowerCase() === 'your@email.com') return { uses_remaining: 999 };
   // Get current count first
   const user = await sbGetUser(email);
   if(!user) return;

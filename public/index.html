@@ -947,10 +947,12 @@ function showApiError(msg) {
 function goToBreakdown(){
   buildBreakdown(revealScore, currentCriteria);
   showScreen(document.getElementById('screenBreakdown'));
-  if(session && session.email && apiResult && apiResult.criteria){
-    sendResultsEmail(session.email, session.name || '', revealScore, apiResult.criteria);
-  }
-}
+  try {
+    const _s = JSON.parse(localStorage.getItem('cps_session') || '{}');
+    if(_s && _s.email && apiResult && apiResult.criteria){
+      sendResultsEmail(_s.email, _s.name || '', revealScore, apiResult.criteria);
+    }
+  } catch(e) {}
 
 async function sendResultsEmail(email, name, overall, criteria){
   try {

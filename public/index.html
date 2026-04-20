@@ -966,19 +966,6 @@ async function sendResultsEmail(email, name, overall, criteria){
   }
 }
 
-async function sendResultsEmail(email, name, overall, criteria){
-  try {
-    await fetch('/api/send-results', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, name, overall, criteria })
-    });
-  } catch(e) {
-    // Silent fail — never breaks the scoring flow
-    console.warn('Results email failed to send:', e.message);
-  }
-}
-
 function buildBreakdown(score, criteria){
   const tier=getTier(score);
   const color=scoreColor(score);

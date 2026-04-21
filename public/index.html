@@ -137,10 +137,64 @@ kbd{background:rgba(255,255,255,0.1);border-radius:4px;padding:2px 6px;font-fami
 .step-copy{font-family:'Barlow',sans-serif;font-size:14px;font-style:italic;color:var(--text-sec);line-height:1.45;}
 .loading-step.active .step-label{color:var(--orange);}.loading-step.active .step-copy{color:var(--text);}.loading-step.active .step-spinner{display:block;}
 .loading-step.done .step-label{color:var(--text-muted);}.loading-step.done .step-copy{color:var(--text-muted);}.loading-step.done .step-check{display:block;}
+.scan-container.scan-done .scan-line { display: none; }
+.scan-container.scan-done .scan-label { animation: none; opacity: 0.4; }
+.scan-container.scan-done .scan-label::after { content: 'Analysis complete'; }
+/* Grayscale the background image when scan is complete */
+.scan-container.scan-done .scan-bg-img {
+  filter: grayscale(1);
+  opacity: 0.25;
+  transition: filter 0.8s ease, opacity 0.8s ease;
+}
 .loading-complete{display:none;margin-top:24px;width:100%;padding:16px 20px;background:rgba(99,153,34,0.1);border:1px solid rgba(99,153,34,0.3);border-radius:6px;text-align:center;}
 .loading-complete-text{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--green);}
 .see-score-btn{display:inline-block;margin-top:14px;background:var(--green);color:#fff;border:none;border-radius:4px;padding:12px 28px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:opacity 0.15s;}
 .see-score-btn:hover{opacity:0.88;}
+
+/* Scan complete overlay */
+.scan-complete-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.0);
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: background 0.6s ease;
+}
+.scan-complete-overlay.show {
+  display: flex;
+  background: rgba(0,0,0,0.45);
+}
+.scan-score-btn {
+  background: var(--orange);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 14px 28px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(16px, 3vw, 22px);
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.5), 4px 4px 0 rgba(204,34,0,0.4);
+  transition: background 0.15s, transform 0.15s;
+  position: relative;
+  z-index: 11;
+  opacity: 0;
+  transform: scale(0.85);
+  animation: none;
+}
+.scan-score-btn.show {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.4s ease 0.2s, transform 0.4s ease 0.2s, background 0.15s;
+}
+.scan-score-btn:hover {
+  background: var(--orange-dark);
+  transform: scale(1.03);
+}
 
 /* ── SCORE REVEAL ── */
 #screenReveal{padding:0 20px 60px;justify-content:flex-start;}
@@ -479,11 +533,27 @@ kbd{background:rgba(255,255,255,0.1);border-radius:4px;padding:2px 6px;font-fami
     <div id="gateFormState" style="width:100%;display:flex;flex-direction:column;align-items:center;">
       <div class="gate-icon">📧</div>
       <h2 class="gate-heading">One quick step</h2>
-      <p class="gate-sub">Your first three analyses are free. Enter your name and email to get started — we will send you a verification link.</p>
+      <p class="gate-sub">Your first three analyses are free. Tell us a little about yourself to get started — we'll send you a verification link.</p>
       <div class="gate-form" id="gateForm">
         <div class="gate-field">
-          <label class="gate-label" for="gateName">Your name</label>
-          <input class="gate-input" type="text" id="gateName" placeholder="First name" autocomplete="given-name">
+          <label class="gate-label" for="gateFirstName">First name</label>
+          <input class="gate-input" type="text" id="gateFirstName" placeholder="First name" autocomplete="given-name">
+        </div>
+        <div class="gate-field">
+          <label class="gate-label" for="gateLastName">Last name</label>
+          <input class="gate-input" type="text" id="gateLastName" placeholder="Last name" autocomplete="family-name">
+        </div>
+        <div class="gate-field">
+          <label class="gate-label" for="gateCompany">Company</label>
+          <input class="gate-input" type="text" id="gateCompany" placeholder="Your company" autocomplete="organization">
+        </div>
+        <div class="gate-field">
+          <label class="gate-label" for="gateJobTitle">Job title</label>
+          <input class="gate-input" type="text" id="gateJobTitle" placeholder="Your job title" autocomplete="organization-title">
+        </div>
+        <div class="gate-field">
+          <label class="gate-label" for="gateLinkedIn">LinkedIn URL</label>
+          <input class="gate-input" type="url" id="gateLinkedIn" placeholder="linkedin.com/in/yourname">
         </div>
         <div class="gate-field">
           <label class="gate-label" for="gateEmail">Email address</label>
@@ -520,12 +590,12 @@ kbd{background:rgba(255,255,255,0.1);border-radius:4px;padding:2px 6px;font-fami
 <div class="screen" id="screenLoading">
   <header class="header"><div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div><div class="header-title">Camera<br>Presence <em>Score™</em></div></header>
   <div class="loading-wrap">
-    <div class="scan-container" id="scanContainer"><img class="scan-bg-img" id="scanBgImg" src="" alt=""><div class="scan-dark-overlay"></div><div class="scan-grid"></div><div class="scan-corner tl"></div><div class="scan-corner tr"></div><div class="scan-corner bl"></div><div class="scan-corner br"></div><div class="scan-line"></div><div class="scan-label">Analysing&nbsp;·&nbsp;·&nbsp;·</div></div>
+    <div class="scan-container" id="scanContainer"><img class="scan-bg-img" id="scanBgImg" src="" alt=""><div class="scan-dark-overlay"></div><div class="scan-grid"></div><div class="scan-corner tl"></div><div class="scan-corner tr"></div><div class="scan-corner bl"></div><div class="scan-corner br"></div><div class="scan-line"></div><div class="scan-label" id="scanLabel">Analysing&nbsp;·&nbsp;·&nbsp;·</div><div class="scan-complete-overlay" id="scanCompleteOverlay"><button class="scan-score-btn" id="seeScoreBtn" onclick="handleSeeScore()">See My Score →</button></div></div>
     <h2 class="loading-title">Analysing your setup&hellip;</h2>
     <div class="loading-steps" id="loadingSteps"></div>
-    <div class="loading-complete" id="loadingComplete">
+    <div class="loading-complete" id="loadingComplete" style="display:none">
       <div class="loading-complete-text">Score calculated</div>
-      <button class="see-score-btn" id="seeScoreBtn" onclick="handleSeeScore()">See My Score →</button>
+      <button class="see-score-btn" onclick="handleSeeScore()">See My Score →</button>
     </div>
   </div>
 </div>
@@ -770,6 +840,12 @@ function buildSteps(){
 function startLoading(){
   buildSteps();
   document.getElementById('loadingComplete').style.display='none';
+  // Reset scan overlay state
+  const sc=document.getElementById('scanContainer'); if(sc) sc.classList.remove('scan-done');
+  const overlay=document.getElementById('scanCompleteOverlay'); if(overlay) overlay.classList.remove('show');
+  const seeBtn=document.getElementById('seeScoreBtn'); if(seeBtn){seeBtn.classList.remove('show');seeBtn.disabled=false;seeBtn.textContent='See My Score →';}
+  const sl=document.getElementById('scanLabel'); if(sl){sl.style.animation='';sl.style.opacity='';sl.style.color='';sl.textContent='Analysing · · ·';}
+  const errDiv=document.getElementById('apiErrorMsg'); if(errDiv) errDiv.style.display='none';
   document.getElementById('scanBgImg').src=currentDataUrl||'';
   showScreen(document.getElementById('screenLoading'));
   // Run animation and API call in parallel
@@ -856,7 +932,7 @@ async function callVisionAPI(dataUrl) {
     apiDone = true;
   }
 }
-function runStep(i){if(i>=LOADING_STEPS.length){setTimeout(()=>{document.getElementById('loadingComplete').style.display='block';},400);return;}const el=document.getElementById('step-'+i);el.classList.add('active');setTimeout(()=>{el.classList.remove('active');el.classList.add('done');setTimeout(()=>runStep(i+1),120);},STEP_DURATION);}
+function runStep(i){if(i>=LOADING_STEPS.length){setTimeout(()=>{const sc=document.getElementById('scanContainer');if(sc)sc.classList.add('scan-done');const sl=document.getElementById('scanLabel');if(sl){sl.style.animation='none';sl.style.opacity='1';sl.style.color='rgba(99,153,34,0.85)';sl.textContent='Analysis complete';}const overlay=document.getElementById('scanCompleteOverlay');if(overlay){overlay.classList.add('show');setTimeout(()=>{const btn=document.getElementById('seeScoreBtn');if(btn)btn.classList.add('show');},200);}},400);return;}const el=document.getElementById('step-'+i);el.classList.add('active');setTimeout(()=>{el.classList.remove('active');el.classList.add('done');setTimeout(()=>runStep(i+1),120);},STEP_DURATION);}
 
 // ═══════════════════════════════════════
 // SCORE REVEAL
@@ -960,14 +1036,18 @@ function routeResult() {
 
 function showApiError(msg) {
   const btn = document.getElementById('seeScoreBtn');
-  if (btn) { btn.textContent = 'See My Score →'; btn.disabled = false; }
-  const complete = document.getElementById('loadingComplete');
-  const errDiv = document.getElementById('apiErrorMsg') || document.createElement('div');
-  errDiv.id = 'apiErrorMsg';
-  errDiv.style.cssText = 'margin-top:14px;padding:12px 16px;background:rgba(226,75,74,0.1);border:1px solid rgba(226,75,74,0.3);border-radius:6px;font-size:13px;color:#E24B4A;text-align:center;';
+  if (btn) { btn.textContent = 'See My Score →'; btn.disabled = false; btn.classList.remove('show'); }
+  // Reset overlay so user can retry
+  const overlay = document.getElementById('scanCompleteOverlay');
+  if (overlay) overlay.classList.remove('show');
+  const sc = document.getElementById('scanContainer');
+  if (sc) sc.classList.remove('scan-done');
+  // Show error below the steps
+  const container = document.querySelector('#screenLoading .loading-wrap') || document.getElementById('loadingComplete');
+  let errDiv = document.getElementById('apiErrorMsg');
+  if (!errDiv) { errDiv = document.createElement('div'); errDiv.id = 'apiErrorMsg'; container.appendChild(errDiv); }
+  errDiv.style.cssText = 'margin-top:14px;padding:12px 16px;background:rgba(226,75,74,0.1);border:1px solid rgba(226,75,74,0.3);border-radius:6px;font-size:13px;color:#E24B4A;text-align:center;display:block;';
   errDiv.innerHTML = '⚠️ ' + msg + '<br><span style="color:rgba(255,255,255,0.4);font-size:12px;">Check your API key in the config block at the top of this file, then try again.</span>';
-  if (!document.getElementById('apiErrorMsg')) complete.appendChild(errDiv);
-  else errDiv.innerHTML = '⚠️ ' + msg + '<br><span style="color:rgba(255,255,255,0.4);font-size:12px;">Check your API key in the config block at the top of this file, then try again.</span>';
 }
 
 function goToBreakdown(){
@@ -1129,11 +1209,11 @@ async function sbGetUser(email){
   return Array.isArray(data) && data.length > 0 ? data[0] : null;
 }
 
-async function sbCreateUser(email, name, token){
+async function sbCreateUser(email, name, token, company, jobTitle, linkedIn){
   const res = await fetch(`${SUPABASE_URL}/rest/v1/camera_score_users`, {
     method:'POST',
     headers:{...SB_HEADERS, 'Prefer':'return=representation'},
-    body: JSON.stringify({email, name, verified:false, uses_remaining:3, verification_token:token})
+    body: JSON.stringify({email, name, verified:false, uses_remaining:3, verification_token:token, company: company||'', job_title: jobTitle||'', linkedin_url: linkedIn||''})
   });
   const data = await res.json();
   return Array.isArray(data) ? data[0] : data;
@@ -1199,9 +1279,15 @@ function showGateError(msg){ const el=document.getElementById('gateError'); el.t
 function hideGateError(){ document.getElementById('gateError').style.display='none'; }
 
 async function handleGateSubmit(){
-  const name = document.getElementById('gateName').value.trim();
-  const email = document.getElementById('gateEmail').value.trim().toLowerCase();
+  const firstName = document.getElementById('gateFirstName').value.trim();
+  const lastName  = document.getElementById('gateLastName').value.trim();
+  const company   = document.getElementById('gateCompany').value.trim();
+  const jobTitle  = document.getElementById('gateJobTitle').value.trim();
+  const linkedIn  = document.getElementById('gateLinkedIn').value.trim();
+  const email     = document.getElementById('gateEmail').value.trim().toLowerCase();
+  if(!firstName){ showGateError('Please enter your first name.'); return; }
   if(!email || !email.includes('@')){ showGateError('Please enter a valid email address.'); return; }
+  const name = (firstName + (lastName ? ' ' + lastName : '')).trim();
 
   const btn = document.getElementById('gateSubmit');
   btn.disabled = true; btn.textContent = 'Checking…'; hideGateError();
@@ -1227,7 +1313,7 @@ async function handleGateSubmit(){
     pendingToken = generateToken();
 
     if(!user){
-      await sbCreateUser(email, name, pendingToken);
+      await sbCreateUser(email, name, pendingToken, company, jobTitle, linkedIn);
     } else {
       await sbUpdateToken(email, pendingToken);
     }
@@ -1250,7 +1336,10 @@ async function resendVerification(){
   if(!pendingEmail) return;
   pendingToken = generateToken();
   await sbUpdateToken(pendingEmail, pendingToken);
-  await sendVerificationEmail(pendingEmail, document.getElementById('gateName').value.trim(), pendingToken);
+  const _fn = document.getElementById('gateFirstName') ? document.getElementById('gateFirstName').value.trim() : '';
+  const _ln = document.getElementById('gateLastName') ? document.getElementById('gateLastName').value.trim() : '';
+  const _resendName = (_fn + (_ln ? ' ' + _ln : '')).trim() || 'there';
+  await sendVerificationEmail(pendingEmail, _resendName, pendingToken);
 }
 
 function startLoadingWithDecrement(email){

@@ -590,7 +590,7 @@ function handleFile(file){
   const mb=file.size/1048576;
   if(mb>MAX_SIZE_MB){showUploadError('That file is too large ('+mb.toFixed(1)+' MB).','Please use a file under '+MAX_SIZE_MB+' MB.');return;}
   const reader=new FileReader();
-  reader.onload=e=>{currentDataUrl=e.target.result;currentFile=file;document.getElementById('previewImg').src=currentDataUrl;document.getElementById('fileName').textContent=file.name||'screenshot';document.getElementById('fileSize').textContent=fmt(file.size);showUploadState('Preview');analyseBtn.disabled=false;};
+  reader.onload=e=>{currentDataUrl=e.target.result;currentFile=file;document.getElementById('previewImg').src=currentDataUrl;document.getElementById('fileName').textContent=file.name||'screenshot';document.getElementById('fileSize').textContent=fmt(file.size);showUploadState('Preview');analyseBtn.disabled=false;analyseBtn.classList.add('ready');};
   reader.onerror=()=>showUploadError('Could not read that file.','Please try a different screenshot.');
   reader.readAsDataURL(file);
 }

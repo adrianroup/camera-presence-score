@@ -1177,7 +1177,7 @@ function isValidLinkedIn(url){
   // Normalise: strip protocol and trailing slash
   const clean = url.replace(/^https?:\/\//i,'').replace(/\/$/,'').toLowerCase();
   // Must be linkedin.com/in/[username] where username is 3+ chars, no spaces, not just 'in'
-  return /^(www\.)?linkedin\.com\/in\/[a-z0-9\-_%]{3,100}$/.test(clean);
+  return /^(www\.)?linkedin\.com\/in\/[a-z0-9\-_%]{2,100}$/.test(clean);
 }
 
 function validateLinkedIn(input){

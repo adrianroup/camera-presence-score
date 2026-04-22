@@ -1,5 +1,5 @@
-// api/convert-heic.js — converts HEIC/HEIF to JPEG server-side using sharp
-import sharp from 'sharp';
+// api/convert-heic.js — converts HEIC/HEIF to JPEG using heic-convert (pure JS, no native binaries)
+import convert from 'heic-convert';
 
 export const config = { api: { bodyParser: { sizeLimit: '30mb' } } };
 
@@ -14,9 +14,13 @@ export default async function handler(req, res) {
   if (!imageData) return res.status(400).json({ error: 'No image data' });
 
   try {
-    const buffer = Buffer.from(imageData, 'base64');
-    const jpegBuffer = await sharp(buffer).jpeg({ quality: 92 }).toBuffer();
-    const base64 = jpegBuffer.toString('base64');
+    const inputBuffer = Buffer.from(imageData, 'base64');
+    const outputBuffer = await convert({
+      buffer: inputBuffer,
+      format: 'JPEG',
+      quality: 0.92
+    });
+    const base64 = Buffer.from(outputBuffer).toString('base64');
     return res.status(200).json({ imageData: base64, mediaType: 'image/jpeg' });
   } catch (err) {
     console.error('HEIC conversion error:', err);

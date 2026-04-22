@@ -169,9 +169,9 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 .gauge-outer{position:relative;width:220px;height:220px;}
 .gauge-svg{width:220px;height:220px;transform:rotate(-90deg);}
 .gauge-track{fill:none;stroke:rgba(255,248,235,0.06);stroke-width:14;stroke-linecap:round;}
-.gauge-fill{fill:none;stroke:var(--gold);stroke-width:14;stroke-linecap:round;stroke-dasharray:565;stroke-dashoffset:565;transition:stroke-dashoffset 0.05s linear,stroke 0.3s ease;}
+.gauge-fill{fill:none;stroke:var(--red);stroke-width:14;stroke-linecap:round;stroke-dasharray:565;stroke-dashoffset:565;transition:stroke-dashoffset 0.05s linear,stroke 0.3s ease;}
 .gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
-.gauge-number{font-family:'Barlow Condensed',sans-serif;font-size:62px;font-weight:600;line-height:1;color:var(--gold);transition:color 0.3s ease;}
+.gauge-number{font-family:'Barlow Condensed',sans-serif;font-size:62px;font-weight:600;line-height:1;color:var(--red);transition:color 0.3s ease;}
 .gauge-denom{font-family:'Barlow',sans-serif;font-size:14px;font-weight:400;color:var(--text-muted);letter-spacing:0.06em;margin-top:-2px;}
 @keyframes heartbeat{0%{transform:scale(1);}25%{transform:scale(1.045);}50%{transform:scale(0.975);}75%{transform:scale(1.02);}100%{transform:scale(1);}}
 .gauge-outer.pulse{animation:heartbeat 0.55s ease-in-out forwards;}
@@ -427,7 +427,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 <div class="screen" id="screenReveal">
   <header class="header"><div class="header-logo"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</div><div class="header-title">The Camera<br><em>Score™</em></div></header>
   <div class="reveal-wrap">
-    <div class="gauge-section"><div class="gauge-outer" id="gaugeOuter"><svg class="gauge-svg" viewBox="0 0 220 220"><circle class="gauge-track" cx="110" cy="110" r="90"/><circle class="gauge-fill" id="gaugeFill" cx="110" cy="110" r="90" stroke="#c49e58"/></svg><div class="gauge-center"><div class="gauge-number" id="gaugeNumber">0</div><div class="gauge-denom">/100</div></div></div></div>
+    <div class="gauge-section"><div class="gauge-outer" id="gaugeOuter"><svg class="gauge-svg" viewBox="0 0 220 220"><circle class="gauge-track" cx="110" cy="110" r="90"/><circle class="gauge-fill" id="gaugeFill" cx="110" cy="110" r="90" stroke="#C0392B"/></svg><div class="gauge-center"><div class="gauge-number" id="gaugeNumber">0</div><div class="gauge-denom">/100</div></div></div></div>
     <div class="tier-badge" id="tierBadge"></div>
     <div class="verdict-block" id="verdictBlock"><div class="verdict-name" id="verdictName"></div><div class="verdict-copy" id="verdictCopy"></div></div>
     <div class="char-placeholder" id="charPlaceholder"><div class="char-placeholder-text">Lottie<br>character<br>here</div></div>
@@ -733,9 +733,9 @@ function setGauge(s,anim){
   const fill=document.getElementById('gaugeFill');
   fill.style.transition=anim?'stroke-dashoffset 0.05s linear,stroke 0.3s ease':'none';
   fill.style.strokeDashoffset=CIRCUMFERENCE*(1-s/100);
-  fill.style.stroke='#c49e58';
+  fill.style.stroke='#C0392B';
   document.getElementById('gaugeNumber').textContent=s;
-  document.getElementById('gaugeNumber').style.color='#c49e58';
+  document.getElementById('gaugeNumber').style.color='#C0392B';
 }
 function easeOutExpo(t){return t===1?1:1-Math.pow(2,-10*t);}
 function animateCount(target,duration,cb){

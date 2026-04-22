@@ -213,6 +213,17 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 
 /* Section header */
 .breakdown-section-label{width:100%;font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.referral-row{width:100%;margin-top:40px;padding-top:28px;border-top:1px solid var(--border);}
+.referral-prompt{display:flex;align-items:center;gap:10px;font-family:'Barlow',sans-serif;font-size:13px;color:var(--text-muted);margin-bottom:14px;}
+.referral-icon{color:var(--text-muted);flex-shrink:0;}
+.referral-form{display:flex;gap:10px;width:100%;}
+.referral-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:11px 14px;font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border-color 0.3s var(--ease-premium);}
+.referral-input:focus{border-color:rgba(237,235,230,0.4);}
+.referral-input::placeholder{color:var(--text-muted);}
+.referral-btn{background:transparent;border:1px solid var(--border);border-radius:2px;padding:11px 18px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-sec);cursor:pointer;white-space:nowrap;transition:border-color 0.3s var(--ease-premium),color 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);}
+.referral-btn:hover{border-color:var(--red);color:var(--text);box-shadow:0 0 20px var(--red-glow);transform:translateY(-2px);}
+.referral-sent{font-family:'Barlow',sans-serif;font-size:13px;color:var(--text-muted);font-style:italic;padding:8px 0;}
+.referral-error{font-family:'Barlow',sans-serif;font-size:13px;color:var(--red);padding:8px 0;}
 
 /* Criteria cards grid */
 .criteria-grid{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;}
@@ -473,6 +484,21 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
     </div>
     <button class="action-btn" onclick="window.open('https://anaudiencefromanywhere.com','_blank')">Pre-order the book →</button>
     <button class="action-btn secondary" onclick="scanAgain()">← Scan a different setup</button>
+
+    <!-- REFERRAL ROW -->
+    <div class="referral-row" id="referralRow">
+      <div class="referral-prompt">
+        <svg class="referral-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        <span>Know someone who should test their camera setup?</span>
+      </div>
+      <div class="referral-form" id="referralForm">
+        <input class="referral-input" id="referralEmail" type="email" placeholder="Their email address" autocomplete="off">
+        <button class="referral-btn" onclick="sendReferral()">Send invite</button>
+      </div>
+      <div class="referral-sent" id="referralSent" style="display:none;">Invite sent. The camera will be waiting for them.</div>
+      <div class="referral-error" id="referralError" style="display:none;"></div>
+    </div>
+
   </div>
 </div>
 
@@ -962,6 +988,45 @@ function buildBreakdown(score, criteria){
 // ═══════════════════════════════════════
 function showRingLightFail(){showScreen(document.getElementById('screenRingLight'));}
 function showBgBlurFail(){showScreen(document.getElementById('screenBgBlur'));}
+async function sendReferral(){
+  const friendEmail = document.getElementById('referralEmail').value.trim().toLowerCase();
+  const errEl = document.getElementById('referralError');
+  const sentEl = document.getElementById('referralSent');
+  const formEl = document.getElementById('referralForm');
+  errEl.style.display='none';
+  if(!friendEmail || !friendEmail.includes('@')){
+    errEl.textContent='Please enter a valid email address.';
+    errEl.style.display='block';
+    return;
+  }
+  const btn = document.querySelector('.referral-btn');
+  btn.disabled=true; btn.textContent='Sending…';
+  try{
+    const resp = await fetch('/api/send-referral',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        referrerName: sessionName || '',
+        referrerEmail: sessionEmail || '',
+        friendEmail,
+        toolUrl: TOOL_URL
+      })
+    });
+    if(resp.ok){
+      formEl.style.display='none';
+      sentEl.style.display='block';
+    } else {
+      errEl.textContent='Something went wrong. Please try again.';
+      errEl.style.display='block';
+      btn.disabled=false; btn.textContent='Send invite';
+    }
+  } catch(e){
+    errEl.textContent='Something went wrong. Please try again.';
+    errEl.style.display='block';
+    btn.disabled=false; btn.textContent='Send invite';
+  }
+}
+
 function scanAgain(){
   currentFile=null;currentDataUrl=null;fileInput.value='';
   document.getElementById('previewImg').src='';

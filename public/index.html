@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Camera Score™ — An Audience From Anywhere</title>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@700;800;900&family=Playfair+Display:ital,wght@1,600;1,700&display=swap" rel="stylesheet">
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -17,7 +17,8 @@
   --border-accent:rgba(232,230,224,0.3);
   --text:#edebe6;
   --text-sec:rgba(237,235,230,0.6);
-  --text-muted:rgba(237,235,230,0.35);
+  --text-muted:rgba(237,235,230,0.9);
+  --text-subtle:rgba(237,235,230,0.35);
   --gold:#E8E6E0;
   --gold-dim:rgba(232,230,224,0.08);
   --gold-border:rgba(232,230,224,0.25);
@@ -41,7 +42,7 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'B
 .main{width:100%;max-width:580px;display:flex;flex-direction:column;align-items:center;}
 .headline{font-family:'Barlow Condensed',sans-serif;font-size:clamp(18px,2.8vw,24px);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;text-align:center;margin-bottom:12px;line-height:1.2;color:var(--text);}
 .headline .red{color:var(--red);}
-.subline{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--text);text-align:center;margin-bottom:16px;line-height:1.6;}.context-line{font-family:'Barlow',sans-serif;font-size:16px;font-weight:400;color:var(--text-muted);text-align:center;margin-bottom:40px;line-height:1.7;max-width:540px;margin-left:auto;margin-right:auto;}
+.subline{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--text);text-align:center;margin-bottom:16px;line-height:1.6;}.context-line{font-family:'Playfair Display',Georgia,serif;font-size:clamp(17px,2.2vw,22px);font-weight:700;font-style:italic;color:#ffffff;text-align:center;margin-bottom:40px;line-height:1.65;max-width:560px;margin-left:auto;margin-right:auto;}
 @keyframes borderPulse{0%,100%{border-color:rgba(232,230,224,0.15);border-width:1px;}50%{border-color:rgba(232,230,224,1);border-width:2px;}}
 .upload-zone{width:100%;min-height:300px;border:1px solid rgba(232,230,224,0.15);border-radius:4px;background:var(--surface);position:relative;cursor:pointer;transition:border-color 0.3s var(--ease-premium),border-width 0.3s var(--ease-premium);overflow:hidden;margin-bottom:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 32px rgba(0,0,0,0.4);animation:borderPulse 5.6s ease-in-out infinite;}
 .upload-zone:hover{animation:none;border-width:2px;border-color:rgba(232,230,224,0.85);background:var(--surface);}
@@ -63,7 +64,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 .uz-preview-meta{display:flex;align-items:center;justify-content:space-between;width:100%;gap:12px;}
 .uz-file-info{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}
 .uz-file-name{font-size:13px;color:var(--text-sec);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.uz-file-size{font-size:12px;color:var(--text-muted);flex-shrink:0;}
+.uz-file-size{font-size:12px;color:var(--text-subtle);flex-shrink:0;}
 .uz-change-btn{background:transparent;border:1px solid var(--border);border-radius:2px;padding:6px 14px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:500;letter-spacing:0.04em;color:var(--text-muted);cursor:pointer;flex-shrink:0;transition:border-color 0.3s var(--ease-premium),color 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);}
 .uz-change-btn:hover{border-color:var(--border-accent);color:var(--gold);box-shadow:0 0 40px var(--red-glow),inset 0 1px 0 rgba(255,255,255,0.12);transform:translateY(-2px);}
 .uz-error{display:none;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;gap:16px;}
@@ -93,8 +94,8 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 .gate-field{display:flex;flex-direction:column;gap:6px;}
 .gate-label{font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);}
 .gate-input{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:13px 16px;font-family:'Barlow',sans-serif;font-size:16px;color:var(--text);outline:none;transition:border-color 0.3s ease;width:100%;}
-.gate-input:focus{border-color:var(--red);}.gate-input.invalid{border-color:#c0392b;}.gate-input.valid{border-color:rgba(80,200,120,0.6);}.gate-linkedin-row{display:flex;gap:8px;align-items:stretch;}.gate-linkedin-row .gate-input{flex:1;min-width:0;}.gate-linkedin-open{background:transparent;border:1px solid var(--border);border-radius:2px;padding:0 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;white-space:nowrap;transition:border-color 0.3s ease,color 0.3s ease;flex-shrink:0;}.gate-linkedin-open:hover{border-color:var(--red);color:var(--text);}.gate-linkedin-hint{font-family:'Barlow',sans-serif;font-size:11px;color:var(--text-muted);margin-top:4px;}
-.gate-input::placeholder{color:var(--text-muted);}
+.gate-input:focus{border-color:var(--red);}.gate-input.invalid{border-color:#c0392b;}.gate-input.valid{border-color:rgba(80,200,120,0.6);}.gate-linkedin-row{display:flex;gap:8px;align-items:stretch;}.gate-linkedin-row .gate-input{flex:1;min-width:0;}.gate-linkedin-open{background:transparent;border:1px solid var(--border);border-radius:2px;padding:0 14px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;white-space:nowrap;transition:border-color 0.3s ease,color 0.3s ease;flex-shrink:0;}.gate-linkedin-open:hover{border-color:var(--red);color:var(--text);}.gate-linkedin-hint{font-family:'Barlow',sans-serif;font-size:11px;color:var(--text-subtle);margin-top:4px;}
+.gate-input::placeholder{color:var(--text-subtle);}
 .gate-submit{width:100%;background:var(--red);color:#ffffff;border:none;border-radius:2px;padding:18px 28px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:opacity 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium);margin-top:4px;box-shadow:0 0 24px var(--red-glow),inset 0 1px 0 rgba(255,255,255,0.12);}
 .gate-submit:hover:not(:disabled){opacity:0.9;box-shadow:0 0 36px var(--red-glow),inset 0 1px 0 rgba(255,255,255,0.12);}
 .gate-submit:disabled{background:rgba(192,57,43,0.2);cursor:not-allowed;}
@@ -186,7 +187,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 .verdict-copy{font-family:'Barlow',sans-serif;font-size:16px;font-style:italic;color:var(--text-sec);line-height:1.7;max-width:440px;margin:0 auto;}
 .char-placeholder{width:100px;height:100px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin-bottom:28px;opacity:0;transform:scale(0.85);transition:opacity 0.5s ease,transform 0.5s ease;}
 .char-placeholder.show{opacity:1;transform:scale(1);}
-.char-placeholder-text{font-size:11px;color:var(--text-muted);text-align:center;line-height:1.4;font-family:'Barlow',sans-serif;letter-spacing:0.04em;}
+.char-placeholder-text{font-size:11px;color:var(--text-subtle);text-align:center;line-height:1.4;font-family:'Barlow',sans-serif;letter-spacing:0.04em;}
 .next-btn{width:100%;background:var(--gold);color:#0c0b0a;border:none;border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.08em;cursor:pointer;margin-bottom:16px;opacity:0;transition:opacity 0.5s ease,box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);}
 .next-btn.show{opacity:1;}
 .next-btn:hover{opacity:1;box-shadow:0 0 40px var(--red-glow),inset 0 1px 0 rgba(255,255,255,0.12);transform:translateY(-2px);}
@@ -322,7 +323,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
   <main class="main">
     <h1 class="headline"><span class="red">The camera</span> has been watching<br>and it <span class="red">takes attendance.</span></h1>
     <p class="subline">You already have a camera presence. Let's find out what it is...</p>
-    <p class="context-line">You've been on camera hundreds of times. Nobody told you the truth about what they saw. Now you can find out — and whether it's working for you or against you.</p>
+    <p class="context-line">You've been on camera hundreds of times.<br>Nobody told you the truth about what they saw.<br>Now you can find out — and whether it's working for you or against you.</p>
     <div class="upload-zone" id="uploadZone" onclick="handleZoneClick(event)">
       
       <div class="uz-default" id="stateDefault">

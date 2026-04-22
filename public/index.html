@@ -102,6 +102,28 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 .gate-small{font-family:'Barlow',sans-serif;font-size:12px;color:var(--text-muted);text-align:center;line-height:1.6;}
 .gate-error{display:none;padding:10px 14px;background:rgba(168,92,92,0.1);border:1px solid rgba(168,92,92,0.3);border-radius:2px;font-size:13px;color:var(--red);text-align:center;margin-top:4px;}
 
+/* ── LINKEDIN OAUTH STYLES ── */
+.linkedin-auth-section{width:100%;display:flex;flex-direction:column;align-items:center;gap:0;margin-bottom:24px;}
+.linkedin-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;background:#0c0b0a;color:#edebe6;border:1px solid rgba(232,230,224,0.2);border-radius:2px;padding:16px 24px;font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.3s cubic-bezier(0.16,1,0.3,1);box-shadow:inset 0 1px 0 rgba(255,255,255,0.06);position:relative;overflow:hidden;}
+.linkedin-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(10,102,194,0.08) 0%,transparent 60%);pointer-events:none;}
+.linkedin-btn:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(192,57,43,0.28),inset 0 1px 0 rgba(255,255,255,0.12);border-color:rgba(232,230,224,0.45);}
+.linkedin-btn-logo{flex-shrink:0;}
+.linkedin-btn-text{letter-spacing:0.1em;}
+.linkedin-divider{display:flex;align-items:center;gap:12px;width:100%;margin:20px 0 0;}
+.linkedin-divider-line{flex:1;height:1px;background:rgba(255,248,235,0.07);}
+.linkedin-divider-text{font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:rgba(237,235,230,0.3);white-space:nowrap;}
+.linkedin-skip{background:transparent;border:none;font-family:'Barlow',sans-serif;font-size:13px;color:rgba(237,235,230,0.35);cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px;transition:color 0.3s ease;margin-top:16px;}
+.linkedin-skip:hover{color:rgba(237,235,230,0.7);}
+
+/* LinkedIn post-auth: job title step */
+.linkedin-profile-row{display:flex;align-items:center;gap:14px;width:100%;margin-bottom:24px;padding:14px 16px;background:rgba(10,102,194,0.06);border:1px solid rgba(10,102,194,0.18);border-radius:3px;}
+.linkedin-avatar{width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:1px solid rgba(232,230,224,0.12);}
+.linkedin-avatar-placeholder{width:44px;height:44px;border-radius:50%;background:rgba(10,102,194,0.15);border:1px solid rgba(10,102,194,0.3);flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.linkedin-profile-info{flex:1;min-width:0;}
+.linkedin-profile-name{font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.linkedin-profile-email{font-size:12px;color:var(--text-sec);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.linkedin-connected-badge{flex-shrink:0;display:flex;align-items:center;gap:5px;font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.04em;color:rgba(10,102,194,0.9);}
+
 /* Email sent state */
 .gate-sent{display:none;flex-direction:column;align-items:center;text-align:center;width:100%;}
 .gate-sent-heading{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;color:var(--text);}
@@ -373,43 +395,103 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
   </header>
   <div class="gate-wrap">
 
-    <!-- Form state -->
+    <!-- Form state: LinkedIn OAuth + job title -->
     <div id="gateFormState" style="width:100%;display:flex;flex-direction:column;align-items:center;">
-      <h2 class="gate-heading">One quick step</h2>
-      <p class="gate-sub">Your first three analyses are free. Tell us a little about yourself to get started — we'll send you a verification link.</p>
-      <div class="gate-form" id="gateForm">
-        <div class="gate-field">
-          <label class="gate-label" for="gateFirstName">First name</label>
-          <input class="gate-input" type="text" id="gateFirstName" placeholder="First name" autocomplete="given-name">
+
+      <!-- Step A: LinkedIn button (shown when no LinkedIn profile in session) -->
+      <div id="linkedinStep" style="width:100%;display:flex;flex-direction:column;align-items:center;">
+        <h2 class="gate-heading">One quick step</h2>
+        <p class="gate-sub">Your first three analyses are free. Connect with LinkedIn to get started — we'll pull your name and email automatically.</p>
+
+        <div class="linkedin-auth-section">
+          <button class="linkedin-btn" type="button" onclick="startLinkedInOAuth()">
+            <span class="linkedin-btn-logo">
+              <!-- LinkedIn white mark -->
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect width="20" height="20" rx="3" fill="#0A66C2"/>
+                <path d="M4.5 7.5H6.5V15.5H4.5V7.5ZM5.5 4C4.67 4 4 4.67 4 5.5C4 6.33 4.67 7 5.5 7C6.33 7 7 6.33 7 5.5C7 4.67 6.33 4 5.5 4Z" fill="white"/>
+                <path d="M8.5 7.5H10.4V8.4H10.43C10.7 7.86 11.4 7.3 12.45 7.3C14.5 7.3 14.9 8.65 14.9 10.4V15.5H12.9V10.8C12.9 10.05 12.88 9.1 11.87 9.1C10.84 9.1 10.68 9.9 10.68 10.75V15.5H8.5V7.5Z" fill="white"/>
+              </svg>
+            </span>
+            <span class="linkedin-btn-text">Continue with LinkedIn</span>
+          </button>
+
+          <button class="linkedin-skip" type="button" onclick="showManualGate()">Continue without LinkedIn</button>
         </div>
-        <div class="gate-field">
-          <label class="gate-label" for="gateLastName">Last name</label>
-          <input class="gate-input" type="text" id="gateLastName" placeholder="Last name" autocomplete="family-name">
-        </div>
-        <div class="gate-field">
-          <label class="gate-label" for="gateCompany">Company</label>
-          <input class="gate-input" type="text" id="gateCompany" placeholder="Your company" autocomplete="organization">
-        </div>
-        <div class="gate-field">
-          <label class="gate-label" for="gateJobTitle">Job title</label>
-          <input class="gate-input" type="text" id="gateJobTitle" placeholder="Your job title" autocomplete="organization-title">
-        </div>
-        <div class="gate-field">
-          <label class="gate-label" for="gateLinkedIn">LinkedIn Profile URL</label>
-          <div class="gate-linkedin-row">
-            <input class="gate-input" type="url" id="gateLinkedIn" placeholder="linkedin.com/in/yourname" autocomplete="off" onblur="validateLinkedIn(this)" oninput="clearLinkedInError(this)">
-            <button type="button" class="gate-linkedin-open" onclick="window.open('https://www.linkedin.com/in/','_blank')">Open LinkedIn ↗</button>
-          </div>
-          <div class="gate-linkedin-hint" id="linkedInHint"></div>
-        </div>
-        <div class="gate-field">
-          <label class="gate-label" for="gateEmail">Email address</label>
-          <input class="gate-input" type="email" id="gateEmail" placeholder="you@example.com" autocomplete="email">
-        </div>
-        <button class="gate-submit" id="gateSubmit" type="button" onclick="handleGateSubmit()">Send verification email →</button>
-        <div class="gate-error" id="gateError"></div>
       </div>
-      <p class="gate-small">No spam. No marketing. Just your score.<br>We never share or sell your email.</p>
+
+      <!-- Step B: Post-LinkedIn job title field (shown after OAuth callback) -->
+      <div id="linkedinJobStep" style="width:100%;display:none;flex-direction:column;align-items:center;">
+        <h2 class="gate-heading">One last thing</h2>
+        <p class="gate-sub">What's your current role? We'll use it to personalise your score context.</p>
+
+        <!-- Profile pill -->
+        <div class="linkedin-profile-row" id="linkedinProfileRow">
+          <img class="linkedin-avatar" id="linkedinAvatar" src="" alt="" style="display:none;">
+          <div class="linkedin-avatar-placeholder" id="linkedinAvatarPlaceholder">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="4" stroke="rgba(10,102,194,0.7)" stroke-width="1.5"/><path d="M2 17c0-4 3.58-7 8-7s8 3 8 7" stroke="rgba(10,102,194,0.7)" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div class="linkedin-profile-info">
+            <div class="linkedin-profile-name" id="linkedinProfileName">—</div>
+            <div class="linkedin-profile-email" id="linkedinProfileEmail">—</div>
+          </div>
+          <div class="linkedin-connected-badge">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6.5" fill="#0A66C2" opacity="0.15" stroke="#0A66C2" stroke-width="1"/><path d="M4 7l2 2 4-4" stroke="#0A66C2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Connected
+          </div>
+        </div>
+
+        <div class="gate-form" style="margin-bottom:12px;">
+          <div class="gate-field">
+            <label class="gate-label" for="gateJobTitleLinkedIn">Your job title</label>
+            <input class="gate-input" type="text" id="gateJobTitleLinkedIn" placeholder="e.g. Head of Marketing" autocomplete="organization-title">
+          </div>
+          <button class="gate-submit" id="gateSubmitLinkedIn" type="button" onclick="handleLinkedInSubmit()">See My Score →</button>
+          <div class="gate-error" id="gateErrorLinkedIn"></div>
+        </div>
+        <p class="gate-small">No spam. We never share or sell your data.</p>
+      </div>
+
+      <!-- Step C: Manual fallback (shown when user clicks "Continue without LinkedIn") -->
+      <div id="manualGateStep" style="width:100%;display:none;flex-direction:column;align-items:center;">
+        <h2 class="gate-heading">One quick step</h2>
+        <p class="gate-sub">Your first three analyses are free. Enter your details to get started — we'll send you a verification link.</p>
+        <div class="gate-form" id="gateForm">
+          <div class="gate-field">
+            <label class="gate-label" for="gateFirstName">First name</label>
+            <input class="gate-input" type="text" id="gateFirstName" placeholder="First name" autocomplete="given-name">
+          </div>
+          <div class="gate-field">
+            <label class="gate-label" for="gateLastName">Last name</label>
+            <input class="gate-input" type="text" id="gateLastName" placeholder="Last name" autocomplete="family-name">
+          </div>
+          <div class="gate-field">
+            <label class="gate-label" for="gateCompany">Company</label>
+            <input class="gate-input" type="text" id="gateCompany" placeholder="Your company" autocomplete="organization">
+          </div>
+          <div class="gate-field">
+            <label class="gate-label" for="gateJobTitle">Job title</label>
+            <input class="gate-input" type="text" id="gateJobTitle" placeholder="Your job title" autocomplete="organization-title">
+          </div>
+          <div class="gate-field">
+            <label class="gate-label" for="gateLinkedIn">LinkedIn Profile URL</label>
+            <div class="gate-linkedin-row">
+              <input class="gate-input" type="url" id="gateLinkedIn" placeholder="linkedin.com/in/yourname" autocomplete="off" onblur="validateLinkedIn(this)" oninput="clearLinkedInError(this)">
+              <button type="button" class="gate-linkedin-open" onclick="window.open('https://www.linkedin.com/in/','_blank')">Open LinkedIn ↗</button>
+            </div>
+            <div class="gate-linkedin-hint" id="linkedInHint"></div>
+          </div>
+          <div class="gate-field">
+            <label class="gate-label" for="gateEmail">Email address</label>
+            <input class="gate-input" type="email" id="gateEmail" placeholder="you@example.com" autocomplete="email">
+          </div>
+          <button class="gate-submit" id="gateSubmit" type="button" onclick="handleGateSubmit()">Send verification email →</button>
+          <div class="gate-error" id="gateError"></div>
+        </div>
+        <p class="gate-small">No spam. No marketing. Just your score.<br>We never share or sell your email.</p>
+        <button class="linkedin-skip" type="button" onclick="showLinkedInStep()" style="margin-top:8px;">← Back to LinkedIn sign-in</button>
+      </div>
+
     </div>
 
     <!-- Email sent state -->
@@ -1165,12 +1247,180 @@ async function sendVerificationEmail(email, name, token){
 }
 
 // ═══════════════════════════════════════
+// ═══════════════════════════════════════
+// LINKEDIN OAUTH FLOW
+// ═══════════════════════════════════════
+const LINKEDIN_CLIENT_ID = '864m1vwqv4n27j';
+const LINKEDIN_REDIRECT  = 'https://test.anaudiencefromanywhere.com/auth/linkedin/callback';
+const LINKEDIN_SCOPE     = 'openid profile email';
+
+function startLinkedInOAuth() {
+  const state = Math.random().toString(36).slice(2);
+  sessionStorage.setItem('linkedin_state', state);
+  const params = new URLSearchParams({
+    response_type: 'code',
+    client_id:     LINKEDIN_CLIENT_ID,
+    redirect_uri:  LINKEDIN_REDIRECT,
+    scope:         LINKEDIN_SCOPE,
+    state,
+  });
+  window.location.href = 'https://www.linkedin.com/oauth/v2/authorization?' + params.toString();
+}
+
+function showLinkedInStep() {
+  document.getElementById('linkedinStep').style.display = 'flex';
+  document.getElementById('linkedinJobStep').style.display = 'none';
+  document.getElementById('manualGateStep').style.display = 'none';
+}
+
+function showManualGate() {
+  document.getElementById('linkedinStep').style.display = 'none';
+  document.getElementById('linkedinJobStep').style.display = 'none';
+  document.getElementById('manualGateStep').style.display = 'flex';
+}
+
+function showLinkedInJobStep(profile) {
+  document.getElementById('linkedinStep').style.display = 'none';
+  document.getElementById('manualGateStep').style.display = 'none';
+  const step = document.getElementById('linkedinJobStep');
+  step.style.display = 'flex';
+
+  // Populate profile pill
+  const fullName = [profile.firstName, profile.lastName].filter(Boolean).join(' ');
+  document.getElementById('linkedinProfileName').textContent = fullName || 'LinkedIn User';
+  document.getElementById('linkedinProfileEmail').textContent = profile.email || '';
+
+  if (profile.picture) {
+    const img = document.getElementById('linkedinAvatar');
+    const placeholder = document.getElementById('linkedinAvatarPlaceholder');
+    img.src = profile.picture;
+    img.style.display = 'block';
+    placeholder.style.display = 'none';
+    img.onerror = () => { img.style.display='none'; placeholder.style.display='flex'; };
+  }
+
+  // Pre-populate job title if headline available
+  const jobField = document.getElementById('gateJobTitleLinkedIn');
+  if (profile.headline && !jobField.value) {
+    jobField.value = profile.headline;
+  }
+
+  // Focus job title field after short delay
+  setTimeout(() => jobField.focus(), 200);
+}
+
+function checkLinkedInReturn() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('linkedin') !== '1') return false;
+
+  // Clean URL
+  window.history.replaceState({}, document.title, window.location.pathname);
+
+  const raw = sessionStorage.getItem('linkedin_profile');
+  if (!raw) return false;
+
+  try {
+    const profile = JSON.parse(raw);
+    // Profile valid for 15 minutes
+    if (Date.now() - (profile.ts || 0) > 15 * 60 * 1000) {
+      sessionStorage.removeItem('linkedin_profile');
+      return false;
+    }
+    return profile;
+  } catch(e) { return false; }
+}
+
+async function handleLinkedInSubmit() {
+  const raw      = sessionStorage.getItem('linkedin_profile');
+  const profile  = raw ? JSON.parse(raw) : {};
+  const jobTitle = document.getElementById('gateJobTitleLinkedIn').value.trim();
+  const errEl    = document.getElementById('gateErrorLinkedIn');
+
+  if (!jobTitle) {
+    errEl.textContent = 'Please enter your job title.';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  const email     = profile.email     || '';
+  const firstName = profile.firstName || '';
+  const lastName  = profile.lastName  || '';
+  const name      = [firstName, lastName].filter(Boolean).join(' ');
+
+  if (!email || !email.includes('@')) {
+    errEl.textContent = 'Could not read your LinkedIn email. Please use the manual form.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('gateSubmitLinkedIn');
+  btn.disabled = true;
+  btn.textContent = 'Checking…';
+
+  try {
+    let user = await sbGetUser(email);
+
+    if (user && user.verified) {
+      if (user.uses_remaining <= 0) {
+        showGatePaywall();
+        return;
+      }
+      setSession(email, user.name || name, user.uses_remaining);
+      sessionStorage.removeItem('linkedin_profile');
+      showScreen(document.getElementById('screenUpload'));
+      startLoadingWithDecrement(email);
+      return;
+    }
+
+    // Create or update user then auto-verify (LinkedIn = identity provider)
+    const token = generateToken();
+    if (!user) {
+      await sbCreateUser(email, name, token, '', jobTitle, '');
+    } else {
+      await sbUpdateToken(email, token);
+    }
+    await sbVerifyUserDirect(email);
+
+    user = await sbGetUser(email);
+    const uses = user ? user.uses_remaining : 3;
+    setSession(email, name, uses);
+    sessionStorage.removeItem('linkedin_profile');
+
+    showScreen(document.getElementById('screenUpload'));
+    startLoadingWithDecrement(email);
+
+  } catch(err) {
+    console.error('LinkedIn submit error:', err);
+    errEl.textContent = 'Something went wrong. Please try again.';
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'See My Score →';
+  }
+}
+
+async function sbVerifyUserDirect(email) {
+  // Mark user verified without email token — LinkedIn is the identity provider
+  await fetch(
+    `${SUPABASE_URL}/rest/v1/camera_score_users?email=eq.${encodeURIComponent(email)}`,
+    { method: 'PATCH', headers: SB_HEADERS,
+      body: JSON.stringify({ verified: true, verification_token: null }) }
+  );
+}
+
 // EMAIL GATE UI LOGIC
 // ═══════════════════════════════════════
 let pendingEmail = '';
 let pendingToken = '';
 
-function showGateForm(){ document.getElementById('gateFormState').style.display='flex'; document.getElementById('gateSentState').style.display='none'; document.getElementById('gatePaywallState').style.display='none'; }
+function showGateForm(){
+  document.getElementById('gateFormState').style.display='flex';
+  document.getElementById('gateSentState').style.display='none';
+  document.getElementById('gatePaywallState').style.display='none';
+  // Default to LinkedIn step (hide others)
+  showLinkedInStep();
+}
 function showGateSent(email){ document.getElementById('gateFormState').style.display='none'; document.getElementById('gateSentState').style.display='flex'; document.getElementById('gatePaywallState').style.display='none'; document.getElementById('gateSentEmail').textContent=email; }
 function showGatePaywall(){ document.getElementById('gateFormState').style.display='none'; document.getElementById('gateSentState').style.display='none'; document.getElementById('gatePaywallState').style.display='flex'; }
 function showGateError(msg){ const el=document.getElementById('gateError'); el.textContent=msg; el.style.display='block'; }
@@ -1419,12 +1669,30 @@ function showAudioError(msg) {
 // INIT
 // ═══════════════════════════════════════
 showUploadState('Default');
-// Check for verification token in URL first
-checkVerificationToken().then(wasVerified => {
-  if(!wasVerified){
-    showScreen(document.getElementById('screenUpload'));
+
+// 1. Check for LinkedIn OAuth return (?linkedin=1)
+(function() {
+  const linkedInProfile = checkLinkedInReturn();
+  if (linkedInProfile) {
+    showScreen(document.getElementById('screenEmailGate'));
+    showGateForm();
+    showLinkedInJobStep(linkedInProfile);
+    return;
   }
-});
+
+  // 2. Check for email verification token (?verify=&email=)
+  checkVerificationToken().then(wasVerified => {
+    if (!wasVerified) {
+      // 3. Check for existing verified session
+      const session = getSession();
+      if (session && session.verified) {
+        showScreen(document.getElementById('screenUpload'));
+      } else {
+        showScreen(document.getElementById('screenUpload'));
+      }
+    }
+  });
+})();
 </script>
 </body>
 </html>

@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Camera Score™ — An Audience From Anywhere</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -592,34 +591,45 @@ function showUploadState(name){
 async function handleFile(file){
   if(!file)return;
   const fname=file.name||'';
-  const isHeic=file.type==='image/heic'||file.type==='image/heif'||/\.heic$/i.test(fname)||/\.heif$/i.test(fname);
+  const isHeic=file.type==='image/heic'||file.type==='image/heif'||/\.(heic|heif)$/i.test(fname);
   const isKnownImage=ACCEPTED_TYPES.includes(file.type);
-  // Allow through if it's a known image type OR a HEIC — block everything else
   if(!isHeic&&!isKnownImage){
-    // Last-ditch: if MIME is empty but filename looks like an image, allow it through
     const looksLikeImage=/\.(jpe?g|png|gif|webp|bmp|tiff?|heic|heif)$/i.test(fname);
     if(!looksLikeImage){showUploadError('That file type is not supported.','Please upload a JPG, PNG, WebP, or HEIC screenshot.');return;}
   }
   const mb=file.size/1048576;
   if(mb>MAX_SIZE_MB){showUploadError('That file is too large ('+mb.toFixed(1)+' MB).','Please use a file under '+MAX_SIZE_MB+' MB.');return;}
-  let processFile=file;
-  if(isHeic||/\.(heic|heif)$/i.test(fname)){
-    // Show a brief converting state
-    document.getElementById('uz-label') && (document.getElementById('uz-label').textContent='Converting…');
+  if(isHeic){
+    // Convert server-side
     try{
-      const blob=await heic2any({blob:file,toType:'image/jpeg',quality:0.92});
-      const outBlob=Array.isArray(blob)?blob[0]:blob;
-      processFile=new File([outBlob],fname.replace(/\.(heic|heif)$/i,'.jpg'),{type:'image/jpeg'});
+      const rawBase64=await new Promise((resolve,reject)=>{
+        const r=new FileReader();
+        r.onload=e=>resolve(e.target.result.split(',')[1]);
+        r.onerror=reject;
+        r.readAsDataURL(file);
+      });
+      const resp=await fetch('/api/convert-heic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({imageData:rawBase64})});
+      if(!resp.ok)throw new Error('Server conversion failed');
+      const {imageData}=await resp.json();
+      const dataUrl='data:image/jpeg;base64,'+imageData;
+      currentDataUrl=dataUrl;
+      currentFile=file;
+      document.getElementById('previewImg').src=dataUrl;
+      document.getElementById('fileName').textContent=fname;
+      document.getElementById('fileSize').textContent=fmt(file.size);
+      showUploadState('Preview');
+      analyseBtn.disabled=false;
+      analyseBtn.classList.add('ready');
     }catch(err){
       console.error('HEIC conversion failed:',err);
-      showUploadError('Could not convert HEIC file.','Please export the photo as JPG from your Photos app and try again.');
-      return;
+      showUploadError('Could not convert HEIC file.','Please try exporting as JPG from Photos and uploading that instead.');
     }
+    return;
   }
   const reader=new FileReader();
-  reader.onload=e=>{currentDataUrl=e.target.result;currentFile=processFile;document.getElementById('previewImg').src=currentDataUrl;document.getElementById('fileName').textContent=fname||'screenshot';document.getElementById('fileSize').textContent=fmt(file.size);showUploadState('Preview');analyseBtn.disabled=false;analyseBtn.classList.add('ready');};
+  reader.onload=e=>{currentDataUrl=e.target.result;currentFile=file;document.getElementById('previewImg').src=currentDataUrl;document.getElementById('fileName').textContent=fname||'screenshot';document.getElementById('fileSize').textContent=fmt(file.size);showUploadState('Preview');analyseBtn.disabled=false;analyseBtn.classList.add('ready');};
   reader.onerror=()=>showUploadError('Could not read that file.','Please try a different screenshot.');
-  reader.readAsDataURL(processFile);
+  reader.readAsDataURL(file);
 }
 function showUploadError(msg,sub){document.getElementById('errorMsg').textContent=msg;document.getElementById('errorSub').textContent=sub;showUploadState('Error');analyseBtn.disabled=true;currentFile=null;currentDataUrl=null;}
 function clearImage(e){if(e)e.stopPropagation();currentFile=null;currentDataUrl=null;fileInput.value='';document.getElementById('previewImg').src='';showUploadState('Default');analyseBtn.disabled=true;analyseBtn.classList.remove('ready');}

@@ -1112,6 +1112,10 @@ async function handleGateSubmit(){
   const linkedIn  = document.getElementById('gateLinkedIn').value.trim();
   const email     = document.getElementById('gateEmail').value.trim().toLowerCase();
   if(!firstName){ showGateError('Please enter your first name.'); return; }
+  if(!lastName){ showGateError('Please enter your last name.'); return; }
+  if(!company){ showGateError('Please enter your company.'); return; }
+  if(!jobTitle){ showGateError('Please enter your job title.'); return; }
+  if(!linkedIn){ showGateError('Please enter your LinkedIn URL.'); return; }
   if(!email || !email.includes('@')){ showGateError('Please enter a valid email address.'); return; }
   const name = (firstName + (lastName ? ' ' + lastName : '')).trim();
 

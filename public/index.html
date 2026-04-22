@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Camera Score™ — An Audience From Anywhere</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -336,7 +337,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
       </div>
       <div class="drag-overlay" id="dragOverlay"><p class="drag-overlay-text">Drop to analyse</p></div>
     </div>
-    <input type="file" id="fileInput" accept="image/*">
+    <input type="file" id="fileInput" accept="image/*,.heic,.heif">
     <button class="analyse-btn" id="analyseBtn" disabled type="button">Analyse My Setup →</button>
     <p class="small-print">Your screenshot is analysed by AI and never stored or shared.<br>Scored across 6 criteria · First 3 analyses free with a verified email.</p>
     <div class="criteria-row">
@@ -527,7 +528,7 @@ const TOOL_URL      = window.location.href.split('?')[0];
 // ═══════════════════════════════════════
 // CONSTANTS & DATA
 // ═══════════════════════════════════════
-const ACCEPTED_TYPES=['image/jpeg','image/png','image/gif','image/webp','image/bmp','image/tiff'];
+const ACCEPTED_TYPES=['image/jpeg','image/png','image/gif','image/webp','image/bmp','image/tiff','image/heic','image/heif'];
 const MAX_SIZE_MB=25;
 const STEP_DURATION=1300;
 const CIRCUMFERENCE=565.49;
@@ -588,15 +589,26 @@ function showUploadState(name){
   uploadZone.classList.toggle('has-image',name==='Preview');
   uploadZone.classList.toggle('has-error',name==='Error');
 }
-function handleFile(file){
+async function handleFile(file){
   if(!file)return;
-  if(!ACCEPTED_TYPES.includes(file.type)){showUploadError('That file type is not supported.','Please upload a JPG, PNG, GIF, or WebP screenshot.');return;}
+  const isHeic=file.type==='image/heic'||file.type==='image/heif'||/\.heic$/i.test(file.name)||/\.heif$/i.test(file.name);
+  if(!isHeic&&!ACCEPTED_TYPES.includes(file.type)){showUploadError('That file type is not supported.','Please upload a JPG, PNG, WebP, or HEIC screenshot.');return;}
   const mb=file.size/1048576;
   if(mb>MAX_SIZE_MB){showUploadError('That file is too large ('+mb.toFixed(1)+' MB).','Please use a file under '+MAX_SIZE_MB+' MB.');return;}
+  let processFile=file;
+  if(isHeic){
+    try{
+      const converted=await heic2any({blob:file,toType:'image/jpeg',quality:0.92});
+      processFile=new File([converted],file.name.replace(/\.heic$/i,'.jpg').replace(/\.heif$/i,'.jpg'),{type:'image/jpeg'});
+    }catch(err){
+      showUploadError('Could not convert HEIC file.','Please export the photo as JPG from your Photos app and try again.');
+      return;
+    }
+  }
   const reader=new FileReader();
-  reader.onload=e=>{currentDataUrl=e.target.result;currentFile=file;document.getElementById('previewImg').src=currentDataUrl;document.getElementById('fileName').textContent=file.name||'screenshot';document.getElementById('fileSize').textContent=fmt(file.size);showUploadState('Preview');analyseBtn.disabled=false;analyseBtn.classList.add('ready');};
+  reader.onload=e=>{currentDataUrl=e.target.result;currentFile=processFile;document.getElementById('previewImg').src=currentDataUrl;document.getElementById('fileName').textContent=file.name||'screenshot';document.getElementById('fileSize').textContent=fmt(file.size);showUploadState('Preview');analyseBtn.disabled=false;analyseBtn.classList.add('ready');};
   reader.onerror=()=>showUploadError('Could not read that file.','Please try a different screenshot.');
-  reader.readAsDataURL(file);
+  reader.readAsDataURL(processFile);
 }
 function showUploadError(msg,sub){document.getElementById('errorMsg').textContent=msg;document.getElementById('errorSub').textContent=sub;showUploadState('Error');analyseBtn.disabled=true;currentFile=null;currentDataUrl=null;}
 function clearImage(e){if(e)e.stopPropagation();currentFile=null;currentDataUrl=null;fileInput.value='';document.getElementById('previewImg').src='';showUploadState('Default');analyseBtn.disabled=true;analyseBtn.classList.remove('ready');}

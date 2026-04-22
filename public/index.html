@@ -79,7 +79,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 .analyse-btn.ready{background:var(--red);color:#ffffff;border-color:var(--red);cursor:pointer;box-shadow:0 0 28px var(--red-glow),inset 0 1px 0 rgba(255,255,255,0.12);}
 .analyse-btn.ready:hover{opacity:1;box-shadow:0 0 40px var(--red-glow),inset 0 1px 0 rgba(255,255,255,0.12);transform:translateY(-2px);}
 .small-print{font-size:12px;color:var(--text);text-align:center;line-height:1.6;margin-bottom:40px;}
-.criteria-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-bottom:40px;}
+.criteria-header{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);text-align:center;margin-bottom:10px;margin-top:4px;}.criteria-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-bottom:24px;}
 .criteria-pill{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:10px 8px;text-align:center;}
 .criteria-pill-label{font-family:'Barlow',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.04em;color:var(--text);}
 .footer{font-family:'Barlow',sans-serif;font-size:11px;color:var(--text-sec);text-align:center;letter-spacing:0.06em;}
@@ -324,13 +324,22 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
     <h1 class="headline"><span class="red">The camera</span> has been watching<br>and it <span class="red">takes attendance.</span></h1>
     <p class="subline">You already have a camera presence. Let's find out what it is...</p>
     <p class="context-line">You've been on camera hundreds of times.<br>Nobody told you the truth about what they saw...<br>Find out now — and let's help you address<br>your audience from anywhere...</p>
+    <p class="criteria-header">You’ll be scored across 6 criteria</p>
+    <div class="criteria-row">
+      <div class="criteria-pill"><span class="criteria-pill-label">Lighting</span></div>
+      <div class="criteria-pill"><span class="criteria-pill-label">Camera angle</span></div>
+      <div class="criteria-pill"><span class="criteria-pill-label">Background</span></div>
+      <div class="criteria-pill"><span class="criteria-pill-label">Framing</span></div>
+      <div class="criteria-pill"><span class="criteria-pill-label">Audio signal</span></div>
+      <div class="criteria-pill"><span class="criteria-pill-label">Presence</span></div>
+    </div>
     <div class="upload-zone" id="uploadZone" onclick="handleZoneClick(event)">
       
       <div class="uz-default" id="stateDefault">
         <svg class="uz-icon" width="56" height="56" viewBox="0 0 56 56" fill="none"><rect x="4" y="20" width="48" height="32" rx="3" stroke="rgba(245,240,232,0.45)" stroke-width="2"/><rect x="4" y="11" width="48" height="11" rx="2" stroke="rgba(245,240,232,0.45)" stroke-width="2"/><line x1="4" y1="22" x2="52" y2="22" stroke="rgba(245,240,232,0.45)" stroke-width="2"/><line x1="15" y1="11" x2="12" y2="22" stroke="rgba(245,240,232,0.45)" stroke-width="2"/><line x1="25" y1="11" x2="22" y2="22" stroke="rgba(245,240,232,0.45)" stroke-width="2"/><line x1="35" y1="11" x2="32" y2="22" stroke="rgba(245,240,232,0.45)" stroke-width="2"/><line x1="45" y1="11" x2="42" y2="22" stroke="rgba(245,240,232,0.45)" stroke-width="2"/><line x1="4" y1="4" x2="52" y2="11" stroke="rgba(245,240,232,0.45)" stroke-width="2" stroke-linecap="round"/></svg>
-        <p class="uz-label">Drop your screenshot here</p>
-        <p class="uz-sub desktop-only"><span class="uz-paste-hint"><kbd>Ctrl</kbd>+<kbd>V</kbd> to paste &nbsp;·&nbsp; or drag and drop</span></p>
-        <p class="uz-sub mobile-only">Tap to choose from your camera roll</p>
+        <p class="uz-label">Drop your video call screenshot here</p>
+        <p class="uz-sub desktop-only"><span class="uz-paste-hint">Take a screenshot of your Zoom, Teams, or Meet window &nbsp;·&nbsp; <kbd>Ctrl</kbd>+<kbd>V</kbd> to paste or drag and drop</span></p>
+        <p class="uz-sub mobile-only">Take a screenshot of your video call setup and tap to upload</p>
         <p class="uz-divider">or</p>
         <button class="uz-btn" type="button">Choose file</button>
       </div>
@@ -351,15 +360,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
     </div>
     <input type="file" id="fileInput" accept="image/*,.heic,.heif">
     <button class="analyse-btn" id="analyseBtn" disabled type="button">Analyse My Setup →</button>
-    <p class="small-print">Your screenshot is analysed by AI and never stored or shared.<br>Scored across 6 criteria · First 3 analyses free with a verified email.</p>
-    <div class="criteria-row">
-      <div class="criteria-pill"><span class="criteria-pill-label">Lighting</span></div>
-      <div class="criteria-pill"><span class="criteria-pill-label">Camera angle</span></div>
-      <div class="criteria-pill"><span class="criteria-pill-label">Background</span></div>
-      <div class="criteria-pill"><span class="criteria-pill-label">Framing</span></div>
-      <div class="criteria-pill"><span class="criteria-pill-label">Audio signal</span></div>
-      <div class="criteria-pill"><span class="criteria-pill-label">Presence</span></div>
-    </div>
+    <p class="small-print">Your screenshot is analysed by AI and never stored or shared. First 3 analyses free with a verified email.</p>
   </main>
   <footer class="footer">© 2026 An Audience From Anywhere &nbsp;·&nbsp; Adrian Roup &nbsp;·&nbsp; Santa Monica, CA</footer>
 </div>

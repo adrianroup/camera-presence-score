@@ -20,7 +20,7 @@
   --gold:#E8E6E0;
   --gold-dim:rgba(232,230,224,0.08);
   --gold-border:rgba(232,230,224,0.25);
-  --red:#a85c5c;
+  --red:#C0392B;
   --green:#6b9a5e;
 }
 html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;line-height:1.6;}
@@ -28,20 +28,22 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'B
 .screen.visible{opacity:1;}
 .header{text-align:center;margin-bottom:40px;padding-top:48px;}
 .header-logo{font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.14em;color:#c8ccd4;margin-bottom:10px;}
-.header-logo span{color:var(--gold);}
+.header-logo .red{color:var(--red);}
 .header-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(34px,6vw,54px);font-weight:900;letter-spacing:0.02em;text-transform:uppercase;line-height:0.95;}
-.header-title em{font-style:italic;color:var(--gold);}
+.header-title em{font-style:normal;color:var(--red);}
+.header-title .red{color:var(--red);}
 
 /* ── UPLOAD ── */
 #screenUpload{padding:0 20px 60px;}
 .main{width:100%;max-width:580px;display:flex;flex-direction:column;align-items:center;}
 .headline{font-family:'Barlow Condensed',sans-serif;font-size:clamp(22px,4vw,30px);font-weight:800;text-transform:uppercase;letter-spacing:0.04em;text-align:center;margin-bottom:8px;}
+.headline .red{color:var(--red);}
 .subline{font-family:'Barlow',sans-serif;font-size:16px;font-style:normal;color:var(--text);text-align:center;margin-bottom:32px;line-height:1.6;}
 @keyframes borderPulse{0%,100%{border-color:rgba(232,230,224,0.1);border-width:1px;}50%{border-color:rgba(232,230,224,0.9);border-width:3px;}}
 .upload-zone{width:100%;min-height:280px;border:1px solid var(--border-accent);border-radius:4px;background:var(--surface);position:relative;cursor:pointer;transition:border-color 0.3s ease,border-width 0.3s ease;overflow:hidden;margin-bottom:20px;display:flex;align-items:center;justify-content:center;animation:borderPulse 2.8s ease-in-out infinite;}
 .upload-zone:hover{animation:none;border-width:2px;border-color:rgba(232,230,224,0.85);background:var(--surface);}
 .upload-zone.drag-over{border-color:var(--gold);background:var(--gold-dim);}
-.upload-zone.has-image{border-color:var(--gold);cursor:default;}
+.upload-zone.has-image{border-color:var(--red);cursor:default;}
 .upload-zone.has-error{border-color:var(--red);}
 .uz-default{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;gap:14px;width:100%;}
 .uz-icon{opacity:0.45;transition:opacity 0.3s ease,transform 0.3s ease;}.upload-zone:hover .uz-icon{opacity:1;transform:translateY(-2px);}
@@ -69,9 +71,9 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 .drag-overlay{display:none;position:absolute;inset:0;background:rgba(232,230,224,0.04);border-radius:3px;align-items:center;justify-content:center;pointer-events:none;}
 .drag-overlay.show{display:flex;}
 .drag-overlay-text{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:400;color:var(--gold);}
-.analyse-btn{width:100%;background:var(--gold);color:#0c0b0a;border:none;border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.08em;cursor:pointer;transition:opacity 0.3s ease;margin-bottom:16px;}
-.analyse-btn:hover:not(:disabled){opacity:0.88;}
-.analyse-btn:disabled{background:rgba(232,230,224,0.08);color:rgba(245,240,232,0.3);cursor:not-allowed;}
+.analyse-btn{width:100%;background:rgba(232,230,224,0.08);color:rgba(245,240,232,0.3);border:1px solid rgba(232,230,224,0.15);border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.08em;cursor:not-allowed;transition:background 0.3s ease,color 0.3s ease,border-color 0.3s ease;margin-bottom:16px;}
+.analyse-btn.ready{background:var(--red);color:#ffffff;border-color:var(--red);cursor:pointer;}
+.analyse-btn.ready:hover{opacity:0.88;}
 .small-print{font-size:12px;color:var(--text);text-align:center;line-height:1.6;margin-bottom:40px;}
 .criteria-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-bottom:40px;}
 .criteria-pill{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:10px 8px;text-align:center;}
@@ -82,17 +84,17 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 /* ── EMAIL GATE SCREEN ── */
 #screenEmailGate{padding:0 20px 60px;justify-content:flex-start;}
 .gate-wrap{width:100%;max-width:480px;display:flex;flex-direction:column;align-items:center;padding-bottom:40px;}
-.gate-heading{font-family:'Barlow Condensed',sans-serif;font-size:clamp(24px,5vw,34px);font-weight:900;text-transform:uppercase;letter-spacing:0.04em;text-align:center;margin-bottom:8px;}
+.gate-heading{font-family:'Barlow Condensed',sans-serif;font-size:clamp(24px,5vw,34px);font-weight:900;text-transform:uppercase;letter-spacing:0.04em;text-align:center;margin-bottom:8px;color:var(--red);}
 .gate-sub{font-family:'Barlow',sans-serif;font-size:15px;font-style:italic;color:var(--text-sec);text-align:center;line-height:1.6;margin-bottom:32px;max-width:380px;}
 .gate-form{width:100%;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
 .gate-field{display:flex;flex-direction:column;gap:6px;}
 .gate-label{font-family:'Barlow',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);}
 .gate-input{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:13px 16px;font-family:'Barlow',sans-serif;font-size:16px;color:var(--text);outline:none;transition:border-color 0.3s ease;width:100%;}
-.gate-input:focus{border-color:var(--gold);}
+.gate-input:focus{border-color:var(--red);}
 .gate-input::placeholder{color:var(--text-muted);}
-.gate-submit{width:100%;background:var(--gold);color:#0c0b0a;border:none;border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.08em;cursor:pointer;transition:opacity 0.3s ease;margin-top:4px;}
+.gate-submit{width:100%;background:var(--red);color:#ffffff;border:none;border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.08em;cursor:pointer;transition:opacity 0.3s ease;margin-top:4px;}
 .gate-submit:hover:not(:disabled){opacity:0.88;}
-.gate-submit:disabled{background:rgba(232,230,224,0.15);cursor:not-allowed;}
+.gate-submit:disabled{background:rgba(192,57,43,0.2);cursor:not-allowed;}
 .gate-small{font-family:'Barlow',sans-serif;font-size:12px;color:var(--text-muted);text-align:center;line-height:1.6;}
 .gate-error{display:none;padding:10px 14px;background:rgba(168,92,92,0.1);border:1px solid rgba(168,92,92,0.3);border-radius:2px;font-size:13px;color:var(--red);text-align:center;margin-top:4px;}
 
@@ -111,7 +113,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 .gate-paywall{display:none;flex-direction:column;align-items:center;text-align:center;width:100%;}
 .gate-paywall-heading{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;color:var(--gold);}
 .gate-paywall-copy{font-family:'Barlow',sans-serif;font-size:15px;color:var(--text-sec);line-height:1.65;margin-bottom:24px;max-width:380px;}
-.gate-paywall-btn{width:100%;background:var(--gold);color:#0c0b0a;border:none;border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.08em;cursor:pointer;transition:opacity 0.3s ease;}
+.gate-paywall-btn{width:100%;background:var(--red);color:#ffffff;border:none;border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.08em;cursor:pointer;transition:opacity 0.3s ease;}
 .gate-paywall-btn:hover{opacity:0.88;}
 
 /* ── LOADING ── */
@@ -300,11 +302,11 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 <!-- SCREEN 1: UPLOAD -->
 <div class="screen" id="screenUpload">
   <header class="header">
-    <div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div>
-    <div class="header-title">The Camera<br>Presence <em>Score™</em></div>
+    <div class="header-logo"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</div>
+    <div class="header-title"><span class="red">The Camera</span><br>Presence <em>Score™</em></div>
   </header>
   <main class="main">
-    <h1 class="headline">The camera has been watching.<br>It takes attendance.</h1>
+    <h1 class="headline"><span class="red">The camera</span> has been watching.<br>It <span class="red">takes attendance.</span></h1>
     <p class="subline">You already have a camera presence. Let's find out what it is...</p>
     <div class="upload-zone" id="uploadZone" onclick="handleZoneClick(event)">
       <div class="uz-default" id="stateDefault">
@@ -348,8 +350,8 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 <!-- SCREEN 1b: EMAIL GATE -->
 <div class="screen" id="screenEmailGate">
   <header class="header">
-    <div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div>
-    <div class="header-title">The Camera<br>Presence <em>Score™</em></div>
+    <div class="header-logo"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</div>
+    <div class="header-title"><span class="red">The Camera</span><br>Presence <em>Score™</em></div>
   </header>
   <div class="gate-wrap">
 
@@ -409,7 +411,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 
 <!-- SCREEN 2: LOADING -->
 <div class="screen" id="screenLoading">
-  <header class="header"><div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div><div class="header-title">The Camera<br>Presence <em>Score™</em></div></header>
+  <header class="header"><div class="header-logo"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</div><div class="header-title"><span class="red">The Camera</span><br>Presence <em>Score™</em></div></header>
   <div class="loading-wrap">
     <div class="scan-container" id="scanContainer"><img class="scan-bg-img" id="scanBgImg" src="" alt=""><div class="scan-dark-overlay"></div><div class="scan-grid"></div><div class="scan-corner tl"></div><div class="scan-corner tr"></div><div class="scan-corner bl"></div><div class="scan-corner br"></div><div class="scan-line"></div><div class="scan-label" id="scanLabel">Analysing&nbsp;·&nbsp;·&nbsp;·</div><div class="scan-complete-overlay" id="scanCompleteOverlay"><button class="scan-score-btn" id="seeScoreBtn" onclick="handleSeeScore()">See My Score →</button></div></div>
     <h2 class="loading-title">Analysing your setup&hellip;</h2>
@@ -423,7 +425,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 
 <!-- SCREEN 3: SCORE REVEAL -->
 <div class="screen" id="screenReveal">
-  <header class="header"><div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div><div class="header-title">The Camera<br>Presence <em>Score™</em></div></header>
+  <header class="header"><div class="header-logo"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</div><div class="header-title"><span class="red">The Camera</span><br>Presence <em>Score™</em></div></header>
   <div class="reveal-wrap">
     <div class="gauge-section"><div class="gauge-outer" id="gaugeOuter"><svg class="gauge-svg" viewBox="0 0 220 220"><circle class="gauge-track" cx="110" cy="110" r="90"/><circle class="gauge-fill" id="gaugeFill" cx="110" cy="110" r="90" stroke="#c49e58"/></svg><div class="gauge-center"><div class="gauge-number" id="gaugeNumber">0</div><div class="gauge-denom">/100</div></div></div></div>
     <div class="tier-badge" id="tierBadge"></div>
@@ -446,7 +448,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 
 <!-- SCREEN 4: CRITERIA BREAKDOWN -->
 <div class="screen" id="screenBreakdown">
-  <header class="header"><div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div><div class="header-title">The Camera<br>Presence <em>Score™</em></div></header>
+  <header class="header"><div class="header-logo"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</div><div class="header-title"><span class="red">The Camera</span><br>Presence <em>Score™</em></div></header>
   <div class="breakdown-wrap">
     <div class="breakdown-summary" id="breakdownSummary">
       <div class="breakdown-score-circle" id="breakdownScoreCircle">
@@ -472,7 +474,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 
 <!-- SCREEN 5: RING LIGHT FAIL -->
 <div class="screen" id="screenRingLight">
-  <header class="header"><div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div><div class="header-title">The Camera<br>Presence <em>Score™</em></div></header>
+  <header class="header"><div class="header-logo"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</div><div class="header-title"><span class="red">The Camera</span><br>Presence <em>Score™</em></div></header>
   <div class="disq-wrap">
     <div class="disq-warning-bar"><span class="disq-warning-text">Ring Light Detected.</span></div>
     <h2 class="disq-title">Instant Disqualification</h2>
@@ -485,7 +487,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 
 <!-- SCREEN 6: BACKGROUND BLUR FAIL -->
 <div class="screen" id="screenBgBlur">
-  <header class="header"><div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div><div class="header-title">The Camera<br>Presence <em>Score™</em></div></header>
+  <header class="header"><div class="header-logo"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</div><div class="header-title"><span class="red">The Camera</span><br>Presence <em>Score™</em></div></header>
   <div class="disq-wrap">
     <div class="disq-warning-bar"><span class="disq-warning-text">Background Blur Detected.</span></div>
     <h2 class="disq-title">Instant Disqualification</h2>
@@ -499,7 +501,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 
 <!-- SCREEN 7: BRIGHT BACKGROUND FAIL -->
 <div class="screen" id="screenBrightBg">
-  <header class="header"><div class="header-logo">An Audience From Anywhere &nbsp;·&nbsp; <span>Adrian Roup</span></div><div class="header-title">The Camera<br>Presence <em>Score™</em></div></header>
+  <header class="header"><div class="header-logo"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</div><div class="header-title"><span class="red">The Camera</span><br>Presence <em>Score™</em></div></header>
   <div class="disq-wrap">
     <div class="disq-warning-bar"><span class="disq-warning-text">Bright Background Detected.</span></div>
     <h2 class="disq-title">Instant Disqualification</h2>
@@ -593,7 +595,7 @@ function handleFile(file){
   reader.readAsDataURL(file);
 }
 function showUploadError(msg,sub){document.getElementById('errorMsg').textContent=msg;document.getElementById('errorSub').textContent=sub;showUploadState('Error');analyseBtn.disabled=true;currentFile=null;currentDataUrl=null;}
-function clearImage(e){if(e)e.stopPropagation();currentFile=null;currentDataUrl=null;fileInput.value='';document.getElementById('previewImg').src='';showUploadState('Default');analyseBtn.disabled=true;}
+function clearImage(e){if(e)e.stopPropagation();currentFile=null;currentDataUrl=null;fileInput.value='';document.getElementById('previewImg').src='';showUploadState('Default');analyseBtn.disabled=true;analyseBtn.classList.remove('ready');}
 function clearError(e){if(e)e.stopPropagation();showUploadState('Default');}
 function handleZoneClick(e){if(document.getElementById('statePreview').style.display!=='none')return;if(e.target.closest('.uz-retry-btn')||e.target.closest('.uz-change-btn'))return;fileInput.click();}
 function fmt(bytes){if(!bytes)return'';if(bytes<1024)return bytes+' B';if(bytes<1048576)return(bytes/1024).toFixed(1)+' KB';return(bytes/1048576).toFixed(1)+' MB';}
@@ -927,7 +929,7 @@ function scanAgain(){
   currentFile=null;currentDataUrl=null;fileInput.value='';
   document.getElementById('previewImg').src='';
   showUploadState('Default');
-  analyseBtn.disabled=true;
+  analyseBtn.disabled=true;analyseBtn.classList.remove('ready');
   // Reset gate form for next submission
   showGateForm();
   hideGateError();

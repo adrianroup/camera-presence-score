@@ -210,8 +210,8 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 #screenBreakdown{padding:0 20px 60px;justify-content:flex-start;}
 .breakdown-wrap{width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center;padding-bottom:40px;}
 .breakdown-summary{width:100%;display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--gold-border);border-radius:4px;padding:14px 18px;margin-bottom:28px;}
-.breakdown-score-circle{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--gold);}
-.breakdown-score-num{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:600;color:var(--gold);}
+.breakdown-score-circle{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;border:2px solid var(--red);}
+.breakdown-score-num{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:600;color:var(--red);}
 .breakdown-summary-text{flex:1;}
 .breakdown-tier-name{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:400;letter-spacing:0.01em;margin-bottom:2px;}
 .breakdown-tier-sub{font-family:'Barlow',sans-serif;font-size:13px;color:var(--text-muted);}
@@ -878,8 +878,8 @@ function buildBreakdown(score, criteria){
   const color='#c49e58';
   // Summary bar
   document.getElementById('breakdownScoreNum').textContent=score;
-  document.getElementById('breakdownScoreNum').style.color=color;
-  document.getElementById('breakdownScoreCircle').style.borderColor=color;
+  document.getElementById('breakdownScoreNum').style.color='#C0392B';
+  document.getElementById('breakdownScoreCircle').style.borderColor='#C0392B';
   document.getElementById('breakdownTierName').textContent=tier.name;
   document.getElementById('breakdownTierName').style.color='';
   // Cards

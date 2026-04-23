@@ -925,12 +925,21 @@ function regionLuminance(ctx, x, y, w, h, imgW, imgH) {
 }
 
 // F-stop threshold: one stop = sqrt(2) ≈ 1.414x luminance
-// Background > 2× face → Red (two stops brighter)
-// Background 1.414×–2× face → Amber (one to two stops)
-// Background ≤ 1.414× face → Green
-function fStopSignal(faceLum, bgLum) {
-  if (faceLum === null || bgLum === null || faceLum <= 0) return 'amber'; // fallback
-  const ratio = bgLum / faceLum;
+// We use the 90th percentile of background luminance (not the average) so that
+// a blown-out window or lamp spike is caught even when the rest of the background is dark.
+// p90 ratio > 2× face → Red (bright source clearly competing)
+// p90 ratio 1.414×–2× → Amber
+// p90 ratio ≤ 1.414× → Green
+function percentile90(values) {
+  if (!values || values.length === 0) return null;
+  const sorted = Float32Array.from(values).sort();
+  const idx = Math.floor(sorted.length * 0.90);
+  return sorted[Math.min(idx, sorted.length - 1)];
+}
+
+function fStopSignal(faceLum, bgP90) {
+  if (faceLum === null || bgP90 === null || faceLum <= 0) return 'amber'; // fallback
+  const ratio = bgP90 / faceLum;
   if (ratio > 2.0)   return 'red';
   if (ratio > 1.414) return 'amber';
   return 'green';
@@ -1006,8 +1015,9 @@ async function analyseClientLighting(dataUrl) {
           const bgCenterX = (fx + fw / 2) * W;
           const bgCenterY = (fy + fh / 2) * H;
 
-          // Sample strips that avoid the face zone
-          let bgTotal = 0, bgCount = 0;
+          // Collect all background pixel luminances (strips avoiding the face zone)
+          // We use p90 so a blown-out window spike is caught even when surrounded by dark bg
+          const bgLumValues = [];
           const strips = [
             // top strip
             { x: 0, y: 0, w: W, h: Math.max(1, bgCenterY - padY) },
@@ -1024,16 +1034,16 @@ async function analyseClientLighting(dataUrl) {
             if (sw < 4 || sh < 4) continue;
             const sx = Math.round(s.x), sy = Math.round(s.y);
             const data = ctx.getImageData(sx, sy, sw, sh).data;
-            for (let i = 0; i < data.length; i += 4) {
+            // Sample every 4th pixel to keep it fast
+            for (let i = 0; i < data.length; i += 16) {
               const r = data[i] / 255, g = data[i+1] / 255, b = data[i+2] / 255;
-              bgTotal += 0.2126 * r + 0.7152 * g + 0.0722 * b;
-              bgCount++;
+              bgLumValues.push(0.2126 * r + 0.7152 * g + 0.0722 * b);
             }
           }
-          const bgLum = bgCount > 0 ? bgTotal / bgCount : null;
+          const bgP90 = percentile90(bgLumValues);
 
-          const signal = fStopSignal(faceLum, bgLum);
-          console.log('[Lighting] face:', faceLum?.toFixed(3), 'bg:', bgLum?.toFixed(3), 'ratio:', bgLum && faceLum ? (bgLum/faceLum).toFixed(2) : 'n/a', '→', signal);
+          const signal = fStopSignal(faceLum, bgP90);
+          console.log('[Lighting] face:', faceLum?.toFixed(3), 'bg p90:', bgP90?.toFixed(3), 'ratio:', bgP90 && faceLum ? (bgP90/faceLum).toFixed(2) : 'n/a', '→', signal);
           resolve(signal);
         });
 

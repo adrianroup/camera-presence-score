@@ -33,7 +33,7 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'B
 .header{text-align:center;margin-bottom:16px;padding-top:64px;width:100%;max-width:680px;}
 .header-logo{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#c8ccd4;margin-bottom:10px;}
 .header-logo .red{color:var(--red);}
-.header-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(32px,6.5vw,54px);font-weight:900;letter-spacing:0.02em;text-transform:uppercase;line-height:0.9;white-space:nowrap;-webkit-text-stroke:1.5px rgba(192,57,43,0.55);text-stroke:1.5px rgba(192,57,43,0.55);text-shadow:0 0 18px rgba(192,57,43,0.75),0 0 8px rgba(192,57,43,0.55),0 0 3px rgba(192,57,43,0.9);}
+.header-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(32px,6.5vw,54px);font-weight:900;letter-spacing:0.02em;text-transform:uppercase;line-height:0.9;white-space:nowrap;-webkit-text-stroke:1.5px rgba(192,57,43,0.22);text-stroke:1.5px rgba(192,57,43,0.22);text-shadow:0 0 40px rgba(255,240,210,0.12),0 0 14px rgba(255,240,210,0.08);}
 .header-title em{font-style:normal;color:var(--text);}
 .header-title .red{color:var(--red);}
 
@@ -44,8 +44,8 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'B
 .headline .red{color:var(--red);}
 .subline{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--text);text-align:center;margin-bottom:12px;line-height:1.6;}.context-line{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text);text-align:center;margin-bottom:40px;line-height:1.75;max-width:480px;margin-left:auto;margin-right:auto;}
 @keyframes borderPulse{0%,100%{border-color:rgba(232,230,224,0.15);border-width:1px;}50%{border-color:rgba(232,230,224,1);border-width:2px;}}
-.upload-zone{width:100%;min-height:300px;border:1px solid rgba(232,230,224,0.15);border-radius:4px;background:var(--surface);position:relative;cursor:pointer;transition:border-color 0.3s var(--ease-premium),border-width 0.3s var(--ease-premium);overflow:hidden;margin-bottom:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 32px rgba(0,0,0,0.4);animation:borderPulse 5.6s ease-in-out infinite;}
-.upload-zone:hover{animation:none;border-width:2px;border-color:rgba(232,230,224,0.85);background:var(--surface);}
+.upload-zone{width:100%;min-height:300px;border:1px solid rgba(232,230,224,0.15);border-radius:4px;background:var(--bg);position:relative;cursor:pointer;transition:border-color 0.3s var(--ease-premium),border-width 0.3s var(--ease-premium);overflow:hidden;margin-bottom:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 32px rgba(0,0,0,0.4);animation:borderPulse 5.6s ease-in-out infinite;}
+.upload-zone:hover{animation:none;border-width:2px;border-color:rgba(232,230,224,0.85);background:var(--bg);}
 .upload-zone.drag-over{border-color:var(--gold);background:var(--gold-dim);}
 .upload-zone.has-image{border-color:var(--red);cursor:default;}
 .upload-zone.has-error{border-color:var(--red);}
@@ -57,7 +57,7 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'B
 kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-family:'Barlow',sans-serif;font-size:12px;color:var(--text-sec);}
 .uz-divider{font-size:12px;color:var(--text-sec);letter-spacing:0.06em;}
 .uz-btn{background:transparent;color:var(--gold);border:1px solid var(--border-accent);border-radius:2px;padding:9px 24px;font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.06em;cursor:pointer;transition:border-color 0.3s var(--ease-premium),color 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);}
-.uz-btn:hover{background:transparent;border-color:var(--gold);color:var(--text);box-shadow:0 0 40px var(--red-glow),inset 0 1px 0 rgba(255,255,255,0.12);transform:translateY(-2px);}
+.uz-btn:hover{background:transparent;border-color:rgba(255,240,210,0.6);color:var(--text);box-shadow:0 0 40px rgba(255,240,210,0.18),0 0 12px rgba(255,240,210,0.10),inset 0 1px 0 rgba(255,255,255,0.12);transform:translateY(-2px);}
 .uz-preview{display:none;flex-direction:column;align-items:center;width:100%;height:100%;padding:16px;gap:12px;}
 .uz-preview-img-wrap{width:100%;flex:1;display:flex;align-items:center;justify-content:center;min-height:180px;overflow:hidden;border-radius:3px;background:rgba(0,0,0,0.3);}
 .uz-preview-img-wrap img{max-width:100%;max-height:220px;object-fit:contain;border-radius:2px;}
@@ -80,7 +80,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 .analyse-btn.ready:hover{opacity:1;box-shadow:0 0 40px var(--red-glow),inset 0 1px 0 rgba(255,255,255,0.12);transform:translateY(-2px);}
 .small-print{font-size:12px;color:var(--text);text-align:center;line-height:1.6;margin-bottom:40px;}
 .criteria-header{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);text-align:center;margin-bottom:10px;margin-top:4px;}.criteria-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-bottom:24px;}
-.criteria-pill{background:var(--surface);border:1px solid var(--border);border-radius:3px;padding:10px 8px;text-align:center;}
+.criteria-pill{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:10px 8px;text-align:center;}
 .criteria-pill-label{font-family:'Barlow',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.04em;color:var(--text);}
 .footer{font-family:'Barlow',sans-serif;font-size:11px;color:var(--text-sec);text-align:center;letter-spacing:0.06em;}
 #fileInput{display:none;}
@@ -398,26 +398,59 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
     <!-- Form state: LinkedIn OAuth + job title -->
     <div id="gateFormState" style="width:100%;display:flex;flex-direction:column;align-items:center;">
 
-      <!-- Step A: LinkedIn button (shown when no LinkedIn profile in session) -->
+      <!-- Step A: Primary entry — manual form with LinkedIn as speed-boost option -->
       <div id="linkedinStep" style="width:100%;display:flex;flex-direction:column;align-items:center;">
         <h2 class="gate-heading">One quick step</h2>
-        <p class="gate-sub">Your first three analyses are free. Connect with LinkedIn to get started — we'll pull your name and email automatically.</p>
+        <p class="gate-sub">Your first three analyses are free. Enter your details below to get started.</p>
 
         <div class="linkedin-auth-section">
           <button class="linkedin-btn" type="button" onclick="startLinkedInOAuth()">
             <span class="linkedin-btn-logo">
-              <!-- LinkedIn white mark -->
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <rect width="20" height="20" rx="3" fill="#0A66C2"/>
                 <path d="M4.5 7.5H6.5V15.5H4.5V7.5ZM5.5 4C4.67 4 4 4.67 4 5.5C4 6.33 4.67 7 5.5 7C6.33 7 7 6.33 7 5.5C7 4.67 6.33 4 5.5 4Z" fill="white"/>
                 <path d="M8.5 7.5H10.4V8.4H10.43C10.7 7.86 11.4 7.3 12.45 7.3C14.5 7.3 14.9 8.65 14.9 10.4V15.5H12.9V10.8C12.9 10.05 12.88 9.1 11.87 9.1C10.84 9.1 10.68 9.9 10.68 10.75V15.5H8.5V7.5Z" fill="white"/>
               </svg>
             </span>
-            <span class="linkedin-btn-text">Continue with LinkedIn</span>
+            <span class="linkedin-btn-text">Speed up with LinkedIn</span>
           </button>
+          <p style="font-size:11px;color:var(--text-subtle);text-align:center;margin-top:6px;letter-spacing:0.04em;">Pre-fills your name and email automatically</p>
 
-          <button class="linkedin-skip" type="button" onclick="showManualGate()">Continue without LinkedIn</button>
+          <div style="display:flex;align-items:center;gap:12px;width:100%;margin:16px 0 4px;">
+            <div style="flex:1;height:1px;background:var(--border);"></div>
+            <span style="font-size:11px;color:var(--text-subtle);letter-spacing:0.08em;text-transform:uppercase;">or enter manually</span>
+            <div style="flex:1;height:1px;background:var(--border);"></div>
+          </div>
         </div>
+
+        <!-- Inline manual form directly on Step A -->
+        <div class="gate-form" id="gateFormInline" style="width:100%;margin-top:8px;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div class="gate-field">
+              <label class="gate-label" for="gateFirstNameInline">First name</label>
+              <input class="gate-input" type="text" id="gateFirstNameInline" placeholder="First name" autocomplete="given-name">
+            </div>
+            <div class="gate-field">
+              <label class="gate-label" for="gateLastNameInline">Last name</label>
+              <input class="gate-input" type="text" id="gateLastNameInline" placeholder="Last name" autocomplete="family-name">
+            </div>
+          </div>
+          <div class="gate-field">
+            <label class="gate-label" for="gateEmailInline">Work email</label>
+            <input class="gate-input" type="email" id="gateEmailInline" placeholder="you@company.com" autocomplete="email">
+          </div>
+          <div class="gate-field">
+            <label class="gate-label" for="gateJobTitleInline">Job title <span style="color:var(--text-subtle);font-size:10px;">(optional)</span></label>
+            <input class="gate-input" type="text" id="gateJobTitleInline" placeholder="e.g. Head of Marketing" autocomplete="organization-title">
+          </div>
+          <div class="gate-field">
+            <label class="gate-label" for="gateLinkedInInline">LinkedIn URL <span style="color:var(--text-subtle);font-size:10px;">(optional)</span></label>
+            <input class="gate-input" type="url" id="gateLinkedInInline" placeholder="linkedin.com/in/yourname" autocomplete="off">
+          </div>
+          <button class="gate-submit" type="button" onclick="handleInlineManualSubmit()">Get My Score →</button>
+          <div class="gate-error" id="gateErrorInline"></div>
+        </div>
+        <p class="gate-small" style="margin-top:12px;">No spam. We never share or sell your data.</p>
       </div>
 
       <!-- Step B: Post-LinkedIn job title field (shown after OAuth callback) -->

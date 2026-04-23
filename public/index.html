@@ -774,6 +774,7 @@ async function handleFile(file){
       const {imageData}=await resp.json();
       const dataUrl='data:image/jpeg;base64,'+imageData;
       currentDataUrl=dataUrl;
+      try { sessionStorage.setItem('pending_image', dataUrl); } catch(e) {}
       currentFile=file;
       document.getElementById('previewImg').src=dataUrl;
       document.getElementById('fileName').textContent=fname;
@@ -788,7 +789,7 @@ async function handleFile(file){
     return;
   }
   const reader=new FileReader();
-  reader.onload=e=>{currentDataUrl=e.target.result;currentFile=file;document.getElementById('previewImg').src=currentDataUrl;document.getElementById('fileName').textContent=fname||'screenshot';document.getElementById('fileSize').textContent=fmt(file.size);showUploadState('Preview');analyseBtn.disabled=false;analyseBtn.classList.add('ready');};
+  reader.onload=e=>{currentDataUrl=e.target.result;currentFile=file;try{sessionStorage.setItem('pending_image',currentDataUrl);}catch(e){}document.getElementById('previewImg').src=currentDataUrl;document.getElementById('fileName').textContent=fname||'screenshot';document.getElementById('fileSize').textContent=fmt(file.size);showUploadState('Preview');analyseBtn.disabled=false;analyseBtn.classList.add('ready');};
   reader.onerror=()=>showUploadError('Could not read that file.','Please try a different screenshot.');
   reader.readAsDataURL(file);
 }
@@ -1370,6 +1371,13 @@ function showLinkedInJobStep(profile) {
   setTimeout(() => jobField.focus(), 200);
 }
 
+function restorePendingImage() {
+  try {
+    const saved = sessionStorage.getItem('pending_image');
+    if (saved) { currentDataUrl = saved; }
+  } catch(e) {}
+}
+
 function checkGoogleReturn() {
   const params = new URLSearchParams(window.location.search);
   if (params.get('google') !== '1') return false;
@@ -1452,6 +1460,7 @@ async function handleLinkedInSubmit() {
       sessionStorage.removeItem('linkedin_profile');
       sessionStorage.removeItem('google_profile');
       showScreen(document.getElementById('screenUpload'));
+      startLoadingWithDecrement(email);
       return;
     }
 
@@ -1471,6 +1480,7 @@ async function handleLinkedInSubmit() {
     sessionStorage.removeItem('google_profile');
 
     showScreen(document.getElementById('screenUpload'));
+    startLoadingWithDecrement(email);
 
   } catch(err) {
     console.error('LinkedIn submit error:', err);
@@ -1606,6 +1616,7 @@ async function resendVerification(){
 function startLoadingWithDecrement(email){
   decrementSession();
   sbDecrementUses(email);
+  try { sessionStorage.removeItem('pending_image'); } catch(e) {}
   startLoading();
 }
 
@@ -1760,6 +1771,7 @@ showUploadState('Default');
     showScreen(document.getElementById('screenEmailGate'));
     showGateForm();
     showLinkedInJobStep(linkedInProfile);
+    restorePendingImage();
     return;
   }
 
@@ -1769,6 +1781,7 @@ showUploadState('Default');
     showScreen(document.getElementById('screenEmailGate'));
     showGateForm();
     showLinkedInJobStep(googleProfile); // reuses same job-title UI
+    restorePendingImage();
     return;
   }
 

@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Camera Score™ — An Audience From Anywhere</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
+<!-- MediaPipe Face Detection (client-side) -->
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4.1646425229/face_detection.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
@@ -248,7 +252,18 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 .referral-sent{font-family:'Barlow',sans-serif;font-size:15px;color:var(--text-muted);font-style:italic;padding:8px 0;}
 .referral-error{font-family:'Barlow',sans-serif;font-size:15px;color:var(--red);padding:8px 0;}
 
-/* Criteria cards grid */
+
+/* Traffic lights — replaces criteria cards */
+.tl-grid{width:100%;display:flex;flex-direction:column;gap:0;margin-bottom:28px;}
+.tl-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--border);}
+.tl-row:last-child{border-bottom:none;}
+.tl-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+.tl-dot.green{background:#2a9d5c;}
+.tl-dot.amber{background:#d4860b;}
+.tl-dot.red{background:#c0392b;}
+.tl-label{font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.03em;color:var(--text);}
+
+/* Criteria cards grid (legacy — kept for audio card) */
 .criteria-grid{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:28px;}
 .criteria-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 16px;opacity:0;transform:translateY(6px);transition:opacity 0.35s ease,transform 0.35s ease;}
 .criteria-card.show{opacity:1;transform:translateY(0);}
@@ -552,7 +567,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
     <!-- No uses remaining state -->
     <div class="gate-paywall" id="gatePaywallState">
       <div class="gate-paywall-heading">You have used your three free analyses</div>
-      <p class="gate-paywall-copy">The video course covers everything your scores have been pointing at — step-by-step guidance for every setup and budget. Pre-order now at the launch price, available through May 1st.</p>
+      <p class="gate-paywall-copy">The video course covers everything your scores have been pointing at — step-by-step guidance for every setup and budget. Pre-orders are open for a limited time while discounted pricing lasts.</p>
       <button class="gate-paywall-btn" onclick="window.open('https://anaudiencefromanywhere.com','_blank')">Pre-order the course →</button>
     </div>
 
@@ -609,12 +624,11 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
         <div class="breakdown-tier-sub">Here is what the camera saw — criterion by criterion.</div>
       </div>
     </div>
-    <div class="breakdown-section-label">Criterion by criterion</div>
-    <div class="criteria-grid" id="criteriaGrid"></div>
+    <div class="tl-grid" id="criteriaGrid"></div>
     <div class="book-callout">
       <div class="book-callout-text">
         <div class="book-callout-heading">Want the complete answer?</div>
-        <div class="book-callout-copy">The video course covers everything your score is pointing at — step-by-step guidance for every setup and budget. Pre-order now at the launch price, available through May 1st.</div>
+        <div class="book-callout-copy">The video course covers everything your score is pointing at — step-by-step guidance for every setup and budget. Pre-orders are open for a limited time while discounted pricing lasts.</div>
       </div>
     </div>
     <button class="action-btn" onclick="window.open('https://anaudiencefromanywhere.com','_blank')">Pre-order the book →</button>
@@ -884,25 +898,189 @@ function resizeImage(dataUrl, maxPx, quality) {
   });
 }
 
+
+// ═══════════════════════════════════════
+// CLIENT-SIDE LIGHTING ANALYSIS
+// MediaPipe face detection + Canvas brightness → f-stop threshold
+// ═══════════════════════════════════════
+
+let clientLightingSignal = null; // 'green' | 'amber' | 'red' | null (null = face not detected)
+
+// Calculate average perceptual luminance of a pixel region from canvas ImageData
+function regionLuminance(ctx, x, y, w, h, imgW, imgH) {
+  const sx = Math.max(0, Math.round(x));
+  const sy = Math.max(0, Math.round(y));
+  const sw = Math.min(imgW - sx, Math.round(w));
+  const sh = Math.min(imgH - sy, Math.round(h));
+  if (sw <= 0 || sh <= 0) return null;
+  const data = ctx.getImageData(sx, sy, sw, sh).data;
+  let total = 0, count = 0;
+  for (let i = 0; i < data.length; i += 4) {
+    // Perceptual luminance (ITU-R BT.709)
+    const r = data[i] / 255, g = data[i+1] / 255, b = data[i+2] / 255;
+    total += 0.2126 * r + 0.7152 * g + 0.0722 * b;
+    count++;
+  }
+  return count > 0 ? total / count : null;
+}
+
+// F-stop threshold: one stop = sqrt(2) ≈ 1.414x luminance
+// Background > 2× face → Red (two stops brighter)
+// Background 1.414×–2× face → Amber (one to two stops)
+// Background ≤ 1.414× face → Green
+function fStopSignal(faceLum, bgLum) {
+  if (faceLum === null || bgLum === null || faceLum <= 0) return 'amber'; // fallback
+  const ratio = bgLum / faceLum;
+  if (ratio > 2.0)   return 'red';
+  if (ratio > 1.414) return 'amber';
+  return 'green';
+}
+
+// Draw image onto canvas and run MediaPipe face detection
+async function analyseClientLighting(dataUrl) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = async () => {
+      const W = img.naturalWidth;
+      const H = img.naturalHeight;
+
+      // Draw full image to canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = W; canvas.height = H;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      // Try MediaPipe face detection
+      try {
+        const faceDetection = new FaceDetection({
+          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4.1646425229/${file}`
+        });
+        faceDetection.setOptions({
+          model: 'short',       // fast short-range model
+          minDetectionConfidence: 0.4
+        });
+
+        let resolved = false;
+        faceDetection.onResults((results) => {
+          if (resolved) return;
+          resolved = true;
+
+          const detections = results.detections || [];
+          if (detections.length === 0) {
+            // No face detected — can't do brightness analysis, signal null
+            resolve(null);
+            return;
+          }
+
+          // Use the largest (most prominent) face
+          let best = detections[0];
+          if (detections.length > 1) {
+            best = detections.reduce((a, b) => {
+              const aA = a.boundingBox.width * a.boundingBox.height;
+              const bA = b.boundingBox.width * b.boundingBox.height;
+              return bA > aA ? b : a;
+            });
+          }
+
+          const bb = best.boundingBox;
+          // MediaPipe returns normalised coords (0–1 relative to image)
+          const fx = bb.xCenter - bb.width / 2;
+          const fy = bb.yCenter - bb.height / 2;
+          const fw = bb.width;
+          const fh = bb.height;
+
+          // Face region (in pixels) — inset slightly to avoid edge noise
+          const inset = 0.08;
+          const faceX = (fx + fw * inset) * W;
+          const faceY = (fy + fh * inset) * H;
+          const faceW = fw * (1 - inset * 2) * W;
+          const faceH = fh * (1 - inset * 2) * H;
+
+          const faceLum = regionLuminance(ctx, faceX, faceY, faceW, faceH, W, H);
+
+          // Background: full image minus a generous face zone (150% bounding box)
+          // We sample four background strips: top, bottom, left, right
+          const padX = fw * 0.75 * W;
+          const padY = fh * 0.75 * H;
+          const bgCenterX = (fx + fw / 2) * W;
+          const bgCenterY = (fy + fh / 2) * H;
+
+          // Sample strips that avoid the face zone
+          let bgTotal = 0, bgCount = 0;
+          const strips = [
+            // top strip
+            { x: 0, y: 0, w: W, h: Math.max(1, bgCenterY - padY) },
+            // bottom strip
+            { x: 0, y: Math.min(H - 1, bgCenterY + padY), w: W, h: Math.max(1, H - (bgCenterY + padY)) },
+            // left strip
+            { x: 0, y: 0, w: Math.max(1, bgCenterX - padX), h: H },
+            // right strip
+            { x: Math.min(W - 1, bgCenterX + padX), y: 0, w: Math.max(1, W - (bgCenterX + padX)), h: H },
+          ];
+
+          for (const s of strips) {
+            const sw = Math.round(s.w), sh = Math.round(s.h);
+            if (sw < 4 || sh < 4) continue;
+            const sx = Math.round(s.x), sy = Math.round(s.y);
+            const data = ctx.getImageData(sx, sy, sw, sh).data;
+            for (let i = 0; i < data.length; i += 4) {
+              const r = data[i] / 255, g = data[i+1] / 255, b = data[i+2] / 255;
+              bgTotal += 0.2126 * r + 0.7152 * g + 0.0722 * b;
+              bgCount++;
+            }
+          }
+          const bgLum = bgCount > 0 ? bgTotal / bgCount : null;
+
+          const signal = fStopSignal(faceLum, bgLum);
+          console.log('[Lighting] face:', faceLum?.toFixed(3), 'bg:', bgLum?.toFixed(3), 'ratio:', bgLum && faceLum ? (bgLum/faceLum).toFixed(2) : 'n/a', '→', signal);
+          resolve(signal);
+        });
+
+        // Send the canvas frame to MediaPipe
+        await faceDetection.send({ image: canvas });
+
+        // Safety timeout — if MediaPipe never calls back
+        setTimeout(() => { if (!resolved) { resolved = true; resolve(null); } }, 3000);
+
+      } catch (e) {
+        console.warn('[Lighting] MediaPipe error:', e.message);
+        resolve(null); // graceful fallback — AI handles it
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = dataUrl;
+  });
+}
+
 async function callVisionAPI(dataUrl) {
   apiResult = null; apiError = null; apiDone = false;
+  clientLightingSignal = null;
 
-  // Resize large images before sending — cap at 1200px longest side
-  const resizedDataUrl = await resizeImage(dataUrl, 1200, 0.85);
+  // Run client-side lighting analysis AND API call in parallel
+  const [resizedDataUrl] = await Promise.all([resizeImage(dataUrl, 1200, 0.85)]);
   const base64 = resizedDataUrl.split(',')[1];
   const mediaType = 'image/jpeg';
+
+  // Kick off client lighting analysis (uses original full-res dataUrl for accuracy)
+  const lightingPromise = analyseClientLighting(dataUrl);
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 20000);
 
   try {
-    const response = await fetch('/api/analyse', {
-      method: 'POST',
-      signal: controller.signal,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ imageData: base64, mediaType: mediaType })
-    });
+    const [response, lightingResult] = await Promise.all([
+      fetch('/api/analyse', {
+        method: 'POST',
+        signal: controller.signal,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageData: base64, mediaType: mediaType })
+      }),
+      lightingPromise
+    ]);
     clearTimeout(timeout);
+    clientLightingSignal = lightingResult; // 'green'|'amber'|'red'|null
+
     if (!response.ok) {
       const errText = await response.text();
       throw new Error('API error ' + response.status + ': ' + errText.slice(0,200));
@@ -996,8 +1174,15 @@ function routeResult() {
       showScreen(document.getElementById('screenBgBlur'));
       return;
     }
+    // bright_background disqualification now handled client-side via traffic lights
+    // (retained in AI prompt as fallback only — client-side always takes priority for lighting)
     if (disqValue === 'bright_background' || disqValue === 'bright background' || disqValue === 'brightbg') {
-      showScreen(document.getElementById('screenBrightBg'));
+      // Don't hard-disqualify — fall through to normal scoring + traffic lights
+      console.log('[Lighting] AI flagged bright_background — client-side signal takes priority:', clientLightingSignal);
+      // Remove the disqualification key so routeResult falls through to scoring
+      delete apiResult.disqualification;
+      // Re-run routing now that disq is cleared
+      routeResult();
       return;
     }
     // Unknown disqualification value — log it and fall through to normal scoring
@@ -1052,10 +1237,32 @@ function goToBreakdown(){
 
 async function sendResultsEmail(email, name, overall, criteria){
   try {
+    // Build signals map for email
+    // criteria may be the raw API object {lighting:{score:...}, angle:{score:...}}
+    // or the mapped array [{key:'lighting', score:...}, ...]
+    const signals = {};
+    if (criteria) {
+      if (Array.isArray(criteria)) {
+        criteria.forEach(c => { signals[c.key] = scoreToSignal(c.score); });
+      } else {
+        // Raw API object shape
+        Object.entries(criteria).forEach(([key, val]) => {
+          if (val && typeof val.score === 'number') signals[key] = scoreToSignal(val.score);
+        });
+      }
+    }
+    if (clientLightingSignal) signals['lighting'] = clientLightingSignal;
+
     await fetch('/api/send-results', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, name, overall, criteria })
+      body: JSON.stringify({
+        email,
+        name,
+        overall,
+        lightingSignal: clientLightingSignal,
+        signals
+      })
     });
   } catch(e) {
     // Silent fail — never breaks the scoring flow
@@ -1063,38 +1270,57 @@ async function sendResultsEmail(email, name, overall, criteria){
   }
 }
 
+// Helper: score → traffic light signal
+function scoreToSignal(score) {
+  if (score >= 75) return 'green';
+  if (score >= 50) return 'amber';
+  return 'red';
+}
+
 function buildBreakdown(score, criteria){
   const tier=getTier(score);
-  const color='#c49e58';
   // Summary bar
   document.getElementById('breakdownScoreNum').textContent=score;
   document.getElementById('breakdownScoreNum').style.color='#C0392B';
   document.getElementById('breakdownScoreCircle').style.borderColor='#C0392B';
   document.getElementById('breakdownTierName').textContent=tier.name;
   document.getElementById('breakdownTierName').style.color='';
-  // Cards
+
+  // Build traffic light signals
   const grid=document.getElementById('criteriaGrid');
   grid.innerHTML='';
-  criteria.forEach((c,i)=>{
-    const card=document.createElement('div');
-    card.className='criteria-card';
-    card.id='ccard-'+i;
-    card.innerHTML=`
-      <div class="criteria-card-header">
-        <span class="criteria-card-label">${c.label}</span>
-        <span class="criteria-card-score">${c.score}</span>
-      </div>
-      <div class="criteria-bar-track">
-        <div class="criteria-bar-fill" id="bar-${i}" style="width:0%"></div>
-      </div>
-      <div class="criteria-comment">${c.comment}</div>
-      ${c.hint ? `<div class="criteria-hint">→ ${c.hint}</div>` : ''}`;
-    grid.appendChild(card);
-    // Staggered reveal
-    setTimeout(()=>{
-      card.classList.add('show');
-      setTimeout(()=>{document.getElementById('bar-'+i).style.width=c.score+'%';},80);
-    }, i*110);
+  grid.className='tl-grid';
+
+  // Build signal map — use clientLightingSignal for lighting if available
+  const signalMap = {};
+  criteria.forEach(c => {
+    signalMap[c.key] = scoreToSignal(c.score);
+  });
+  if (clientLightingSignal) {
+    signalMap['lighting'] = clientLightingSignal;
+  }
+
+  const tlRows = [
+    { key: 'lighting',   label: 'Lighting' },
+    { key: 'angle',      label: 'Camera angle' },
+    { key: 'background', label: 'Background' },
+    { key: 'framing',    label: 'Framing' },
+    { key: 'presence',   label: 'Presence' },
+  ];
+
+  tlRows.forEach((row, i) => {
+    const signal = signalMap[row.key] || 'amber';
+    const div = document.createElement('div');
+    div.className = 'tl-row';
+    div.style.opacity = '0';
+    div.style.transform = 'translateY(6px)';
+    div.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+    div.innerHTML = `<div class="tl-dot ${signal}"></div><span class="tl-label">${row.label}</span>`;
+    grid.appendChild(div);
+    setTimeout(() => {
+      div.style.opacity = '1';
+      div.style.transform = 'translateY(0)';
+    }, i * 90);
   });
 
   // Add audio test card as 6th item

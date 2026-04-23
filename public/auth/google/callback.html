@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Connecting Google… — Camera Score™</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0c0b0a;
+  --text:#edebe6;
+  --text-sec:rgba(237,235,230,0.6);
+  --red:#C0392B;
+  --red-glow:rgba(192,57,43,0.28);
+  --surface:#151311;
+  --border:rgba(255,248,235,0.07);
+  --ease-premium:cubic-bezier(0.16,1,0.3,1);
+}
+html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;display:flex;align-items:center;justify-content:center;}
+.wrap{text-align:center;padding:40px 24px;max-width:420px;}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:rgba(200,204,212,0.7);margin-bottom:32px;}
+.logo .red{color:var(--red);}
+.spinner-ring{width:48px;height:48px;border:3px solid rgba(232,230,224,0.1);border-top-color:rgba(232,230,224,0.6);border-radius:50%;animation:spin 0.9s linear infinite;margin:0 auto 28px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.status{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text);margin-bottom:8px;}
+.sub{font-size:14px;color:var(--text-sec);line-height:1.6;}
+.error-wrap{display:none;flex-direction:column;align-items:center;gap:12px;}
+.error-icon{font-size:32px;margin-bottom:4px;}
+.error-title{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--red);}
+.error-msg{font-size:14px;color:var(--text-sec);line-height:1.6;max-width:340px;}
+.retry-btn{margin-top:8px;background:transparent;border:1px solid rgba(192,57,43,0.5);border-radius:2px;padding:10px 24px;font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.04em;color:var(--red);cursor:pointer;transition:border-color 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);}
+.retry-btn:hover{border-color:var(--red);box-shadow:0 0 32px var(--red-glow);transform:translateY(-2px);}
+</style>
+</head>
+<body>
+<div class="wrap" id="loadingWrap">
+  <div class="logo"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</div>
+  <div class="spinner-ring"></div>
+  <div class="status">Connecting Google</div>
+  <p class="sub">Fetching your profile details…</p>
+</div>
+
+<div class="wrap error-wrap" id="errorWrap">
+  <div class="logo"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</div>
+  <div class="error-icon">⚠</div>
+  <div class="error-title">Connection failed</div>
+  <p class="error-msg" id="errorMsg">Something went wrong connecting your Google account.</p>
+  <button class="retry-btn" onclick="goBack()">← Try again</button>
+</div>
+
+<script>
+(async function() {
+  const params   = new URLSearchParams(window.location.search);
+  const code     = params.get('code');
+  const error    = params.get('error');
+  const errorDesc = params.get('error_description');
+
+  function showError(msg) {
+    document.getElementById('loadingWrap').style.display = 'none';
+    const wrap = document.getElementById('errorWrap');
+    wrap.style.display = 'flex';
+    document.getElementById('errorMsg').textContent = msg || 'Something went wrong. Please try again.';
+  }
+
+  function goBack() {
+    window.location.href = '/';
+  }
+  window.goBack = goBack;
+
+  // Google returned an error (e.g. user cancelled)
+  if (error) {
+    if (error === 'access_denied') {
+      window.location.href = '/';
+      return;
+    }
+    showError(errorDesc || 'Google authorisation was declined.');
+    return;
+  }
+
+  if (!code) {
+    showError('No authorisation code received from Google.');
+    return;
+  }
+
+  try {
+    // Exchange code via serverless function (keeps secret server-side)
+    const res = await fetch('/api/google-auth?code=' + encodeURIComponent(code));
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      showError(data.error || 'Token exchange failed. Please try again.');
+      return;
+    }
+
+    const profile = await res.json();
+
+    if (!profile.email && !profile.firstName) {
+      showError('Could not read your Google profile. Please try again.');
+      return;
+    }
+
+    // Store profile in sessionStorage, then redirect to main tool
+    sessionStorage.setItem('google_profile', JSON.stringify({
+      firstName: profile.firstName || '',
+      lastName:  profile.lastName  || '',
+      email:     profile.email     || '',
+      picture:   profile.picture   || '',
+      sub:       profile.sub       || '',
+      ts:        Date.now()
+    }));
+
+    // Redirect back to main tool — ?google=1 signals to pre-fill the form
+    window.location.href = '/?google=1';
+
+  } catch (err) {
+    console.error('Google callback error:', err);
+    showError('A network error occurred. Please check your connection and try again.');
+  }
+})();
+</script>
+</body>
+</html>

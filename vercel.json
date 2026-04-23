@@ -3,6 +3,7 @@
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/auth/linkedin/callback", "dest": "/public/auth/linkedin/callback.html" },
+    { "src": "/auth/google/callback", "dest": "/public/auth/google/callback.html" },
     { "src": "/(.*)", "dest": "/public/$1" }
   ]
 }

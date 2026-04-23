@@ -1,9 +1,8 @@
 {
   "version": 2,
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/auth/linkedin/callback", "dest": "/public/auth/linkedin/callback.html" },
-    { "src": "/auth/google/callback", "dest": "/public/auth/google/callback.html" },
-    { "src": "/(.*)", "dest": "/public/$1" }
+  "rewrites": [
+    { "source": "/auth/linkedin/callback", "destination": "/auth/linkedin/callback.html" },
+    { "source": "/auth/google/callback", "destination": "/auth/google/callback.html" },
+    { "source": "/api/:path*", "destination": "/api/:path*" }
   ]
 }

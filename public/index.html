@@ -1206,12 +1206,12 @@ function routeResult() {
   }
   // Map criteria to UI format
   if (apiResult.criteria) {
+    // Lighting is client-side only — AI returns angle, background, framing, presence
     currentCriteria = [
-      {key:'lighting',   label:'Lighting',        icon:'', score: Math.round(apiResult.criteria.lighting?.score  || 50), comment: apiResult.criteria.lighting?.comment  || '', hint: apiResult.criteria.lighting?.hint  || ''},
       {key:'angle',      label:'Camera angle',    icon:'', score: Math.round(apiResult.criteria.angle?.score    || 50), comment: apiResult.criteria.angle?.comment    || '', hint: apiResult.criteria.angle?.hint    || ''},
       {key:'background', label:'Background',      icon:'', score: Math.round(apiResult.criteria.background?.score|| 50), comment: apiResult.criteria.background?.comment|| '', hint: apiResult.criteria.background?.hint|| ''},
       {key:'framing',    label:'Framing',         icon:'', score: Math.round(apiResult.criteria.framing?.score  || 50), comment: apiResult.criteria.framing?.comment  || '', hint: apiResult.criteria.framing?.hint  || ''},
-      {key:'presence',   label:'Overall presence',icon:'', score: Math.round(apiResult.criteria.presence?.score || 50), comment: apiResult.criteria.presence?.comment || '', hint: apiResult.criteria.presence?.hint || ''},
+      {key:'presence',   label:'Presence',        icon:'', score: Math.round(apiResult.criteria.presence?.score || 50), comment: apiResult.criteria.presence?.comment || '', hint: apiResult.criteria.presence?.hint || ''},
     ];
   }
   revealScore = Math.round(score);
@@ -1311,7 +1311,7 @@ function buildBreakdown(score, criteria){
   }
 
   const tlRows = [
-    { key: 'lighting',   label: 'Lighting' },
+    { key: 'lighting',   label: 'Lighting' },    // client-side only
     { key: 'angle',      label: 'Camera angle' },
     { key: 'background', label: 'Background' },
     { key: 'framing',    label: 'Framing' },

@@ -1370,6 +1370,27 @@ function showLinkedInJobStep(profile) {
   setTimeout(() => jobField.focus(), 200);
 }
 
+function checkGoogleReturn() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('google') !== '1') return false;
+
+  // Clean URL
+  window.history.replaceState({}, document.title, window.location.pathname);
+
+  const raw = sessionStorage.getItem('google_profile');
+  if (!raw) return false;
+
+  try {
+    const profile = JSON.parse(raw);
+    // Profile valid for 15 minutes
+    if (Date.now() - (profile.ts || 0) > 15 * 60 * 1000) {
+      sessionStorage.removeItem('google_profile');
+      return false;
+    }
+    return profile;
+  } catch(e) { return false; }
+}
+
 function checkLinkedInReturn() {
   const params = new URLSearchParams(window.location.search);
   if (params.get('linkedin') !== '1') return false;
@@ -1429,6 +1450,7 @@ async function handleLinkedInSubmit() {
       }
       setSession(email, user.name || name, user.uses_remaining);
       sessionStorage.removeItem('linkedin_profile');
+      sessionStorage.removeItem('google_profile');
       showScreen(document.getElementById('screenUpload'));
       startLoadingWithDecrement(email);
       return;
@@ -1447,6 +1469,7 @@ async function handleLinkedInSubmit() {
     const uses = user ? user.uses_remaining : 3;
     setSession(email, name, uses);
     sessionStorage.removeItem('linkedin_profile');
+    sessionStorage.removeItem('google_profile');
 
     showScreen(document.getElementById('screenUpload'));
     startLoadingWithDecrement(email);
@@ -1731,13 +1754,23 @@ function showAudioError(msg) {
 // ═══════════════════════════════════════
 showUploadState('Default');
 
-// 1. Check for LinkedIn OAuth return (?linkedin=1)
+// 1. Check for LinkedIn or Google OAuth return
 (function() {
+  // LinkedIn
   const linkedInProfile = checkLinkedInReturn();
   if (linkedInProfile) {
     showScreen(document.getElementById('screenEmailGate'));
     showGateForm();
     showLinkedInJobStep(linkedInProfile);
+    return;
+  }
+
+  // Google
+  const googleProfile = checkGoogleReturn();
+  if (googleProfile) {
+    showScreen(document.getElementById('screenEmailGate'));
+    showGateForm();
+    showLinkedInJobStep(googleProfile); // reuses same job-title UI
     return;
   }
 

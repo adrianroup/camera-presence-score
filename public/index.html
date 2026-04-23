@@ -1452,7 +1452,6 @@ async function handleLinkedInSubmit() {
       sessionStorage.removeItem('linkedin_profile');
       sessionStorage.removeItem('google_profile');
       showScreen(document.getElementById('screenUpload'));
-      startLoadingWithDecrement(email);
       return;
     }
 
@@ -1472,7 +1471,6 @@ async function handleLinkedInSubmit() {
     sessionStorage.removeItem('google_profile');
 
     showScreen(document.getElementById('screenUpload'));
-    startLoadingWithDecrement(email);
 
   } catch(err) {
     console.error('LinkedIn submit error:', err);

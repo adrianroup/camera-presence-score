@@ -43,10 +43,14 @@ export default async function handler(req, res) {
   // ─── Poem + fix content per criterion ───────────────────────────────────
   // Each: { movie, poem (HTML), fix, part }
 
+  // Base URL for illustrations served from Vercel public folder
+  const BASE_URL = 'https://test.anaudiencefromanywhere.com';
+
   const content = {
     lighting: {
       movie: 'The Shawshank Redemption',
       subject: 'Have you seen the movie: The Shawshank Redemption? You\'re backlit.',
+      illustration: `${BASE_URL}/illustration-larry-lighting.png`,
       poem: `Your main light source is behind you, not in front.<br><br>The camera exposes for the brightest thing in frame. Right now that\'s the window. Your face loses every time.<br><br>Andy Dufresne spent nineteen years in Shawshank before he finally walked out into the light. You can fix yours by moving a lamp.`,
       fix: 'Put a light source — a lamp, a window, anything bright — in front of you, not behind you.',
       part: 'Part III: The Craft',
@@ -54,6 +58,7 @@ export default async function handler(req, res) {
     angle: {
       movie: 'Apocalypse Now',
       subject: 'Have you seen the movie: Apocalypse Now? Your camera is below eye level.',
+      illustration: `${BASE_URL}/illustration-alan-angle.png`,
       poem: `Your camera is below eye level.<br><br>When the camera sits low, you get ceiling in the shot, nostrils in the frame, and authority quietly exits the call.<br><br>Captain Willard spent the entire opening of Apocalypse Now face-down on a Saigon hotel bed, staring at the ceiling fan. It was a cinematic choice. Your laptop on your desk is not.`,
       fix: 'Stack some books under your laptop — or raise the monitor — until the lens is level with your eyes.',
       part: 'Part II: The World Changed. Did You?',
@@ -61,6 +66,7 @@ export default async function handler(req, res) {
     background: {
       movie: 'Garden State',
       subject: 'Have you seen the movie: Garden State? Your background is competing with you.',
+      illustration: `${BASE_URL}/illustration-brian-background.png`,
       poem: `Your background is pulling attention away from your face.<br><br>Audiences read the room — automatically, involuntarily. If the room is loud, they stop listening to you.<br><br>In <em>Garden State</em>, Zach Braff blends into a wallpaper pattern in his childhood bedroom. It\'s a metaphor. It is also what is happening on your calls.`,
       fix: 'Find a plain wall, or clear the shelf behind you — anything the eye can settle on without working for it.',
       part: 'Part IV: The Room You\'re Actually In',
@@ -68,6 +74,7 @@ export default async function handler(req, res) {
     framing: {
       movie: 'Home Alone',
       subject: 'Have you seen the movie: Home Alone? You\'re too close to the camera.',
+      illustration: `${BASE_URL}/illustration-dennis-distance.png`,
       poem: `The frame is mostly your face — shoulders aren\'t visible, and there\'s no breathing room.<br><br>It feels claustrophobic. The audience can\'t settle. They spend the whole call half-braced, like Kevin McCallister pressing his cheeks in the mirror before he realizes the burglars are real.`,
       fix: 'Back away from the camera until your shoulders are in frame and there\'s a little air above your head.',
       part: 'Part II: The World Changed. Did You?',
@@ -75,6 +82,7 @@ export default async function handler(req, res) {
     presence: {
       movie: '2001: A Space Odyssey',
       subject: 'Have you seen the movie: 2001: A Space Odyssey? You\'re not looking at the camera.',
+      illustration: `${BASE_URL}/illustration-eddie-eyecontact.png`,
       poem: `You\'re looking at your own tile, or your notes, or the faces on your screen — not the lens.<br><br>To everyone watching, you\'re looking slightly sideways for the entire call. It reads as distracted, uncertain, or — if they\'re being uncharitable — evasive.<br><br>HAL 9000 never blinked, never looked away, and somehow made "I\'m sorry, Dave" feel like a threat. Eye contact is a tool. It works better when you use it.`,
       fix: 'Look at the small dot at the top of your screen — the lens, not your tile. A small sticker next to it helps your eyes find it automatically.',
       part: 'Part I: What Has Always Been True',
@@ -119,17 +127,21 @@ export default async function handler(req, res) {
   // ─── Choose email body ────────────────────────────────────────────────────
   let poemHtml, fixHtml, partRef, subjectSuffix;
 
+  let illustrationUrl = '';
+
   if (allGreen) {
     poemHtml = `Nothing was flagged. Every criterion is green.<br><br>That means your light is good, your frame is good, your eye contact is there, and your background isn\'t stealing the show. You didn\'t skip steps. That puts you ahead of most people on most calls.<br><br>Ferris Bueller took a Ferrari, a parade, and an entire city just to feel alive for one afternoon. You set up a decent camera angle. Arguably more useful.`;
     fixHtml = 'Go make something worth watching.';
     partRef = 'Part V: Now Make It Yours';
     subjectSuffix = 'Have you seen the movie: Ferris Bueller\'s Day Off? You passed. All of it.';
+    illustrationUrl = `${BASE_URL}/illustration-allgreen-ferris.png`;
   } else {
     const c = content[worstCriterion.key] || content.lighting;
     poemHtml = c.poem;
     fixHtml  = c.fix;
     partRef  = c.part;
     subjectSuffix = c.subject || (worstCriterion.signal === 'red' ? 'One thing to fix.' : 'Getting closer.');
+    illustrationUrl = c.illustration || '';
   }
 
   const html = `
@@ -151,6 +163,12 @@ export default async function handler(req, res) {
         <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#888;margin:0 0 14px 0;">Your Camera Presence Score™</p>
         ${lightsHtml}
       </td></tr>
+
+      <!-- Illustration -->
+      ${illustrationUrl ? `
+      <tr><td style="padding:28px 40px 0 40px;">
+        <img src="${illustrationUrl}" alt="" width="440" style="width:100%;max-width:440px;height:auto;display:block;border:0;" />
+      </td></tr>` : ''}
 
       <!-- Poem -->
       <tr><td style="padding:28px 40px 0 40px;">

@@ -153,9 +153,20 @@ export default async function handler(req, res) {
   <tr><td align="center" style="padding:40px 20px;">
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;background:#ffffff;">
 
-      <!-- Header -->
-      <tr><td style="padding:32px 40px 0 40px;">
-        <p style="font-family:Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#aaaaaa;margin:0 0 24px 0;">An Audience From Anywhere &nbsp;·&nbsp; Adrian Roup</p>
+      <!-- Header — branded dark bar -->
+      <tr><td style="background:#0c0b0a;padding:28px 40px 22px 40px;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td>
+              <div style="font-family:Arial,sans-serif;font-size:22px;font-weight:900;letter-spacing:0.18em;text-transform:uppercase;color:#edebe6;line-height:1;">AFA</div>
+              <div style="width:32px;height:2px;background:#C0392B;margin-top:6px;"></div>
+              <div style="font-family:Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:rgba(237,235,230,0.45);margin-top:8px;">An Audience From Anywhere</div>
+            </td>
+            <td align="right" style="vertical-align:middle;">
+              <div style="font-family:Arial,sans-serif;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:rgba(237,235,230,0.35);">Camera Presence Score™</div>
+            </td>
+          </tr>
+        </table>
       </td></tr>
 
       <!-- Traffic lights -->

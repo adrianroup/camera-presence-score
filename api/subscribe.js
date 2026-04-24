@@ -42,9 +42,13 @@ export default async function handler(req, res) {
       body: JSON.stringify(profilePayload)
     });
 
-    // 409 = profile already exists — still get the ID from the response
     const profileData = await profileRes.json();
-    const profileId = profileData?.data?.id;
+    let profileId = profileData?.data?.id;
+
+    // 409 = profile already exists — extract ID from the conflict error meta
+    if (!profileId && profileRes.status === 409) {
+      profileId = profileData?.errors?.[0]?.meta?.duplicate_profile_id;
+    }
 
     if (!profileId) {
       return res.status(500).json({ error: 'Could not create or find profile', detail: JSON.stringify(profileData).slice(0, 200) });

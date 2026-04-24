@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { email, overall, lightingSignal, signals } = req.body;
+  const { email, overall, lightingSignal, signals, disqualification } = req.body;
   if (!email || overall === undefined) return res.status(400).json({ error: 'Missing email or score' });
 
   // ─── Traffic light values ───────────────────────────────────────────────
@@ -91,6 +91,10 @@ export default async function handler(req, res) {
 
   // ─── If all green — positive email ──────────────────────────────────────
   const allGreen = criteriaWeights.every(c => c.signal === 'green');
+  const allAmber = criteriaWeights.every(c => c.signal === 'amber');
+  const hasRed   = criteriaWeights.some(c => c.signal === 'red');
+  const redCount = criteriaWeights.filter(c => c.signal === 'red').length;
+  const amberCount = criteriaWeights.filter(c => c.signal === 'amber').length;
   const allAmberOrGreen = criteriaWeights.every(c => c.signal !== 'red');
 
   // ─── Traffic light HTML helper ───────────────────────────────────────────
@@ -124,17 +128,67 @@ export default async function handler(req, res) {
       ${trafficLight(presenceColor,  'Presence')}
     </table>`;
 
+  // ─── Disqualification scenarios ─────────────────────────────────────────
+  const disqContent = {
+    ring_light: {
+      movie: 'The Hangover',
+      subject: 'Have you seen the movie: The Hangover? Your ring light has questions.',
+      illustration: `${BASE_URL}/illustration-ringlight-dentist.png`,
+      poem: `Something got flagged in your camera presence score: the ring light.<br><br>Not because you have one. Having one is fine. The problem is where it's sitting — dead centre, straight ahead, pointed directly at the lens. That turns your eyes into two small moons and your face into a passport photo from a vending machine.<br><br>In <em>The Hangover</em>, four men wake up in a Las Vegas hotel suite with no memory, a tiger in the bathroom, and a missing groom. They have every resource they need. The problem is arrangement.<br><br>Same light. Wrong position.<br><br>The ring was <em>hung</em> wrong — and the <em>over</em>-exposure gave the game away.<br><br>They piece it back together. You can too.`,
+      fix: 'Move the ring light to your 10 o\'clock or 2 o\'clock position — off-axis, angled toward your face at about 45 degrees. Or bounce it off a white wall behind your camera so the light wraps rather than blasts. Same light. Better result.',
+      part: 'Part IV: The Room You\'re Actually In',
+    },
+    background_blur: {
+      movie: 'Eternal Sunshine of the Spotless Mind',
+      subject: 'Have you seen the movie: Eternal Sunshine of the Spotless Mind? Is your background real?',
+      illustration: '',
+      poem: `Quick question — is the space behind you actually there?<br><br>The score picked up what looks like a digital background blur: the kind where the background goes soft in a way that doesn't match the light, where edges do strange things around hair and shoulders, where the wall seems to exist in a slightly different universe from the person in front of it.<br><br>In <em>Eternal Sunshine of the Spotless Mind</em>, memories get erased in real time. Things that were solid start to dissolve at the edges. Rooms disappear mid-scene. The background stops being reliable.<br><br>That's what a virtual blur filter does to your credibility on camera.<br><br>The <em>sunshine</em> is <em>eternal</em> — but the <em>spotless</em> background you've applied is fooling nobody, and the <em>mind</em> of your viewer registers something is slightly off even if they can't name it.<br><br>You don't need to hide the room. You need to own it.`,
+      fix: 'Turn off the digital blur or virtual background filter entirely. If the real background needs work, move your setup so there\'s at least two metres between you and the wall — natural depth creates its own soft focus without the glitching artefacts.',
+      part: 'Part IV: The Room You\'re Actually In',
+    },
+    bright_background: {
+      movie: 'Cool Hand Luke',
+      subject: "Have you seen the movie: Cool Hand Luke? What we've got here is a failure to illuminate.",
+      illustration: '',
+      poem: `The score flagged a bright background — which means the camera can't see your face.<br><br>The camera exposes for the brightest thing in frame. Right now that's whatever is behind you: a window, a lamp, a wall catching afternoon sun. Your face is in competition with it, and your face is losing.<br><br>You have become a silhouette. Present in the frame. Not readable in it.<br><br>In <em>Cool Hand Luke</em>, the Captain delivers his famous line from behind mirrored sunglasses, standing between Luke and the sun. The power isn't in what he says — it's in what Luke can't see. "What we've got here," he says, "is a failure to communicate."<br><br>That's what a blown-out background does to a call. <em>Cool</em> room. Wrong <em>hand</em>. The light is in the wrong place, and nobody can <em>Luke</em> past it.`,
+      fix: 'Close the blind or move away from the window. If the window is your only light source, turn your desk so it\'s in front of you, not behind. Your face should be the brightest object the camera sees. If it isn\'t, the camera makes the decision for you.',
+      part: 'Part III: The Craft',
+    },
+  };
+
   // ─── Choose email body ────────────────────────────────────────────────────
   let poemHtml, fixHtml, partRef, subjectSuffix;
-
   let illustrationUrl = '';
 
-  if (allGreen) {
+  if (disqualification && disqContent[disqualification]) {
+    // Disqualification email
+    const d = disqContent[disqualification];
+    poemHtml       = d.poem;
+    fixHtml        = d.fix;
+    partRef        = d.part;
+    subjectSuffix  = d.subject;
+    illustrationUrl = d.illustration || '';
+  } else if (allGreen) {
     poemHtml = `Nothing was flagged. Every criterion is green.<br><br>That means your light is good, your frame is good, your eye contact is there, and your background isn\'t stealing the show. You didn\'t skip steps. That puts you ahead of most people on most calls.<br><br>Ferris Bueller took a Ferrari, a parade, and an entire city just to feel alive for one afternoon. You set up a decent camera angle. Arguably more useful.`;
     fixHtml = 'Go make something worth watching.';
     partRef = 'Part V: Now Make It Yours';
     subjectSuffix = 'Have you seen the movie: Ferris Bueller\'s Day Off? You passed. All of it.';
     illustrationUrl = `${BASE_URL}/illustration-allgreen-ferris.png`;
+  } else if (allAmber) {
+    // All amber — Groundhog Day
+    poemHtml = `Everything came back amber.<br><br>Not red. Nothing is broken. But nothing is landing cleanly either — lighting, angle, background, framing, presence, all sitting in that particular shade of <em>close but not quite</em>.<br><br>Phil Connors wakes up on February 2nd. Again. He's not failing. He's not succeeding. He's looping — same day, same choices, same Sonny and Cher at 6am, same slight wrongness that he can't quite put his finger on until he finally decides to actually change something.<br><br>Every amber you've got is a <em>ground</em> that could be firmer, a <em>hog</em> that keeps doubling back on itself, a <em>day</em> that could break differently if one thing shifted.<br><br>The good news: amber means you're most of the way there. Each fix is small. Any one of them changes the frame.`;
+    fixHtml = 'Pick the one criterion that feels most fixable — start with your light source, since it affects everything downstream. Get that to green, then re-run the score. You don\'t need to fix everything at once. You just need to stop waking up on February 2nd.';
+    partRef = 'Part III: The Craft';
+    subjectSuffix = 'Have you seen the movie: Groundhog Day? You\'re almost there. Almost.';
+    illustrationUrl = '';
+  } else if (hasRed && amberCount >= 2) {
+    // Mixed — The Big Lebowski
+    const worst = content[worstCriterion.key] || content.lighting;
+    poemHtml = `The score came back with one red criterion and a couple of ambers alongside it.<br><br>Not a disaster. Not a clean pass. The kind of result where you can see exactly what the problem is — you're just not quite pulling it together into one coherent picture yet.<br><br>The Dude is not incapable. He is, in many ways, a man with a clear philosophy, a regular schedule, and an extremely specific idea of what constitutes a good rug. The problem is that nothing quite lines up. The rug gets ruined. The wrong Lebowski gets contacted. Everything almost works.<br><br><em>The Big</em> issue isn't that you're missing by much. <em>Lebowski</em> logic applies: every element is doing its own thing, and they haven't agreed to cooperate yet.<br><br>The red one first. Fix that, and the ambers are easier to see clearly.`;
+    fixHtml = worst.fix;
+    partRef = 'Part II: The World Changed. Did You?';
+    subjectSuffix = 'Have you seen the movie: The Big Lebowski? One red flag. A few amber ones.';
+    illustrationUrl = worst.illustration || '';
   } else {
     const c = content[worstCriterion.key] || content.lighting;
     poemHtml = c.poem;

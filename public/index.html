@@ -1178,10 +1178,12 @@ function routeResult() {
     const disqValue = String(apiResult.disqualification).toLowerCase().trim();
     if (disqValue === 'ring_light' || disqValue === 'ring light' || disqValue === 'ringlight') {
       showScreen(document.getElementById('screenRingLight'));
+      sendDisqEmail('ring_light');
       return;
     }
     if (disqValue === 'background_blur' || disqValue === 'background blur' || disqValue === 'bgblur') {
       showScreen(document.getElementById('screenBgBlur'));
+      sendDisqEmail('background_blur');
       return;
     }
     // bright_background disqualification now handled client-side via traffic lights
@@ -1245,6 +1247,27 @@ function goToBreakdown(){
   } catch(e) {}
 }
 
+async function sendDisqEmail(disqType) {
+  try {
+    const _s = getSession();
+    if (!_s || !_s.email) return;
+    await fetch('/api/send-results', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: _s.email,
+        name: _s.name || '',
+        overall: 0,
+        lightingSignal: clientLightingSignal || 'red',
+        signals: { lighting: 'red', angle: 'amber', background: 'red', framing: 'amber', presence: 'amber' },
+        disqualification: disqType
+      })
+    });
+  } catch(e) {
+    console.warn('Disq email failed:', e.message);
+  }
+}
+
 async function sendResultsEmail(email, name, overall, criteria){
   try {
     // Build signals map for email
@@ -1282,7 +1305,7 @@ async function sendResultsEmail(email, name, overall, criteria){
 
 // Helper: score → traffic light signal
 function scoreToSignal(score) {
-  if (score >= 75) return 'green';
+  if (score >= 85) return 'green';
   if (score >= 50) return 'amber';
   return 'red';
 }

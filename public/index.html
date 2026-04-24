@@ -1657,8 +1657,9 @@ function checkLinkedInReturn() {
 }
 
 async function handleLinkedInSubmit() {
-  const raw      = sessionStorage.getItem('linkedin_profile');
-  const profile  = raw ? JSON.parse(raw) : {};
+  const rawLI     = sessionStorage.getItem('linkedin_profile');
+  const rawGoogle = sessionStorage.getItem('google_profile');
+  const profile   = rawLI ? JSON.parse(rawLI) : (rawGoogle ? JSON.parse(rawGoogle) : {});
   const jobTitle = document.getElementById('gateJobTitleLinkedIn').value.trim();
   const errEl    = document.getElementById('gateErrorLinkedIn');
 
@@ -1670,12 +1671,12 @@ async function handleLinkedInSubmit() {
   errEl.style.display = 'none';
 
   const email     = profile.email     || '';
-  const firstName = profile.firstName || '';
-  const lastName  = profile.lastName  || '';
+  const firstName = profile.firstName || profile.given_name  || '';
+  const lastName  = profile.lastName  || profile.family_name || '';
   const name      = [firstName, lastName].filter(Boolean).join(' ');
 
   if (!email || !email.includes('@')) {
-    errEl.textContent = 'Could not read your LinkedIn email. Please use the manual form.';
+    errEl.textContent = 'Could not read your email. Please use the manual form.';
     errEl.style.display = 'block';
     return;
   }

@@ -65,34 +65,46 @@ The camera should be at eye level or fractionally above. The test is simple: whe
 
 85–100: Eye level or just above. The viewer feels like a peer. Professional.
 65–84: Slightly off — not a laptop problem, minor adjustment needed.
-0–45: Camera clearly below eye level — nostrils visible, chin prominent, ceiling in shot. OR camera clearly above eye level — top of head dominant, face compressed downward, subject appears to be looking up at the viewer. Both are fails. NO partial credit in this range.
+0–45: Camera clearly below eye level — nostrils visible, chin prominent, ceiling in shot. OR camera clearly above eye level — top of head dominant, face compressed downward, subject appears to be looking up at the viewer. Both are fails. Score MUST be 45 or below. You are not permitted to score higher than 45 if ANY of these are visible.
 Skip 46–64 entirely.
 
-LOW ANGLE TELL: Camera below eye level — ceiling visible in upper frame, nostrils prominent, forehead cropped or absent, chin and neck filling lower frame.
+LOW ANGLE — MANDATORY FAIL TRIGGERS (score 0–45, no exceptions):
+- Nostrils visible from below
+- Ceiling or top of doorframe visible in upper portion of frame
+- Chin and neck dominating lower half of frame
+- Subject appears to be looking upward toward camera
+If you can see up someone's nose, the camera is below eye level. Score it 0–45. Do not give partial credit.
+
 HIGH ANGLE TELL: Camera above eye level — top of head fills upper frame, face is compressed, subject appears small, too much floor or desk visible.
 TOO CLOSE: If the face fills more than 80% of the frame AND the angle is wrong, name both problems. "Too close" is a framing issue but compounds the angle problem.
 
 ─── BACKGROUND (0–100) ───
 The background should be subordinate to the face. It should not compete, distract, or dominate.
 
-85–100: Background clearly subordinate. Darker, softer, or genuinely intentional and identity-reinforcing with face as clear focal point.
-70–84: Minor issues — slightly busy but face holds attention.
-50–69: Background competes — clutter, colour clash, or elements drawing the eye away from the face.
-25–49: Background dominant over face.
+85–100: Background clearly subordinate. Darker, softer, or plain. Face is unmistakably the focal point.
+70–84: Minor issues — slightly busy but face still holds primary attention.
+50–69: Background competes — visible clutter, colour clash, or sharp elements pulling the eye. Score MUST be 69 or below if the background contains multiple distinct, sharp, competing elements.
+25–49: Background dominant over face — eye is drawn away from the subject more than toward them.
 0–24: Background has taken control entirely.
 
-BUSY BACKGROUND TELLS: Many distinct objects, colours, or patterns visible and sharp behind the subject. High visual complexity. Eye is pulled away from the face.
-SILHOUETTE DISRUPTION: Any object (shelf edge, picture frame, plant, door frame) that intersects or protrudes directly behind the subject's head. Particularly distracting on bald subjects or smooth head profiles. Deduct 8–12 and name it.
+HARD RED TRIGGERS — score MUST be 49 or below, no exceptions:
+- GALLERY WALL / ART WALL: Multiple framed pictures, artwork, or photographs covering the wall behind the subject. Even if the subject is sharp, the gallery competes directly. Score 35–49.
+- BUSY BOOKSHELF: Books, objects, and varied colours clearly visible and sharp on shelves directly behind the subject. Score 35–49.
+- KITCHEN: Cabinets, appliances, countertops, or food visible. The setting undermines any professional context. Score 30–44.
+- BEDROOM: Bed, headboard, pillows, or bedroom furniture visible. Score 30–44.
+- CAR INTERIOR: Dashboard, seats, windows, or car interior visible. Score 25–39.
+- HIGH VISUAL COMPLEXITY: 5+ distinct objects, colours, or patterns clearly visible and sharp behind the subject. Score 35–49.
+These are environmental fails. The setting is the message. You are not permitted to score above 49 when any of these are clearly present.
 
 INTENTIONAL BACKGROUND RULE: A background may be credited as intentional ONLY if ALL THREE are true:
 (1) Background elements are visibly softer in focus than the face — actual bokeh present, not assumed
 (2) Elements reinforce professional identity (subject's own books, awards, professional equipment)
-(3) Face remains the brightest and sharpest element in the frame
-A sharp busy bookshelf is NOT automatically intentional. It must also be subordinate.
+(3) Face remains the brightest and sharpest element in the frame, clearly dominant
+A sharp busy bookshelf is NOT intentional. It must be soft AND subordinate. When in doubt, it is not intentional.
 
-CARS, KITCHENS, BEDROOMS: These are environmental fails regardless of brightness. The setting is the message. Name it.
+SILHOUETTE DISRUPTION: Any object (shelf edge, picture frame, plant, door frame) that intersects or protrudes directly behind the subject's head. Particularly distracting on bald subjects. Deduct 10–15 and name it specifically.
 
-Penalties: horizontal line bisecting face at eye level -8 to -12; vertical split frame -10 to -12; wide angle distortion -10 to -15; bright warm-coloured wall competing with face -8 to -12; visible cables or equipment cluttering frame -5 to -8.
+Additional penalties (stack onto base score): horizontal line bisecting face at eye level -10 to -15; vertical split frame -10 to -12; wide angle distortion -10 to -15; bright warm-coloured wall competing with face -8 to -12; visible cables or equipment cluttering frame -5 to -8.
 
 ─── FRAMING (0–100) ───
 85–100: Face occupies 50–70% of frame. Eyes sit in the upper third. Shoulders visible. Subject centred.

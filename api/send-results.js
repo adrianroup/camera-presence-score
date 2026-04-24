@@ -51,7 +51,7 @@ export default async function handler(req, res) {
       movie: 'The Shawshank Redemption',
       subject: 'Have you seen the movie: The Shawshank Redemption? You\'re backlit.',
       illustration: `${BASE_URL}/illustration-larry-lighting.png`,
-      poem: `Your main light source is behind you, not in front.<br><br>The camera exposes for the brightest thing in frame. Right now that\'s the window. Your face loses every time.<br><br>Andy Dufresne spent nineteen years in Shawshank before he finally walked out into the light. You can fix yours by moving a lamp.`,
+      poem: `Your main light source is behind you, not in front.<br><br>The camera exposes for the brightest thing in frame. Right now that\'s the window. Your face loses every time.<br><br>Andy Dufresne spent nineteen years in Shawshank before he finally walked out into the&nbsp;light. You can fix yours by moving a lamp.`,
       fix: 'Put a light source — a lamp, a window, anything bright — in front of you, not behind you.',
       part: 'Part III: The Craft',
     },

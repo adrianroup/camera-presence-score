@@ -1909,15 +1909,39 @@ async function toggleRecording() {
   }
 }
 
+function getSupportedMimeType() {
+  // Ordered by preference — mp4 works on Safari, webm/opus on Chrome desktop,
+  // webm fallback for older Android. ogg is Firefox fallback.
+  const types = [
+    'audio/mp4',
+    'audio/webm;codecs=opus',
+    'audio/webm',
+    'audio/ogg;codecs=opus',
+    'audio/ogg',
+  ];
+  for (const type of types) {
+    if (MediaRecorder.isTypeSupported(type)) return type;
+  }
+  return ''; // browser picks default
+}
+
 async function startRecording() {
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     audioChunks = [];
-    mediaRecorder = new MediaRecorder(stream);
+    const mimeType = getSupportedMimeType();
+    const options = mimeType ? { mimeType } : {};
+    try {
+      mediaRecorder = new MediaRecorder(stream, options);
+    } catch(e) {
+      // Fallback: let the browser pick
+      mediaRecorder = new MediaRecorder(stream);
+    }
+    const usedMime = mediaRecorder.mimeType || mimeType || 'audio/webm';
     mediaRecorder.ondataavailable = e => { if(e.data.size > 0) audioChunks.push(e.data); };
     mediaRecorder.onstop = async () => {
       stream.getTracks().forEach(t => t.stop());
-      await analyseAudio();
+      await analyseAudio(usedMime);
     };
     mediaRecorder.start();
     isRecording = true;
@@ -1947,16 +1971,17 @@ function stopRecording() {
   }
 }
 
-async function analyseAudio() {
+async function analyseAudio(mimeType) {
   try {
-    const blob = new Blob(audioChunks, { type: 'audio/webm' });
+    const usedType = mimeType || 'audio/webm';
+    const blob = new Blob(audioChunks, { type: usedType });
     const arrayBuffer = await blob.arrayBuffer();
     const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
 
     const response = await fetch('/api/analyse-audio', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ audioData: base64, mediaType: 'audio/webm' })
+      body: JSON.stringify({ audioData: base64, mediaType: usedType })
     });
 
     const parsed = await response.json();

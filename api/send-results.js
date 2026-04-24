@@ -45,33 +45,38 @@ export default async function handler(req, res) {
 
   const content = {
     lighting: {
-      movie: 'Rear Window',
-      poem: `Your background found the spotlight.<br>Your face did not.<br>Hitchcock shot <em>Rear Window</em> from one angle,<br>and he made sure the light hit what mattered.`,
-      fix: 'Add a light source in front of you — even a desk lamp pointed at a white wall behind your screen will shift the balance. Your face should be the brightest thing in the frame.',
+      movie: 'The Shawshank Redemption',
+      subject: 'Have you seen the movie: The Shawshank Redemption? You\'re backlit.',
+      poem: `Your main light source is behind you, not in front.<br><br>The camera exposes for the brightest thing in frame. Right now that\'s the window. Your face loses every time.<br><br>Andy Dufresne spent nineteen years in Shawshank before he finally walked out into the light. You can fix yours by moving a lamp.`,
+      fix: 'Put a light source — a lamp, a window, anything bright — in front of you, not behind you.',
       part: 'Part III: The Craft',
     },
     angle: {
-      movie: 'Lawrence of Arabia',
-      poem: `The desert is vast. The frame is small.<br><em>Lawrence of Arabia</em> fills it — eye level,<br>horizon behind him, not above him.<br>Raise the camera. Meet it eye to eye.`,
-      fix: 'Elevate your camera to eye level or just above. Stack some books under the laptop, or move to a proper monitor. Eye level reads as a peer. Below eye level reads as a ceiling fan.',
+      movie: 'Apocalypse Now',
+      subject: 'Have you seen the movie: Apocalypse Now? Your camera is below eye level.',
+      poem: `Your camera is below eye level.<br><br>When the camera sits low, you get ceiling in the shot, nostrils in the frame, and authority quietly exits the call.<br><br>Captain Willard spent the entire opening of Apocalypse Now face-down on a Saigon hotel bed, staring at the ceiling fan. It was a cinematic choice. Your laptop on your desk is not.`,
+      fix: 'Stack some books under your laptop — or raise the monitor — until the lens is level with your eyes.',
       part: 'Part II: The World Changed. Did You?',
     },
     background: {
       movie: 'Garden State',
-      poem: `In <em>Garden State</em>, Zach Braff wears a wallpaper shirt<br>so he disappears into the background.<br>Yours is doing something similar.<br>You, however, are not trying to disappear.`,
-      fix: 'Put some distance between you and what\'s behind you. Close the blind. Move the chair. The background should be visibly softer than your face, not competing for attention.',
+      subject: 'Have you seen the movie: Garden State? Your background is competing with you.',
+      poem: `Your background is pulling attention away from your face.<br><br>Audiences read the room — automatically, involuntarily. If the room is loud, they stop listening to you.<br><br>In <em>Garden State</em>, Zach Braff blends into a wallpaper pattern in his childhood bedroom. It\'s a metaphor. It is also what is happening on your calls.`,
+      fix: 'Find a plain wall, or clear the shelf behind you — anything the eye can settle on without working for it.',
       part: 'Part IV: The Room You\'re Actually In',
     },
     framing: {
       movie: 'Home Alone',
-      poem: `<em>Home Alone</em> opens on a face<br>filling the frame — cheeks, eyes, chin, all of it.<br>The camera knows what it\'s here for.<br>Step back. Give it something to hold onto.`,
-      fix: 'Your face should fill roughly half to two thirds of the frame. Eyes in the upper third. Shoulders visible. If the camera is seeing your forehead and not much else, back away from it.',
+      subject: 'Have you seen the movie: Home Alone? You\'re too close to the camera.',
+      poem: `The frame is mostly your face — shoulders aren\'t visible, and there\'s no breathing room.<br><br>It feels claustrophobic. The audience can\'t settle. They spend the whole call half-braced, like Kevin McCallister pressing his cheeks in the mirror before he realizes the burglars are real.`,
+      fix: 'Back away from the camera until your shoulders are in frame and there\'s a little air above your head.',
       part: 'Part II: The World Changed. Did You?',
     },
     presence: {
-      movie: 'The Shining',
-      poem: `Kubrick held the camera on Nicholson for thirty seconds<br>before he said a word. The audience didn\'t look away.<br>In <em>The Shining</em>, the eyes do the talking.<br>Find the dot. Look at it. Speak to it.`,
-      fix: 'Look directly at the camera lens, not at your own image on screen. Stick a small piece of tape just below the camera to give yourself a target. Eye contact on camera is the whole game.',
+      movie: '2001: A Space Odyssey',
+      subject: 'Have you seen the movie: 2001: A Space Odyssey? You\'re not looking at the camera.',
+      poem: `You\'re looking at your own tile, or your notes, or the faces on your screen — not the lens.<br><br>To everyone watching, you\'re looking slightly sideways for the entire call. It reads as distracted, uncertain, or — if they\'re being uncharitable — evasive.<br><br>HAL 9000 never blinked, never looked away, and somehow made "I\'m sorry, Dave" feel like a threat. Eye contact is a tool. It works better when you use it.`,
+      fix: 'Look at the small dot at the top of your screen — the lens, not your tile. A small sticker next to it helps your eyes find it automatically.',
       part: 'Part I: What Has Always Been True',
     },
   };
@@ -115,16 +120,16 @@ export default async function handler(req, res) {
   let poemHtml, fixHtml, partRef, subjectSuffix;
 
   if (allGreen) {
-    poemHtml = `The camera found you.<br>All of you. Eyes, frame, light, background — <em>The Sound of Music</em><br>could not have staged it better.<br>The hills are alive. So is your setup.`;
-    fixHtml = 'There is nothing blocking you right now. The camera is not the problem. The next variable to work on is what you say when you have its full attention.';
+    poemHtml = `Nothing was flagged. Every criterion is green.<br><br>That means your light is good, your frame is good, your eye contact is there, and your background isn\'t stealing the show. You didn\'t skip steps. That puts you ahead of most people on most calls.<br><br>Ferris Bueller took a Ferrari, a parade, and an entire city just to feel alive for one afternoon. You set up a decent camera angle. Arguably more useful.`;
+    fixHtml = 'Go make something worth watching.';
     partRef = 'Part V: Now Make It Yours';
-    subjectSuffix = 'The camera found you.';
+    subjectSuffix = 'Have you seen the movie: Ferris Bueller\'s Day Off? You passed. All of it.';
   } else {
     const c = content[worstCriterion.key] || content.lighting;
     poemHtml = c.poem;
     fixHtml  = c.fix;
     partRef  = c.part;
-    subjectSuffix = worstCriterion.signal === 'red' ? 'One thing to fix.' : 'Getting closer.';
+    subjectSuffix = c.subject || (worstCriterion.signal === 'red' ? 'One thing to fix.' : 'Getting closer.');
   }
 
   const html = `
@@ -149,12 +154,12 @@ export default async function handler(req, res) {
 
       <!-- Poem -->
       <tr><td style="padding:28px 40px 0 40px;">
-        <p style="font-family:Georgia,serif;font-size:15px;color:#444;line-height:1.75;font-style:italic;margin:0;">${poemHtml}</p>
+        <p style="font-family:Arial,sans-serif;font-size:15px;color:#444;line-height:1.75;margin:0;">${poemHtml}</p>
       </td></tr>
 
       <!-- Fix -->
       <tr><td style="padding:24px 40px 0 40px;">
-        <p style="font-family:Georgia,serif;font-size:15px;color:#333;line-height:1.7;margin:0;"><strong>The fix:</strong> ${fixHtml}</p>
+        <p style="font-family:Arial,sans-serif;font-size:15px;color:#333;line-height:1.7;margin:0;"><strong>The fix:</strong> ${fixHtml}</p>
       </td></tr>
 
       <!-- Part reference -->
@@ -193,7 +198,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         from: process.env.SENDING_EMAIL || 'score@contact.anaudiencefromanywhere.com',
         to: [email],
-        subject: `Your Camera Presence Score™ — ${subjectSuffix}`,
+        subject: allGreen ? subjectSuffix : subjectSuffix,
         html
       })
     });

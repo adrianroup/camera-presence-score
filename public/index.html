@@ -1999,12 +1999,27 @@ async function analyseAudio(mimeType) {
     const usedType = mimeType || 'audio/webm';
     const blob = new Blob(audioChunks, { type: usedType });
     const arrayBuffer = await blob.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+
+    // Decode to PCM via Web Audio API
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+    audioCtx.close();
+
+    // Downmix to mono and downsample to 16kHz for efficient transfer
+    const srcRate = audioBuffer.sampleRate;
+    const srcData = audioBuffer.getChannelData(0); // mono channel 0
+    const targetRate = 16000;
+    const ratio = srcRate / targetRate;
+    const targetLen = Math.floor(srcData.length / ratio);
+    const downsampled = new Float32Array(targetLen);
+    for (let i = 0; i < targetLen; i++) {
+      downsampled[i] = srcData[Math.round(i * ratio)];
+    }
 
     const response = await fetch('/api/analyse-audio', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ audioData: base64, mediaType: usedType })
+      body: JSON.stringify({ samples: Array.from(downsampled), sampleRate: targetRate })
     });
 
     const parsed = await response.json();

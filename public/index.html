@@ -66,7 +66,7 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'B
 .uz-icon{opacity:0.45;transition:opacity 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);}.upload-zone:hover .uz-icon{opacity:1;transform:translateY(-3px);}
 .uz-label{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text);transition:color 0.3s var(--ease-premium),transform 0.3s var(--ease-premium),font-size 0.3s var(--ease-premium),letter-spacing 0.3s var(--ease-premium);}.upload-zone:hover .uz-label{color:#ffffff;transform:translateY(-3px);font-size:22px;letter-spacing:0.1em;}
 .uz-sub{font-size:15px;color:var(--text-sec);line-height:1.5;}
-.uz-paste-hint{display:inline-flex;align-items:center;gap:6px;background:rgba(24,22,15,0.06);border:1px solid rgba(24,22,15,0.25);border-radius:3px;padding:6px 14px;font-size:15px;font-family:'Barlow',sans-serif;letter-spacing:0.04em;color:var(--text-sec);}
+.uz-paste-hint{display:inline-flex;align-items:center;gap:6px;background:rgba(24,22,15,0.06);border:1px solid rgba(24,22,15,0.25);border-radius:3px;padding:6px 14px;font-size:15px;font-family:'Barlow',sans-serif;letter-spacing:0.04em;color:var(--text);}
 kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family:'Barlow',sans-serif;font-size:14px;color:var(--text);}
 .uz-divider{font-size:14px;color:var(--text);letter-spacing:0.06em;}
 .uz-btn{background:transparent;color:var(--text);border:1px solid rgba(24,22,15,0.35);border-radius:2px;padding:9px 24px;font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.06em;cursor:pointer;transition:border-color 0.3s var(--ease-premium),color 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);}
@@ -92,7 +92,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 .analyse-btn.ready{background:var(--red);color:#ffffff;border-color:var(--red);cursor:pointer;box-shadow:0 0 28px var(--red-glow),inset 0 1px 0 rgba(0,0,0,0.06);}
 .analyse-btn.ready:hover{opacity:1;box-shadow:0 0 40px var(--red-glow),inset 0 1px 0 rgba(0,0,0,0.06);transform:translateY(-2px);}
 .small-print{font-size:14px;color:var(--text);text-align:center;line-height:1.6;margin-bottom:40px;}
-.criteria-header{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);text-align:center;margin-bottom:10px;margin-top:4px;}.criteria-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-bottom:24px;}
+.criteria-header{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text);text-align:center;margin-bottom:10px;margin-top:4px;}.criteria-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-bottom:24px;}
 .criteria-pill{background:var(--bg);border:1px solid rgba(24,22,15,0.2);border-radius:3px;padding:10px 8px;text-align:center;}
 .criteria-pill-label{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text);}
 .footer{font-family:'Barlow',sans-serif;font-size:14px;color:var(--text-sec);text-align:center;letter-spacing:0.06em;}
@@ -106,9 +106,9 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 .gate-form{width:100%;display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
 .gate-field{display:flex;flex-direction:column;gap:6px;}
 .gate-label{font-family:'Barlow',sans-serif;font-size: 14px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);}
-.gate-input{background:var(--surface);border:1px solid rgba(24,22,15,0.2);border-radius:2px;padding:13px 16px;font-family:'Barlow',sans-serif;font-size:16px;color:var(--text);outline:none;transition:border-color 0.3s ease;width:100%;}
+.gate-input{background:#fff;border:1px solid rgba(24,22,15,0.3);border-radius:2px;padding:13px 16px;font-family:'Barlow',sans-serif;font-size:16px;color:var(--text);outline:none;transition:border-color 0.3s ease;width:100%;}
 .gate-input:focus{border-color:var(--red);}.gate-input.invalid{border-color:#c0392b;}.gate-input.valid{border-color:rgba(80,200,120,0.6);}.gate-linkedin-row{display:flex;gap:8px;align-items:stretch;}.gate-linkedin-row .gate-input{flex:1;min-width:0;}.gate-linkedin-open{background:transparent;border:1px solid rgba(24,22,15,0.2);border-radius:2px;padding:0 14px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);cursor:pointer;white-space:nowrap;transition:border-color 0.3s ease,color 0.3s ease;flex-shrink:0;}.gate-linkedin-open:hover{border-color:var(--red);color:var(--text);}.gate-linkedin-hint{font-family:'Barlow',sans-serif;font-size: 14px;color:var(--text-subtle);margin-top:4px;}
-.gate-input::placeholder{color:var(--text-subtle);}
+.gate-input::placeholder{color:rgba(24,22,15,0.4);}
 .gate-submit{width:100%;background:var(--red);color:#ffffff;border:none;border-radius:2px;padding:18px 28px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:opacity 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium);margin-top:4px;box-shadow:0 0 24px var(--red-glow),inset 0 1px 0 rgba(0,0,0,0.06);}
 .gate-submit:hover:not(:disabled){opacity:0.9;box-shadow:0 0 36px var(--red-glow),inset 0 1px 0 rgba(0,0,0,0.06);}
 .gate-submit:disabled{background:rgba(192,57,43,0.2);cursor:not-allowed;}
@@ -141,7 +141,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 .gate-sent{display:none;flex-direction:column;align-items:center;text-align:center;width:100%;}
 .gate-sent-heading{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;color:var(--text);}
 .gate-sent-copy{font-family:'Barlow',sans-serif;font-size:15px;color:var(--text-sec);line-height:1.65;margin-bottom:8px;max-width:380px;}
-.gate-sent-email{font-family:'Barlow',sans-serif;font-size:16px;font-weight:500;color:var(--gold);margin-bottom:24px;}
+.gate-sent-email{font-family:'Barlow',sans-serif;font-size:16px;font-weight:500;color:var(--text);margin-bottom:24px;}
 .gate-resend{background:transparent;border:1px solid rgba(24,22,15,0.2);border-radius:2px;padding:10px 24px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.06em;color:var(--text-muted);cursor:pointer;transition:border-color 0.3s ease,color 0.3s ease;}
 .gate-resend:hover{border-color:var(--border-accent);color:var(--gold);}
 
@@ -438,7 +438,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
             </span>
             <span class="linkedin-btn-text">Speed up with LinkedIn</span>
           </button>
-          <p style="font-size:11px;color:var(--text-subtle);text-align:center;margin-top:6px;letter-spacing:0.04em;">Pre-fills your name and email automatically</p>
+          <p style="font-size:11px;color:rgba(24,22,15,0.55);text-align:center;margin-top:6px;letter-spacing:0.04em;">Pre-fills your name and email automatically</p>
 
           <button class="google-btn" type="button" onclick="startGoogleOAuth()">
             <span style="flex-shrink:0;display:flex;align-items:center;">
@@ -451,7 +451,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
             </span>
             <span class="google-btn-text">Continue with Google</span>
           </button>
-          <p style="font-size:11px;color:var(--text-subtle);text-align:center;margin-top:6px;letter-spacing:0.04em;">Pre-fills your name and email automatically</p>
+          <p style="font-size:11px;color:rgba(24,22,15,0.55);text-align:center;margin-top:6px;letter-spacing:0.04em;">Pre-fills your name and email automatically</p>
 
           <div style="display:flex;align-items:center;gap:12px;width:100%;margin:16px 0 4px;">
             <div style="flex:1;height:1px;background:var(--border);"></div>

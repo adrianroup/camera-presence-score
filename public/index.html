@@ -290,10 +290,10 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 .audio-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 16px;opacity:0;transform:translateY(6px);transition:opacity 0.35s ease,transform 0.35s ease;}
 .audio-card.show{opacity:1;transform:translateY(0);}
 .audio-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.audio-card-label{font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.04em;color:var(--text-sec);}
+.audio-card-label{font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.04em;color:var(--text);}
 .audio-card-status{font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.04em;}
 .audio-card-prompt{font-family:'Barlow',sans-serif;font-size:14px;font-style:italic;color:var(--text-muted);line-height:1.55;margin-bottom:10px;}
-.audio-card-sentence{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:400;font-style:italic;color:var(--text);background:rgba(255,248,235,0.04);border-radius:2px;padding:8px 10px;margin-bottom:10px;text-align:center;}
+.audio-card-sentence{font-family:'Barlow Condensed',sans-serif;font-size:19px;font-weight:400;font-style:italic;color:var(--text);background:rgba(255,248,235,0.04);border-radius:2px;padding:10px 12px;margin-bottom:10px;text-align:center;width:100%;box-sizing:border-box;}
 .audio-record-btn{width:100%;background:transparent;border:1px solid var(--border-accent);border-radius:2px;padding:9px 14px;font-family:'Barlow',sans-serif;font-size: 14px;font-weight:500;letter-spacing:0.04em;color:var(--gold);cursor:pointer;transition:box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium),background 0.3s ease,border-color 0.3s ease,color 0.3s ease;display:flex;align-items:center;justify-content:center;gap:8px;}
 .audio-record-btn:hover{background:var(--gold-dim);box-shadow:0 0 40px var(--red-glow),inset 0 1px 0 rgba(255,255,255,0.12);transform:translateY(-2px);}
 .audio-record-btn.recording{border-color:var(--red);color:var(--red);background:transparent;}
@@ -1394,6 +1394,7 @@ function buildBreakdown(score, criteria){
         <span class="audio-card-status" id="audioStatus" style="color:var(--text-muted)">Not tested</span>
       </div>
       <div class="audio-card-prompt">The camera scores what it sees. This scores what it hears. Say the sentence below twice, clearly, at the volume you would use on a call. Try smiling while you speak and see if you can hear the warmth in the playback.</div>
+      <div style="font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:0.02em;">Try repeat this phrase while recording</div>
       <div class="audio-card-sentence">"The quick brown fox wouldn't be caught dead using a ring light."</div>
       <button class="audio-record-btn" id="audioRecordBtn" onclick="toggleRecording()">
         <span class="audio-record-dot"></span>

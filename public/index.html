@@ -1163,13 +1163,13 @@ function resetReveal(){['tierBadge','verdictBlock','charPlaceholder','nextBtn'].
 
 function pickCharacter(score) {
   // Happy — 85 to 100
-  if (score >= 85) return 'https://assets2.lottiefiles.com/packages/lf20_jR229r.json';
+  if (score >= 85) return '/lottie/happy.json';
   // Good — 60 to 84
-  if (score >= 60) return 'https://assets2.lottiefiles.com/packages/lf20_uu0x8lqv.json';
+  if (score >= 60) return '/lottie/good.json';
   // Concerned — 40 to 59
-  if (score >= 40) return 'https://assets9.lottiefiles.com/packages/lf20_qpsnmykx.json';
+  if (score >= 40) return '/lottie/concerned.json';
   // Sad — 0 to 39
-  return 'https://assets5.lottiefiles.com/packages/lf20_gn8GHEJZ4g.json';
+  return '/lottie/sad.json';
 }
 function setCharacter(src) {
   const player = document.getElementById('charLottie');

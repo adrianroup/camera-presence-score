@@ -1490,6 +1490,20 @@ window._testMalformed=function(){apiResult={unexpected:'format',foo:123};apiErro
 window._testOutOfRange=function(){apiResult={overall:847,criteria:{}};apiError=null;apiDone=true;routeResult();};
 
 // ═══════════════════════════════════════
+// KLAVIYO SUBSCRIBE (fire-and-forget)
+// ═══════════════════════════════════════
+function klaviyoSubscribe(email, name, jobTitle, linkedInUrl){
+  const parts = (name || '').trim().split(' ');
+  const first_name = parts[0] || '';
+  const last_name  = parts.slice(1).join(' ') || '';
+  fetch('/api/subscribe', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ email, first_name, last_name, job_title: jobTitle || '', linkedin_url: linkedInUrl || '' })
+  }).catch(()=>{/* non-blocking — never surface Klaviyo errors to the user */});
+}
+
+// ═══════════════════════════════════════
 // SESSION MANAGEMENT
 // ═══════════════════════════════════════
 function getSession(){
@@ -1767,6 +1781,7 @@ async function handleLinkedInSubmit() {
     user = await sbGetUser(email);
     const uses = user ? user.uses_remaining : 3;
     setSession(email, name, uses);
+    klaviyoSubscribe(email, name, jobTitle, linkedIn || '');
     sessionStorage.removeItem('linkedin_profile');
     sessionStorage.removeItem('google_profile');
 
@@ -1929,6 +1944,7 @@ async function checkVerificationToken(){
       const user = await sbGetUser(decodeURIComponent(email));
       if(user){
         setSession(decodeURIComponent(email), user.name || '', user.uses_remaining);
+        klaviyoSubscribe(decodeURIComponent(email), user.name || '', user.job_title || '', user.linkedin_url || '');
         // Show upload screen with success banner
         showScreen(document.getElementById('screenUpload'));
         showVerifiedBanner(user.uses_remaining);

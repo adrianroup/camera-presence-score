@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   if (!email) return res.status(400).json({ error: 'Email is required' });
 
   const KLAVIYO_API_KEY = process.env.KLAVIYO_PRIVATE_API_KEY;
-  const LIST_ID = 'UrheH6'; // EBOOK-BUYER
+  const LIST_ID = 'V4ihjH'; // CPS-USER
 
   try {
     // Step 1 — create or update profile

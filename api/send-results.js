@@ -184,11 +184,20 @@ export default async function handler(req, res) {
   } else if (redCount === 1 && amberCount >= 2) {
     // Mixed — The Big Lebowski
     const worst = content[worstCriterion.key] || content.lighting;
-    poemHtml = `The score came back with one red criterion and a couple of ambers alongside it.<br><br>Not a disaster. Not a clean pass. The kind of result where you can see exactly what the problem is — you're just not quite pulling it together into one coherent picture yet.<br><br>The Dude is not incapable. He is, in many ways, a man with a clear philosophy, a regular schedule, and an extremely specific idea of what constitutes a good rug. The problem is that nothing quite lines up. The rug gets ruined. The wrong Lebowski gets contacted. Everything almost works.<br><br><em>The Big</em> issue isn't that you're missing by much. <em>Lebowski</em> logic applies: every element is doing its own thing, and they haven't agreed to cooperate yet.<br><br>The red one first. Fix that, and the ambers are easier to see clearly.`;
-    fixHtml = worst.fix;
-    partRef = 'Part II: The World Changed. Did You?';
-    subjectSuffix = 'Have you seen the movie: The Big Lebowski? One red flag. A few amber ones.';
-    illustrationUrl = worst.illustration || '';
+    // If the red criterion has its own film, use it — otherwise fall back to Big Lebowski
+    if (worst && worst.subject) {
+      poemHtml = worst.poem;
+      fixHtml = worst.fix;
+      partRef = worst.part || 'Part II: The World Changed. Did You?';
+      subjectSuffix = worst.subject;
+      illustrationUrl = worst.illustration || '';
+    } else {
+      poemHtml = `The score came back with one red criterion and a couple of ambers alongside it.<br><br>Not a disaster. Not a clean pass. The kind of result where you can see exactly what the problem is — you're just not quite pulling it together into one coherent picture yet.<br><br>The Dude is not incapable. He is, in many ways, a man with a clear philosophy, a regular schedule, and an extremely specific idea of what constitutes a good rug. The problem is that nothing quite lines up. The rug gets ruined. The wrong Lebowski gets contacted. Everything almost works.<br><br><em>The Big</em> issue isn't that you're missing by much. <em>Lebowski</em> logic applies: every element is doing its own thing, and they haven't agreed to cooperate yet.<br><br>The red one first. Fix that, and the ambers are easier to see clearly.`;
+      fixHtml = worst ? worst.fix : '';
+      partRef = 'Part II: The World Changed. Did You?';
+      subjectSuffix = 'Have you seen the movie: The Big Lebowski? One red flag. A few amber ones.';
+      illustrationUrl = worst ? (worst.illustration || '') : '';
+    }
   } else {
     const c = content[worstCriterion.key] || content.lighting;
     poemHtml = c.poem;

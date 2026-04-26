@@ -75,7 +75,7 @@ LOW ANGLE — MANDATORY FAIL TRIGGERS (score 0–45, no exceptions):
 - Subject appears to be looking upward toward camera
 If you can see up someone's nose, the camera is below eye level. Score it 0–45. Do not give partial credit.
 
-HIGH ANGLE TELL: Camera above eye level — top of head fills upper frame, face is compressed, subject appears small, too much floor or desk visible.
+HIGH ANGLE TELL: Camera above eye level — top of head fills upper frame, face is compressed, subject appears small, too much floor or desk visible. Also: if the subject's gaze is directed sharply downward (eyes angled down, chin lowered toward chest, face not directed toward the camera at all) this indicates the camera is above their natural sightline. A subject looking down at their own hands or desk with the camera above them is a high-angle fail. Score 0–45.
 TOO CLOSE: If the face fills more than 80% of the frame AND the angle is wrong, name both problems. "Too close" is a framing issue but compounds the angle problem.
 
 ─── BACKGROUND (0–100) ───
@@ -94,6 +94,7 @@ HARD RED TRIGGERS — score MUST be 49 or below, no exceptions:
 - BEDROOM: Bed, headboard, pillows, or bedroom furniture visible. Score 30–44.
 - CAR INTERIOR: Dashboard, seats, windows, or car interior visible. Score 25–39.
 - HIGH VISUAL COMPLEXITY: 5+ distinct objects, colours, or patterns clearly visible and sharp behind the subject. Score 35–49.
+- DIGITAL BLUR WITH BAD EDGE MASKING: Background blur that did not disqualify (perhaps the anatomy loss was ambiguous) but still shows visible artefacts — hard mask line around the face, colour fringing at the subject boundary, or any part of the face or eye region partially blurred or consumed by the background. The background has literally eaten part of the subject. This is always worse than an honest busy background. Score 20–39. Name the specific artefact you see.
 These are environmental fails. The setting is the message. You are not permitted to score above 49 when any of these are clearly present.
 
 INTENTIONAL BACKGROUND RULE: A background may be credited as intentional ONLY if ALL THREE are true:

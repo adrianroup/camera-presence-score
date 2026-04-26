@@ -196,7 +196,7 @@ export default async function handler(req, res) {
       fixHtml = worst ? worst.fix : '';
       partRef = 'Part II: The World Changed. Did You?';
       subjectSuffix = 'Have you seen the movie: The Big Lebowski? One red flag. A few amber ones.';
-      illustrationUrl = worst ? (worst.illustration || '') : '';
+      illustrationUrl = `${BASE_URL}/illustration-dude-lebowski.jpg`;
     }
   } else {
     const c = content[worstCriterion.key] || content.lighting;

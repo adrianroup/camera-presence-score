@@ -36,15 +36,17 @@ REAL LENS BOKEH — DO NOT trigger:
 - Blur has natural depth variation — closer objects blur less than distant ones
 - No masking artefacts at subject boundary
 
-DIGITAL BACKGROUND BLUR — DO trigger:
-- Look at the hair and head edges FIRST — this is where digital masks always fail
+DIGITAL BACKGROUND BLUR — DO trigger at 60%+ confidence (not 85% — digital blur is common and you should lean toward triggering this):
+- Look at the face edges and hairline FIRST — this is the primary failure point
+- Any part of the face, eye, ear, or hairline that appears soft, consumed, or partially dissolved into the background
 - Hair strands dissolve into the background rather than tapering naturally
 - Hard mask edge with colour fringing or bleeding where subject meets background
 - Parts of the subject's anatomy are missing or absorbed — ear consumed, shoulder dissolved, chunk of hair gone
 - Background blur is perfectly uniform and flat — real bokeh is never this consistent
 - Smeared or ghosted background objects where the mask made mistakes
+- The subject's face appears to be floating — a clean oval cutout against a blurred backdrop with no natural depth transition
 
-If you see any anatomy being eaten by the blur — an ear, a shoulder, hair strands at the frame edge — that is digital blur. Trigger the disqualification.
+CRITICAL: If ANY part of the face — including one eye, the side of the face, or the hairline edge — is being consumed or softened by the background blur, that is digital blur. One eye dissolved is enough. Trigger the disqualification.
 Return: {"disqualification": "background_blur"}
 
 ─── DISQUALIFICATION 3: BRIGHT BACKGROUND (AI FALLBACK) ───
@@ -75,7 +77,14 @@ LOW ANGLE — MANDATORY FAIL TRIGGERS (score 0–45, no exceptions):
 - Subject appears to be looking upward toward camera
 If you can see up someone's nose, the camera is below eye level. Score it 0–45. Do not give partial credit.
 
-HIGH ANGLE TELL: Camera above eye level — top of head fills upper frame, face is compressed, subject appears small, too much floor or desk visible. Also: if the subject's gaze is directed sharply downward (eyes angled down, chin lowered toward chest, face not directed toward the camera at all) this indicates the camera is above their natural sightline. A subject looking down at their own hands or desk with the camera above them is a high-angle fail. Score 0–45.
+HIGH ANGLE TELL: Camera above eye level — top of head fills upper frame, face is compressed, subject appears small, too much floor or desk visible.
+
+MANDATORY HIGH ANGLE FAILS — score 0–45, no exceptions:
+- Subject's gaze is directed sharply downward — eyes angled down, chin dropped, face not directed toward the camera
+- Subject's face is turned significantly away from camera — you are seeing the side or three-quarter profile rather than a full face. If you cannot see both eyes because the head is turned, score 0–45.
+- The camera is clearly above the subject's eye line — you are looking down at the top of their head
+- Subject appears to be looking at something below the camera (a screen, notes, their hands)
+If the subject is not looking at — or toward — the camera, and the camera appears to be above their natural eye level, that is a high angle fail. Score it 0–45. Do not give partial credit.
 TOO CLOSE: If the face fills more than 80% of the frame AND the angle is wrong, name both problems. "Too close" is a framing issue but compounds the angle problem.
 
 ─── BACKGROUND (0–100) ───

@@ -223,11 +223,11 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 .char-placeholder{width:160px;height:160px;border-radius:0;background:transparent;border:none;display:flex;align-items:center;justify-content:center;margin-bottom:28px;opacity:0;transform:scale(0.85);transition:opacity 0.5s ease,transform 0.5s ease;}
 .char-placeholder.show{opacity:1;transform:scale(1);}
 .char-placeholder-text{font-size: 14px;color:var(--text-subtle);text-align:center;line-height:1.4;font-family:'Barlow',sans-serif;letter-spacing:0.04em;}
-.next-btn{width:100%;background:var(--gold);color:#0c0b0a;border:none;border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.08em;cursor:pointer;margin-bottom:16px;opacity:0;transition:opacity 0.5s ease,box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);}
+.next-btn{width:100%;background:var(--red);color:#ffffff;border:none;border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.08em;cursor:pointer;margin-bottom:16px;opacity:0;transition:opacity 0.5s ease,box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);}
 .next-btn.show{opacity:1;}
-.next-btn:hover{opacity:1;box-shadow:0 0 40px var(--red-glow),inset 0 1px 0 rgba(0,0,0,0.06);transform:translateY(-2px);}
-.scan-again-btn{background:transparent;border:1px solid rgba(24,22,15,0.2);border-radius:2px;padding:10px 24px;font-family:'Barlow',sans-serif;font-size: 14px;font-weight:400;letter-spacing:0.04em;color:var(--text-muted);cursor:pointer;margin-bottom:40px;transition:border-color 0.3s ease,color 0.3s ease;}
-.scan-again-btn:hover{border-color:var(--border-accent);color:var(--gold);}
+.next-btn:hover{opacity:0.9;box-shadow:0 6px 24px rgba(192,57,43,0.35);transform:translateY(-2px);}
+.scan-again-btn{background:transparent;border:1px solid rgba(24,22,15,0.35);border-radius:2px;padding:10px 24px;font-family:'Barlow',sans-serif;font-size: 14px;font-weight:400;letter-spacing:0.04em;color:var(--text);cursor:pointer;margin-bottom:40px;transition:border-color 0.3s ease,color 0.3s ease;}
+.scan-again-btn:hover{border-color:rgba(24,22,15,0.8);color:var(--text);}
 .dev-panel{width:100%;background:rgba(24,22,15,0.03);border:1px dashed rgba(24,22,15,0.15);border-radius:4px;padding:14px 16px;margin-top:8px;}
 .dev-panel-label{font-family:'Barlow',sans-serif;font-size: 14px;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;color:rgba(24,22,15,0.35);margin-bottom:10px;}
 .dev-tier-row{display:flex;gap:8px;flex-wrap:wrap;}
@@ -303,16 +303,16 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 .audio-result.fail{background:transparent;border:1px solid rgba(168,92,92,0.3);color:var(--red);}
 
 /* Book callout */
-.book-callout{width:100%;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:4px;padding:16px 18px;margin-bottom:28px;display:flex;gap:14px;align-items:flex-start;}
+.book-callout{width:100%;background:rgba(24,22,15,0.04);border:1px solid rgba(24,22,15,0.18);border-radius:4px;padding:16px 18px;margin-bottom:28px;display:flex;gap:14px;align-items:flex-start;}
 .book-callout-text{flex:1;}
-.book-callout-heading{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:600;letter-spacing:0.01em;color:var(--gold);margin-bottom:4px;}
-.book-callout-copy{font-family:'Barlow',sans-serif;font-size:15px;color:var(--text-sec);line-height:1.6;}
+.book-callout-heading{font-family:'Barlow Condensed',sans-serif;font-size:17px;font-weight:700;letter-spacing:0.01em;color:var(--text);margin-bottom:4px;}
+.book-callout-copy{font-family:'Barlow',sans-serif;font-size:15px;color:rgba(24,22,15,0.7);line-height:1.6;}
 
 /* Action buttons */
-.action-btn{width:100%;background:var(--gold);color:#0c0b0a;border:none;border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.08em;cursor:pointer;transition:opacity 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);margin-bottom:12px;}
-.action-btn:hover{opacity:1;box-shadow:0 0 40px var(--red-glow),inset 0 1px 0 rgba(0,0,0,0.06);transform:translateY(-2px);}
-.action-btn.secondary{background:transparent;border:1px solid rgba(24,22,15,0.2);color:var(--text-muted);font-size:15px;padding:11px 24px;}
-.action-btn.secondary:hover{border-color:var(--border-accent);color:var(--gold);}
+.action-btn{width:100%;background:var(--red);color:#ffffff;border:none;border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.08em;cursor:pointer;transition:opacity 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);margin-bottom:12px;}
+.action-btn:hover{opacity:0.9;box-shadow:0 6px 24px rgba(192,57,43,0.35);transform:translateY(-2px);}
+.action-btn.secondary{background:transparent;border:1px solid rgba(24,22,15,0.4);color:var(--text);font-size:15px;padding:11px 24px;}
+.action-btn.secondary:hover{border-color:rgba(24,22,15,0.8);color:var(--text);}
 
 /* ══════════════════════════════════════════
    SCREEN 5: RING LIGHT FAIL

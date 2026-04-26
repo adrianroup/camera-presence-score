@@ -214,7 +214,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 .gauge-denom{font-family:'Barlow',sans-serif;font-size:14px;font-weight:400;color:var(--text-muted);letter-spacing:0.06em;margin-top:-2px;}
 @keyframes heartbeat{0%{transform:scale(1);}25%{transform:scale(1.045);}50%{transform:scale(0.975);}75%{transform:scale(1.02);}100%{transform:scale(1);}}
 .gauge-outer.pulse{animation:heartbeat 0.55s ease-in-out forwards;}
-.tier-badge{display:inline-block;font-family:'Barlow',sans-serif;font-size:14px;font-weight:500;letter-spacing:0.06em;padding:5px 16px;border-radius:20px;border:1px solid var(--gold-border);color:var(--gold);background:var(--gold-dim);margin-bottom:16px;opacity:0;transform:translateY(6px);transition:opacity 0.5s ease,transform 0.5s ease;}
+.tier-badge{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:5px 16px;border-radius:20px;border:1px solid rgba(24,22,15,0.3);color:var(--text);background:rgba(24,22,15,0.06);margin-bottom:16px;opacity:0;transform:translateY(6px);transition:opacity 0.5s ease,transform 0.5s ease;}
 .tier-badge.show{opacity:1;transform:translateY(0);}
 .verdict-block{text-align:center;width:100%;opacity:0;transform:translateY(8px);transition:opacity 0.5s ease,transform 0.5s ease;margin-bottom:32px;}
 .verdict-block.show{opacity:1;transform:translateY(0);}
@@ -231,8 +231,8 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 .dev-panel{width:100%;background:transparent;border:none;padding:14px 0;margin-top:8px;}
 .dev-panel-label{display:none;}
 .dev-tier-row{display:flex;gap:8px;flex-wrap:wrap;}
-.dev-tier-btn{flex:1;min-width:80px;padding:8px 6px;background:transparent;border:2px solid rgba(24,22,15,0.7);border-radius:2px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.06em;color:var(--text);cursor:pointer;text-align:center;transition:background 0.3s var(--ease-premium),color 0.3s var(--ease-premium),border-color 0.3s var(--ease-premium),transform 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium);}
-.dev-tier-btn:hover,.dev-tier-btn.active{background:var(--red);border-color:var(--red);color:#ffffff;transform:translateY(-2px);box-shadow:0 4px 16px rgba(192,57,43,0.3);}
+.dev-tier-btn{flex:1;min-width:80px;padding:8px 6px;background:transparent;border:1px solid rgba(24,22,15,0.25);border-radius:2px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:0.06em;color:rgba(24,22,15,0.35);cursor:default;pointer-events:none;text-align:center;transition:none;}
+.dev-tier-btn.active{background:var(--red);border-color:var(--red);color:#ffffff;font-weight:900;}
 .dev-tier-scores{font-size:13px;color:inherit;opacity:0.75;margin-top:2px;}
 
 /* ══════════════════════════════════════════
@@ -609,12 +609,12 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
     <button class="scan-again-btn" onclick="scanAgain()">← Scan a different setup</button>
     <div class="dev-panel">
       <div class="dev-panel-label">Dev test — preview all 5 tiers</div>
-      <div class="dev-tier-row">
-        <button class="dev-tier-btn" onclick="testTier(15,0)">Tier 1<div class="dev-tier-scores">0–29</div></button>
-        <button class="dev-tier-btn" onclick="testTier(40,1)">Tier 2<div class="dev-tier-scores">30–49</div></button>
-        <button class="dev-tier-btn active" onclick="testTier(62,2)">Tier 3<div class="dev-tier-scores">50–69</div></button>
-        <button class="dev-tier-btn" onclick="testTier(77,3)">Tier 4<div class="dev-tier-scores">70–84</div></button>
-        <button class="dev-tier-btn" onclick="testTier(92,4)">Tier 5<div class="dev-tier-scores">85–100</div></button>
+      <div class="dev-tier-row" id="tierIndicator">
+        <div class="dev-tier-btn" data-tier="0">Tier 1<div class="dev-tier-scores">0–29</div></div>
+        <div class="dev-tier-btn" data-tier="1">Tier 2<div class="dev-tier-scores">30–49</div></div>
+        <div class="dev-tier-btn" data-tier="2">Tier 3<div class="dev-tier-scores">50–69</div></div>
+        <div class="dev-tier-btn" data-tier="3">Tier 4<div class="dev-tier-scores">70–84</div></div>
+        <div class="dev-tier-btn" data-tier="4">Tier 5<div class="dev-tier-scores">85–100</div></div>
       </div>
     </div>
   </div>
@@ -1142,6 +1142,8 @@ function animateCount(target,duration,cb){
 function pulseGauge(){const g=document.getElementById('gaugeOuter');g.classList.remove('pulse');void g.offsetWidth;g.classList.add('pulse');g.addEventListener('animationend',()=>g.classList.remove('pulse'),{once:true});}
 function showRevealElements(s){
   const tier=getTier(s);
+  const tierIdx=TIERS.indexOf(tier);
+  document.querySelectorAll('.dev-tier-btn').forEach((b,i)=>b.classList.toggle('active',i===tierIdx));
   setTimeout(()=>{const b=document.getElementById('tierBadge');b.textContent=tier.badge;b.style.background='';b.style.color='';b.style.border='';b.classList.add('show');},100);
   setTimeout(()=>{document.getElementById('verdictName').textContent=tier.name;document.getElementById('verdictName').style.color='';document.getElementById('verdictCopy').textContent=tier.copy;document.getElementById('verdictBlock').classList.add('show');},350);
   setTimeout(()=>{document.getElementById('charPlaceholder').classList.add('show');},550);

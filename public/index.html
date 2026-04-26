@@ -55,7 +55,7 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'B
 .main{width:100%;max-width:580px;display:flex;flex-direction:column;align-items:center;}
 .headline{font-family:'Barlow Condensed',sans-serif;font-size:clamp(18px,2.8vw,24px);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;text-align:center;margin-bottom:12px;line-height:1.2;color:var(--text);}
 .headline .red{color:var(--red);}
-.subline{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--text);text-align:center;margin-bottom:12px;line-height:1.6;}.context-line{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text);text-align:center;margin-bottom:40px;line-height:1.75;max-width:480px;margin-left:auto;margin-right:auto;}
+.subline{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:0.14em;color:var(--text);text-align:center;margin-bottom:12px;line-height:1.6;white-space:normal;}.context-line{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text);text-align:center;margin-bottom:40px;line-height:1.75;max-width:480px;margin-left:auto;margin-right:auto;}
 @keyframes borderPulse{0%,100%{border-color:rgba(232,230,224,0.15);border-width:1px;}50%{border-color:rgba(232,230,224,1);border-width:2px;}}
 .upload-zone{width:100%;min-height:300px;border:1px solid rgba(232,230,224,0.15);border-radius:4px;background:var(--bg);position:relative;cursor:pointer;transition:border-color 0.3s var(--ease-premium),border-width 0.3s var(--ease-premium);overflow:hidden;margin-bottom:28px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 32px rgba(0,0,0,0.4);animation:borderPulse 5.6s ease-in-out infinite;}
 .upload-zone:hover{animation:none;border-width:2px;border-color:rgba(232,230,224,0.85);background:var(--bg);}
@@ -348,7 +348,6 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 .desktop-only{display:block;}.mobile-only{display:none;}
 @media(max-width:600px){
   .screen{padding:0 16px 48px!important;}
-  .subline{font-size:11px;letter-spacing:0.08em;white-space:nowrap;}
   .desktop-only{display:none;}.mobile-only{display:block;}
   .criteria-grid{grid-template-columns:1fr;}
   .criteria-row{grid-template-columns:repeat(2,1fr);}
@@ -369,7 +368,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
   </header>
   <main class="main">
     <h1 class="headline"><span class="red">The camera</span> has been watching<br>and it <span class="red">takes attendance.</span></h1>
-    <p class="subline">You already have a camera presence. Let's find out what it is...</p>
+    <p class="subline">You already have a camera presence.<br>Let's find out what it is...</p>
     <p class="context-line">You've been on camera hundreds of times.<br>Nobody told you the truth about what they saw...<br>Find out now and address your audience from anywhere...</p>
     <p class="criteria-header">You’ll be scored across 6 criteria</p>
     <div class="criteria-row">

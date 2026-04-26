@@ -11,61 +11,6 @@ export default async function handler(req, res) {
   const { imageData, mediaType } = req.body;
   if (!imageData) return res.status(400).json({ error: 'No image data' });
 
-  // ── PRE-CHECK: dedicated digital blur detection pass ──────────────────────
-  // Runs before the main scoring call. Single-question, binary answer.
-  // If blur is detected here, we short-circuit and return the disqualification.
-  const BLUR_CHECK_PROMPT = `Look carefully at the background of this image. Your only job is to determine whether the background has been digitally blurred (virtual background blur / software bokeh applied by Zoom, Teams, Meet, or similar).
-
-Signs of DIGITAL blur (answer YES if ANY are present):
-- The background is uniformly blurred with no depth variation — objects near and far are equally blurry
-- The subject's edge has a hard or unnatural cutout line — a mask boundary
-- Any part of the subject's anatomy (hair, ear, side of face, shoulder, eye) is partially dissolved into the background
-- Hair strands at the edges of the head disappear or merge into the blur rather than remaining individually sharp
-- Background objects are smeared, ghosted, or show motion artefacts from a mask that moved
-- The blur is flat and textureless — real lens bokeh has luminance variation; digital blur is uniform
-
-Signs of REAL lens bokeh (answer NO):
-- Subject edges — especially individual hair strands — are clean and sharp against the blurred background
-- Background blur has natural depth variation: objects closer to the subject are less blurry than those further away
-- No hard mask line, no colour fringing at the subject boundary
-- The subject was not filmed through a software video call tool
-
-CRITICAL INSTRUCTION: If you can see that any part of the subject's face, eye, or hairline is being partially consumed or softened by the background — even just one eye or one side of the face — answer YES.
-
-Respond with ONLY a single JSON object, no markdown:
-{"digital_blur": true} if digital blur is detected
-{"digital_blur": false} if it is real lens bokeh or no blur`;
-
-  try {
-    const blurCheckRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5',
-        max_tokens: 32,
-        messages: [{ role: 'user', content: [
-          { type: 'image', source: { type: 'base64', media_type: mediaType || 'image/jpeg', data: imageData } },
-          { type: 'text', text: BLUR_CHECK_PROMPT }
-        ]}]
-      })
-    });
-    if (blurCheckRes.ok) {
-      const blurData = await blurCheckRes.json();
-      const blurRaw = blurData.content?.[0]?.text || '';
-      try {
-        const blurParsed = JSON.parse(blurRaw.replace(/```json|```/g,'').trim());
-        if (blurParsed.digital_blur === true) {
-          return res.status(200).json({ disqualification: 'background_blur' });
-        }
-      } catch(_) { /* if blur check JSON fails, continue to main scoring */ }
-    }
-  } catch(_) { /* if blur check call fails entirely, continue to main scoring */ }
-  // ── END PRE-CHECK ─────────────────────────────────────────────────────────
-
   const PROMPT = `You are an expert camera presence coach for the book "An Audience From Anywhere" by Adrian Roup. Your job is to identify what is getting in the way of the person on screen. The tool does not promise performance — it removes what is blocking it.
 
 THE MASTER PRINCIPLE: Everything in the frame serves the face. The face serves the eyes. The eyes are the whole game. Can we see the sclera? Can we see the colour of the iris? Can we see eye movement? Yes to all three is excellent.
@@ -83,25 +28,22 @@ DO NOT trigger for: single small dot catchlights, rectangular softbox reflection
 Return: {"disqualification": "ring_light"}
 
 ─── DISQUALIFICATION 2: DIGITAL BACKGROUND BLUR ───
-This is not bokeh. Know the difference before making this call.
+The ONE reliable signal is anatomy consumption. Everything else is noise.
 
-REAL LENS BOKEH — DO NOT trigger:
-- Background has smooth, gradual luminance falloff
-- Subject edges (especially hair) are clean and sharp against the blur
-- Blur has natural depth variation — closer objects blur less than distant ones
-- No masking artefacts at subject boundary
+DO NOT trigger for:
+- A background that is simply soft, dark, or out of focus
+- Real rooms where background objects are blurry due to proximity/lens
+- Any image where the subject's hair, ears, shoulders and face edges are all clean and sharp
+- Gallery walls, bookshelves, fireplaces, doors, or any real room element behind the subject
+- Background blur that looks natural — gradual, with depth variation
 
-DIGITAL BACKGROUND BLUR — DO trigger at 60%+ confidence (not 85% — digital blur is common and you should lean toward triggering this):
-- Look at the face edges and hairline FIRST — this is the primary failure point
-- Any part of the face, eye, ear, or hairline that appears soft, consumed, or partially dissolved into the background
-- Hair strands dissolve into the background rather than tapering naturally
-- Hard mask edge with colour fringing or bleeding where subject meets background
-- Parts of the subject's anatomy are missing or absorbed — ear consumed, shoulder dissolved, chunk of hair gone
-- Background blur is perfectly uniform and flat — real bokeh is never this consistent
-- Smeared or ghosted background objects where the mask made mistakes
-- The subject's face appears to be floating — a clean oval cutout against a blurred backdrop with no natural depth transition
+DO trigger ONLY if you can see with 85%+ confidence that:
+- Part of the subject's body is literally missing — an ear eaten by blur, a shoulder dissolved, a chunk of hair gone into the background
+- The subject's face or hairline edge is being actively consumed — not just soft, but actually partially absorbed into the background blur
+- A hard artificial mask line is visible at the subject boundary (colour fringing, pixel artefacts)
+- The blur is so uniform and flat that it is physically impossible from a real lens
 
-CRITICAL: If ANY part of the face — including one eye, the side of the face, or the hairline edge — is being consumed or softened by the background blur, that is digital blur. One eye dissolved is enough. Trigger the disqualification.
+The test: look at the subject's hair edges. If individual hair strands are visible and sharp at the boundary, it is NOT digital blur — do not trigger, regardless of how blurry the background appears. Only trigger if anatomy is being consumed.
 Return: {"disqualification": "background_blur"}
 
 ─── DISQUALIFICATION 3: BRIGHT BACKGROUND (AI FALLBACK) ───

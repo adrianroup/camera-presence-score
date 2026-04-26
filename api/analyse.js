@@ -87,6 +87,9 @@ TOO CLOSE: If the face fills more than 80% of the frame AND the angle is wrong, 
 ─── BACKGROUND (0–100) ───
 The background should be subordinate to the face. It should not compete, distract, or dominate.
 
+CHECK THIS FIRST — DIGITAL BLUR ANATOMY FAIL (score 0–39, no exceptions):
+Before scoring anything else: look at the subject's face edges, hairline, ears, and shoulders. If any part of the subject's anatomy is being consumed, dissolved, or partially absorbed into the background blur — one eye softened, an ear missing, the side of the face melting into the background, hair strands dissolved — that is a digital background blur mask failure. It does not matter how clean the rest of the blur looks. Score 0–39 and name the specific anatomy that is being consumed. A blurred background that eats the subject is always worse than an honest busy background.
+
 85–100: Background clearly subordinate. Darker, softer, or plain. Face is unmistakably the focal point.
 70–84: Minor issues — slightly busy but face still holds primary attention.
 50–69: Background competes — visible clutter, colour clash, or sharp elements pulling the eye. Score MUST be 69 or below if the background contains multiple distinct, sharp, competing elements.
@@ -100,7 +103,6 @@ HARD RED TRIGGERS — score MUST be 49 or below, no exceptions:
 - BEDROOM: Bed, headboard, pillows, or bedroom furniture visible. Score 30–44.
 - CAR INTERIOR: Dashboard, seats, windows, or car interior visible. Score 25–39.
 - HIGH VISUAL COMPLEXITY: 5+ distinct objects, colours, or patterns clearly visible and sharp behind the subject. Score 35–49.
-- DIGITAL BLUR WITH BAD EDGE MASKING: Background blur that did not disqualify (perhaps the anatomy loss was ambiguous) but still shows visible artefacts — hard mask line around the face, colour fringing at the subject boundary, or any part of the face or eye region partially blurred or consumed by the background. The background has literally eaten part of the subject. This is always worse than an honest busy background. Score 20–39. Name the specific artefact you see.
 These are environmental fails. The setting is the message. You are not permitted to score above 49 when any of these are clearly present.
 
 INTENTIONAL BACKGROUND RULE: A background may be credited as intentional ONLY if ALL THREE are true:

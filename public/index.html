@@ -947,7 +947,10 @@ function percentile90(values) {
 }
 
 function fStopSignal(faceLum, bgP90) {
-  if (faceLum === null || bgP90 === null || faceLum <= 0) return 'amber'; // fallback
+  if (faceLum === null || bgP90 === null || faceLum <= 0) return null; // bad detection — skip, AI handles
+  // If face luminance is unrealistically dark (< 0.05) the bounding box likely landed
+  // on hair or a turned/clipped face — treat as undetectable and pass to AI.
+  if (faceLum < 0.05) return null;
   const ratio = bgP90 / faceLum;
   if (ratio > 2.0)   return 'red';
   if (ratio > 1.414) return 'amber';
@@ -1243,7 +1246,19 @@ function routeResult() {
       {key:'presence',   label:'Presence',        icon:'', score: Math.round(apiResult.criteria.presence?.score || 50), comment: apiResult.criteria.presence?.comment || '', hint: apiResult.criteria.presence?.hint || ''},
     ];
   }
-  revealScore = Math.round(score);
+  // ── Background red = automatic fail ──────────────────────────────────────
+  // If the AI scored background red (< 50), the overall result is a fail
+  // regardless of every other signal. Cap the score at 44 (top of "Needs work").
+  const bgScore = apiResult.criteria?.background?.score;
+  const bgIsRed = typeof bgScore === 'number' && bgScore < 50;
+  let finalScore = Math.round(score);
+  if (bgIsRed && finalScore >= 50) {
+    finalScore = Math.min(44, finalScore - 20); // pull it into fail range
+  } else if (bgIsRed) {
+    finalScore = Math.min(44, finalScore); // already failing — just cap at 44
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+  revealScore = finalScore;
   const charSrc = pickCharacter(revealScore);
   setCharacter(charSrc);
   startReveal(revealScore);

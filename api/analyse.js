@@ -11,6 +11,61 @@ export default async function handler(req, res) {
   const { imageData, mediaType } = req.body;
   if (!imageData) return res.status(400).json({ error: 'No image data' });
 
+  // ── PRE-CHECK: dedicated digital blur detection pass ──────────────────────
+  // Runs before the main scoring call. Single-question, binary answer.
+  // If blur is detected here, we short-circuit and return the disqualification.
+  const BLUR_CHECK_PROMPT = `Look carefully at the background of this image. Your only job is to determine whether the background has been digitally blurred (virtual background blur / software bokeh applied by Zoom, Teams, Meet, or similar).
+
+Signs of DIGITAL blur (answer YES if ANY are present):
+- The background is uniformly blurred with no depth variation — objects near and far are equally blurry
+- The subject's edge has a hard or unnatural cutout line — a mask boundary
+- Any part of the subject's anatomy (hair, ear, side of face, shoulder, eye) is partially dissolved into the background
+- Hair strands at the edges of the head disappear or merge into the blur rather than remaining individually sharp
+- Background objects are smeared, ghosted, or show motion artefacts from a mask that moved
+- The blur is flat and textureless — real lens bokeh has luminance variation; digital blur is uniform
+
+Signs of REAL lens bokeh (answer NO):
+- Subject edges — especially individual hair strands — are clean and sharp against the blurred background
+- Background blur has natural depth variation: objects closer to the subject are less blurry than those further away
+- No hard mask line, no colour fringing at the subject boundary
+- The subject was not filmed through a software video call tool
+
+CRITICAL INSTRUCTION: If you can see that any part of the subject's face, eye, or hairline is being partially consumed or softened by the background — even just one eye or one side of the face — answer YES.
+
+Respond with ONLY a single JSON object, no markdown:
+{"digital_blur": true} if digital blur is detected
+{"digital_blur": false} if it is real lens bokeh or no blur`;
+
+  try {
+    const blurCheckRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5',
+        max_tokens: 32,
+        messages: [{ role: 'user', content: [
+          { type: 'image', source: { type: 'base64', media_type: mediaType || 'image/jpeg', data: imageData } },
+          { type: 'text', text: BLUR_CHECK_PROMPT }
+        ]}]
+      })
+    });
+    if (blurCheckRes.ok) {
+      const blurData = await blurCheckRes.json();
+      const blurRaw = blurData.content?.[0]?.text || '';
+      try {
+        const blurParsed = JSON.parse(blurRaw.replace(/```json|```/g,'').trim());
+        if (blurParsed.digital_blur === true) {
+          return res.status(200).json({ disqualification: 'background_blur' });
+        }
+      } catch(_) { /* if blur check JSON fails, continue to main scoring */ }
+    }
+  } catch(_) { /* if blur check call fails entirely, continue to main scoring */ }
+  // ── END PRE-CHECK ─────────────────────────────────────────────────────────
+
   const PROMPT = `You are an expert camera presence coach for the book "An Audience From Anywhere" by Adrian Roup. Your job is to identify what is getting in the way of the person on screen. The tool does not promise performance — it removes what is blocking it.
 
 THE MASTER PRINCIPLE: Everything in the frame serves the face. The face serves the eyes. The eyes are the whole game. Can we see the sclera? Can we see the colour of the iris? Can we see eye movement? Yes to all three is excellent.

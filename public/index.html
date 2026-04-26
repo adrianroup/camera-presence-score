@@ -1426,13 +1426,14 @@ async function sendReferral(){
   }
   const btn = document.querySelector('.referral-btn');
   btn.disabled=true; btn.textContent='Sending…';
+  const _sess = getSession();
   try{
     const resp = await fetch('/api/send-referral',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
-        referrerName: sessionName || '',
-        referrerEmail: sessionEmail || '',
+        referrerName: (_sess && _sess.name) || '',
+        referrerEmail: (_sess && _sess.email) || '',
         friendEmail,
         toolUrl: TOOL_URL
       })

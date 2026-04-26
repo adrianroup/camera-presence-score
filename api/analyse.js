@@ -98,12 +98,14 @@ Before scoring anything else: look at the subject's face edges, hairline, ears, 
 
 HARD RED TRIGGERS — score MUST be 49 or below, no exceptions:
 - GALLERY WALL / ART WALL: Multiple framed pictures, artwork, or photographs covering the wall behind the subject. Even if the subject is sharp, the gallery competes directly. Score 35–49.
-- BUSY BOOKSHELF: Books, objects, and varied colours clearly visible and sharp on shelves directly behind the subject. Score 35–49.
 - KITCHEN: Cabinets, appliances, countertops, or food visible. The setting undermines any professional context. Score 30–44.
 - BEDROOM: Bed, headboard, pillows, or bedroom furniture visible. Score 30–44.
 - CAR INTERIOR: Dashboard, seats, windows, or car interior visible. Score 25–39.
-- HIGH VISUAL COMPLEXITY: 5+ distinct objects, colours, or patterns clearly visible and sharp behind the subject. Score 35–49.
 These are environmental fails. The setting is the message. You are not permitted to score above 49 when any of these are clearly present.
+
+AMBER TERRITORY — score 50–69, not a fail:
+- BUSY BOOKSHELF: Books, objects, and varied colours clearly visible and sharp on shelves behind the subject. A bookshelf is a recognised professional and intellectual backdrop. It competes visually but does not disqualify. Score 50–64. Only drop below 50 if the shelves are chaotic enough that the eye is pulled away from the face more than toward it — not merely because the shelves are colourful or full.
+- HIGH VISUAL COMPLEXITY: 5+ distinct objects clearly visible but background is a real room and face remains primary. Score 50–64.
 
 INTENTIONAL BACKGROUND RULE: A background may be credited as intentional ONLY if ALL THREE are true:
 (1) Background elements are visibly softer in focus than the face — actual bokeh present, not assumed

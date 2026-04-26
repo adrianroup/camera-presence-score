@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Camera Score™ — An Audience From Anywhere</title>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Condensed:wght@700;800;900&display=swap" rel="stylesheet">
@@ -219,7 +220,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
 .verdict-block.show{opacity:1;transform:translateY(0);}
 .verdict-name{font-family:'Barlow Condensed',sans-serif;font-size:clamp(26px,5vw,32px);font-weight:400;letter-spacing:0.01em;margin-bottom:14px;color:var(--text);}
 .verdict-copy{font-family:'Barlow',sans-serif;font-size:16px;font-style:italic;color:var(--text-sec);line-height:1.7;max-width:440px;margin:0 auto;}
-.char-placeholder{width:100px;height:100px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;margin-bottom:28px;opacity:0;transform:scale(0.85);transition:opacity 0.5s ease,transform 0.5s ease;}
+.char-placeholder{width:160px;height:160px;border-radius:0;background:transparent;border:none;display:flex;align-items:center;justify-content:center;margin-bottom:28px;opacity:0;transform:scale(0.85);transition:opacity 0.5s ease,transform 0.5s ease;}
 .char-placeholder.show{opacity:1;transform:scale(1);}
 .char-placeholder-text{font-size: 14px;color:var(--text-subtle);text-align:center;line-height:1.4;font-family:'Barlow',sans-serif;letter-spacing:0.04em;}
 .next-btn{width:100%;background:var(--gold);color:#0c0b0a;border:none;border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:500;letter-spacing:0.08em;cursor:pointer;margin-bottom:16px;opacity:0;transition:opacity 0.5s ease,box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);}
@@ -603,7 +604,7 @@ kbd{background:rgba(255,248,235,0.07);border-radius:2px;padding:2px 6px;font-fam
     <div class="gauge-section"><div class="gauge-outer" id="gaugeOuter"><svg class="gauge-svg" viewBox="0 0 220 220"><circle class="gauge-track" cx="110" cy="110" r="90"/><circle class="gauge-fill" id="gaugeFill" cx="110" cy="110" r="90" stroke="#C0392B"/></svg><div class="gauge-center"><div class="gauge-number" id="gaugeNumber">0</div><div class="gauge-denom">/100</div></div></div></div>
     <div class="tier-badge" id="tierBadge"></div>
     <div class="verdict-block" id="verdictBlock"><div class="verdict-name" id="verdictName"></div><div class="verdict-copy" id="verdictCopy"></div></div>
-    <div class="char-placeholder" id="charPlaceholder" style="width:160px;height:160px;border-radius:0;background:transparent;border:none;"><img id="charImg" src="" alt="" style="width:100%;height:100%;object-fit:contain;display:none;border-radius:0;" /></div>
+    <div class="char-placeholder" id="charPlaceholder"><lottie-player id="charLottie" src="" background="transparent" speed="1" style="width:160px;height:160px;" loop autoplay></lottie-player></div>
     <button class="next-btn" id="nextBtn" onclick="goToBreakdown()">See Your Breakdown →</button>
     <button class="scan-again-btn" onclick="scanAgain()">← Scan a different setup</button>
     <div class="dev-panel">
@@ -1148,31 +1149,20 @@ function showRevealElements(s){
 }
 function resetReveal(){['tierBadge','verdictBlock','charPlaceholder','nextBtn'].forEach(id=>document.getElementById(id).classList.remove('show'));setGauge(0,false);revealAnimating=false;}
 
-function pickCharacter(score, criteria, lightingSignal) {
-  // All green
-  if (score >= 85) return '/illustration-allgreen-ferris.png';
-  // Lighting red takes top priority (client-side signal)
-  if (lightingSignal === 'red') return '/illustration-larry-lighting.png';
-  // Find worst-scoring AI criterion
-  if (criteria && criteria.length) {
-    const worst = criteria.slice().sort((a, b) => a.score - b.score)[0];
-    if (worst.score < 60) {
-      if (worst.key === 'angle')      return '/illustration-alan-angle.png';
-      if (worst.key === 'framing')    return '/illustration-dennis-distance.png';
-      if (worst.key === 'background') return '/illustration-brian-background.png';
-      if (worst.key === 'presence')   return '/illustration-eddie-eyecontact.png';
-    }
-  }
-  // Lighting amber fallback
-  if (lightingSignal === 'amber') return '/illustration-larry-lighting.png';
-  // Default
-  return '/illustration-allgreen-ferris.png';
+function pickCharacter(score) {
+  // Happy — 85 to 100
+  if (score >= 85) return 'https://assets2.lottiefiles.com/packages/lf20_jR229r.json';
+  // Good — 60 to 84
+  if (score >= 60) return 'https://assets2.lottiefiles.com/packages/lf20_uu0x8lqv.json';
+  // Concerned — 40 to 59
+  if (score >= 40) return 'https://assets9.lottiefiles.com/packages/lf20_qpsnmykx.json';
+  // Sad — 0 to 39
+  return 'https://assets5.lottiefiles.com/packages/lf20_gn8GHEJZ4g.json';
 }
 function setCharacter(src) {
-  const img = document.getElementById('charImg');
-  if (!img) return;
-  img.src = src;
-  img.style.display = 'block';
+  const player = document.getElementById('charLottie');
+  if (!player) return;
+  player.load(src);
 }
 function startReveal(score){const s=score!==undefined?score:revealScore;resetReveal();showScreen(document.getElementById('screenReveal'));setTimeout(()=>{animateCount(s,2200,()=>{pulseGauge();showRevealElements(s);});},400);}
 function testTier(score,btnIdx){revealScore=score;document.querySelectorAll('.dev-tier-btn').forEach((b,i)=>b.classList.toggle('active',i===btnIdx));resetReveal();setTimeout(()=>{animateCount(score,2200,()=>{pulseGauge();showRevealElements(score);});},150);}
@@ -1252,7 +1242,7 @@ function routeResult() {
     ];
   }
   revealScore = Math.round(score);
-  const charSrc = pickCharacter(revealScore, currentCriteria, clientLightingSignal);
+  const charSrc = pickCharacter(revealScore);
   setCharacter(charSrc);
   startReveal(revealScore);
 }

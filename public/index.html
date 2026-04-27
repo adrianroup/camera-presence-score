@@ -1377,11 +1377,15 @@ function buildBreakdown(score, criteria){
   grid.className='tl-grid';
 
   // Build signal map — use clientLightingSignal for lighting if available
+  // If overall score is 0 (no face), force all signals red
+  const noFaceResult = (revealScore === 0);
   const signalMap = {};
   criteria.forEach(c => {
-    signalMap[c.key] = scoreToSignal(c.score);
+    signalMap[c.key] = noFaceResult ? 'red' : scoreToSignal(c.score);
   });
-  if (clientLightingSignal) {
+  if (noFaceResult) {
+    signalMap['lighting'] = 'red';
+  } else if (clientLightingSignal) {
     signalMap['lighting'] = clientLightingSignal;
   }
 
@@ -1394,7 +1398,7 @@ function buildBreakdown(score, criteria){
   ];
 
   tlRows.forEach((row, i) => {
-    const signal = signalMap[row.key] || 'amber';
+    const signal = signalMap[row.key] || (noFaceResult ? 'red' : 'amber');
     const div = document.createElement('div');
     div.className = 'tl-row';
     div.style.opacity = '0';

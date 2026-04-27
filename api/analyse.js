@@ -28,31 +28,21 @@ DO NOT trigger for: single small dot catchlights, rectangular softbox reflection
 Return: {"disqualification": "ring_light"}
 
 ─── DISQUALIFICATION 2: DIGITAL BACKGROUND BLUR ───
-This is a two-path disqualification. Either path alone is sufficient to trigger it. No confidence threshold required — if you can see it, call it.
+Before doing anything else, answer these four questions by looking at the image:
 
-PATH A — ANATOMY CONSUMPTION (automatic trigger, no exceptions):
-Look at the boundary between the subject and the background. Check: face edges, hairline, ears, shoulders, neck, jawline. If ANY part of the subject's body is being consumed, dissolved, absorbed, softened, or partially erased by the background blur — one eye eaten, an ear missing, hair dissolved into background, side of face melting — trigger immediately. It does not matter how the rest of the blur looks. Anatomy consumption means the mask is eating the subject. That is always a disqualification. Always. No exceptions.
+QUESTION 1: Is any part of the subject's body being dissolved, softened, or partially erased at the boundary where they meet the background? Check specifically: the edges of the face, the ears, the hairline, the shoulders, the neck, the jawline. Is any of it melting into the background? Is an eye partially eaten? Is an ear missing or soft where it should be sharp?
+If YES to any part of Question 1 → return {"disqualification": "background_blur"} immediately. Stop. Do not score anything.
 
-PATH B — UNIFORM FLAT MUSH (trigger when clearly present):
-Real optical blur and digital virtual blur are physically distinct.
+QUESTION 2: Is the background blur identical in softness everywhere — near objects behind the subject equally blurred as far objects, with no graduation in depth?
+If YES → return {"disqualification": "background_blur"} immediately. Stop.
 
-REAL OPTICAL BLUR (do NOT trigger):
-- Gradual depth gradient — objects closest to the subject are least blurry, objects furthest away are most blurry
-- Smooth, continuous falloff in sharpness as depth increases
-- Background elements at different depths show meaningfully different degrees of softness
-- Subject edges are clean, hair strands visible and sharp at the boundary
+QUESTION 3: Are there any edge artefacts at the boundary between the subject and the background — colour fringing, halo glow, pixel bleed, a hard unnatural mask line?
+If YES → return {"disqualification": "background_blur"} immediately. Stop.
 
-DIGITAL VIRTUAL BLUR (trigger when clearly present):
-- Uniform, flat mush — the entire background is identically soft from edge to edge with no depth gradient whatsoever
-- No graduation: objects close behind the subject are equally blurred as objects far behind
-- The background looks like a single flat layer of identical softness rather than a scene with depth
-- Edge artefacts at the subject boundary — colour fringing, halo glow, pixel bleed, or an unnatural hard mask line
+QUESTION 4: Is the background real optical blur from a camera lens (graduated, progressive, natural), with no anatomy consumed and no edge artefacts?
+If YES to Question 4 only → do NOT trigger. Continue to scoring.
 
-The key question: does the background blur get progressively softer with distance, or is it uniformly, perfectly, identically soft everywhere? If it is perfectly uniform — that is a digital filter. Trigger it.
-
-DO NOT trigger for:
-- A background that is simply soft or out of focus with a visible depth gradient
-- Real rooms where background objects are blurry with meaningful variation at different depths
+DO NOT trigger for real optical blur with a visible depth gradient and clean subject edges.  
 Return: {"disqualification": "background_blur"}
 
 ─── DISQUALIFICATION 3: BRIGHT BACKGROUND (AI FALLBACK) ───

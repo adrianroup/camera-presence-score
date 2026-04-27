@@ -14,12 +14,15 @@ export default async function handler(req, res) {
   // ─── Traffic light values ───────────────────────────────────────────────
   // signals: { lighting: 'green'|'amber'|'red', angle: ..., background: ..., framing: ..., presence: ... }
   // lightingSignal is the client-side computed value (takes priority for lighting)
+  // If overall is 0 (no face / complete fail), force all signals red regardless of what was sent
+  const noFace = (overall === 0);
+
   const sig = signals || {};
-  const lightingColor = (lightingSignal || sig.lighting || 'amber').toLowerCase();
-  const angleColor    = (sig.angle      || 'amber').toLowerCase();
-  const bgColor       = (sig.background || 'amber').toLowerCase();
-  const framingColor  = (sig.framing    || 'amber').toLowerCase();
-  const presenceColor = (sig.presence   || 'amber').toLowerCase();
+  const lightingColor = noFace ? 'red' : (lightingSignal || sig.lighting || 'red').toLowerCase();
+  const angleColor    = noFace ? 'red' : (sig.angle      || 'red').toLowerCase();
+  const bgColor       = noFace ? 'red' : (sig.background || 'red').toLowerCase();
+  const framingColor  = noFace ? 'red' : (sig.framing    || 'red').toLowerCase();
+  const presenceColor = noFace ? 'red' : (sig.presence   || 'red').toLowerCase();
 
   // ─── Determine the worst signal (for email poem selection) ──────────────
   // Priority: red > amber > green. Among reds, pick the one with the highest weight.
@@ -160,7 +163,14 @@ export default async function handler(req, res) {
   let poemHtml, fixHtml, partRef, subjectSuffix;
   let illustrationUrl = '';
 
-  if (disqualification && disqContent[disqualification]) {
+  if (noFace && !disqualification) {
+    // No face detected — all red, Groundhog Day email
+    poemHtml = `Everything came back amber.<br><br>Not red. Nothing is broken. But nothing is landing cleanly either — lighting, angle, background, framing, presence, all sitting in that particular shade of <em>close but not quite</em>.<br><br>Phil Connors wakes up on February 2nd. Again. He's not failing. He's not succeeding. He's looping — same day, same choices, same Sonny and Cher at 6am, same slight wrongness that he can't quite put his finger on until he finally decides to actually change something.<br><br>Every amber you've got is a <em>ground</em> that could be firmer, a <em>hog</em> that keeps doubling back on itself, a <em>day</em> that could break differently if one thing shifted.<br><br>The good news: amber means you're most of the way there. Each fix is small. Any one of them changes the frame.`;
+    fixHtml = 'Pick the one criterion that feels most fixable — start with your light source, since it affects everything downstream. Get that to green, then re-run the score. You don\'t need to fix everything at once. You just need to stop waking up on February 2nd.';
+    partRef = 'Part III: The Craft';
+    subjectSuffix = 'Have you seen the movie: Groundhog Day? You\'re almost there. Almost.';
+    illustrationUrl = `${BASE_URL}/illustration-groundhog-whackamole.jpg`;
+  } else if (disqualification && disqContent[disqualification]) {
     // Disqualification email
     const d = disqContent[disqualification];
     poemHtml       = d.poem;

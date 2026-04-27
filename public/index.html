@@ -1248,10 +1248,10 @@ function routeResult() {
   if (apiResult.criteria) {
     // Lighting is client-side only — AI returns angle, background, framing, presence
     currentCriteria = [
-      {key:'angle',      label:'Camera angle',    icon:'', score: Math.round(apiResult.criteria.angle?.score    || 50), comment: apiResult.criteria.angle?.comment    || '', hint: apiResult.criteria.angle?.hint    || ''},
-      {key:'background', label:'Background',      icon:'', score: Math.round(apiResult.criteria.background?.score|| 50), comment: apiResult.criteria.background?.comment|| '', hint: apiResult.criteria.background?.hint|| ''},
-      {key:'framing',    label:'Framing',         icon:'', score: Math.round(apiResult.criteria.framing?.score  || 50), comment: apiResult.criteria.framing?.comment  || '', hint: apiResult.criteria.framing?.hint  || ''},
-      {key:'presence',   label:'Presence',        icon:'', score: Math.round(apiResult.criteria.presence?.score || 50), comment: apiResult.criteria.presence?.comment || '', hint: apiResult.criteria.presence?.hint || ''},
+      {key:'angle',      label:'Camera angle',    icon:'', score: Math.round(apiResult.criteria.angle?.score      ?? 0), comment: apiResult.criteria.angle?.comment    || '', hint: apiResult.criteria.angle?.hint    || ''},
+      {key:'background', label:'Background',      icon:'', score: Math.round(apiResult.criteria.background?.score  ?? 0), comment: apiResult.criteria.background?.comment|| '', hint: apiResult.criteria.background?.hint|| ''},
+      {key:'framing',    label:'Framing',         icon:'', score: Math.round(apiResult.criteria.framing?.score    ?? 0), comment: apiResult.criteria.framing?.comment  || '', hint: apiResult.criteria.framing?.hint  || ''},
+      {key:'presence',   label:'Presence',        icon:'', score: Math.round(apiResult.criteria.presence?.score   ?? 0), comment: apiResult.criteria.presence?.comment || '', hint: apiResult.criteria.presence?.hint || ''},
     ];
   }
   // ── Background red = automatic fail ──────────────────────────────────────

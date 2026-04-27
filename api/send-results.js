@@ -139,11 +139,11 @@ export default async function handler(req, res) {
       part: 'Part IV: The Room You\'re Actually In',
     },
     background_blur: {
-      movie: 'Eternal Sunshine of the Spotless Mind',
-      subject: 'Have you seen the movie: Eternal Sunshine of the Spotless Mind? Is your background real?',
-      illustration: '',
-      poem: `Quick question — is the space behind you actually there?<br><br>The score picked up what looks like a digital background blur: the kind where the background goes soft in a way that doesn't match the light, where edges do strange things around hair and shoulders, where the wall seems to exist in a slightly different universe from the person in front of it.<br><br>In <em>Eternal Sunshine of the Spotless Mind</em>, memories get erased in real time. Things that were solid start to dissolve at the edges. Rooms disappear mid-scene. The background stops being reliable.<br><br>That's what a virtual blur filter does to your credibility on camera.<br><br>The <em>sunshine</em> is <em>eternal</em> — but the <em>spotless</em> background you've applied is fooling nobody, and the <em>mind</em> of your viewer registers something is slightly off even if they can't name it.<br><br>You don't need to hide the room. You need to own it.`,
-      fix: 'Turn off the digital blur or virtual background filter entirely. If the real background needs work, move your setup so there\'s at least two metres between you and the wall — natural depth creates its own soft focus without the glitching artefacts.',
+      movie: 'Garden State',
+      subject: 'Have you seen the movie: Garden State? Your background is competing with you.',
+      illustration: `${BASE_URL}/illustration-brian-background.png`,
+      poem: `Your background is pulling attention away from your face.<br><br>Audiences read the room — automatically, involuntarily. If the room is loud, they stop listening to you.<br><br>In <em>Garden State</em>, Zach Braff blends into a wallpaper pattern in his childhood bedroom. It\'s a metaphor. It is also what is happening on your calls.`,
+      fix: 'Find a plain wall, or clear the shelf behind you — anything the eye can settle on without working for it.',
       part: 'Part IV: The Room You\'re Actually In',
     },
     bright_background: {

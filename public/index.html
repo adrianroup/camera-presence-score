@@ -1096,7 +1096,7 @@ async function callVisionAPI(dataUrl) {
   const lightingPromise = analyseClientLighting(dataUrl);
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20000);
+  const timeout = setTimeout(() => controller.abort(), 45000);
 
   try {
     const [response, lightingResult] = await Promise.all([
@@ -1293,8 +1293,11 @@ function showApiError(msg) {
   const container = document.querySelector('#screenLoading .loading-wrap') || document.getElementById('loadingComplete');
   let errDiv = document.getElementById('apiErrorMsg');
   if (!errDiv) { errDiv = document.createElement('div'); errDiv.id = 'apiErrorMsg'; container.appendChild(errDiv); }
-  errDiv.style.cssText = 'margin-top:14px;padding:12px 16px;background:rgba(168,92,92,0.1);border:1px solid rgba(168,92,92,0.3);border-radius:3px;font-size:13px;color:#a85c5c;text-align:center;display:block;';
-  errDiv.innerHTML = '⚠️ ' + msg + '<br><span style="color:rgba(245,240,232,0.3);font-size:12px;">Check your API key in the config block at the top of this file, then try again.</span>';
+  errDiv.style.cssText = 'margin-top:14px;padding:16px 20px;background:rgba(168,92,92,0.1);border:1px solid rgba(168,92,92,0.3);border-radius:3px;font-size:14px;color:#a85c5c;text-align:center;display:block;';
+  const isTimeout = (msg === 'timeout');
+  errDiv.innerHTML = isTimeout
+    ? '⚠️ The analysis is taking longer than expected.<br><span style="font-size:13px;opacity:0.8;">Please go back and try again.</span><br><br><button onclick="showScreen(document.getElementById(\'screenUpload\'));" style="background:transparent;border:1px solid rgba(168,92,92,0.5);border-radius:2px;padding:8px 20px;font-size:13px;font-weight:600;letter-spacing:0.06em;color:#a85c5c;cursor:pointer;">← Try again</button>'
+    : '⚠️ Something went wrong during analysis.<br><span style="font-size:13px;opacity:0.8;">Please go back and try again.</span><br><br><button onclick="showScreen(document.getElementById(\'screenUpload\'));" style="background:transparent;border:1px solid rgba(168,92,92,0.5);border-radius:2px;padding:8px 20px;font-size:13px;font-weight:600;letter-spacing:0.06em;color:#a85c5c;cursor:pointer;">← Try again</button>';
 }
 
 function goToBreakdown(){

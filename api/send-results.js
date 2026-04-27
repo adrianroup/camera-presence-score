@@ -147,11 +147,11 @@ export default async function handler(req, res) {
       part: 'Part IV: The Room You\'re Actually In',
     },
     bright_background: {
-      movie: 'Cool Hand Luke',
-      subject: "Have you seen the movie: Cool Hand Luke? What we've got here is a failure to illuminate.",
-      illustration: '',
-      poem: `The score flagged a bright background — which means the camera can't see your face.<br><br>The camera exposes for the brightest thing in frame. Right now that's whatever is behind you: a window, a lamp, a wall catching afternoon sun. Your face is in competition with it, and your face is losing.<br><br>You have become a silhouette. Present in the frame. Not readable in it.<br><br>In <em>Cool Hand Luke</em>, the Captain delivers his famous line from behind mirrored sunglasses, standing between Luke and the sun. The power isn't in what he says — it's in what Luke can't see. "What we've got here," he says, "is a failure to communicate."<br><br>That's what a blown-out background does to a call. <em>Cool</em> room. Wrong <em>hand</em>. The light is in the wrong place, and nobody can <em>Luke</em> past it.`,
-      fix: 'Close the blind or move away from the window. If the window is your only light source, turn your desk so it\'s in front of you, not behind. Your face should be the brightest object the camera sees. If it isn\'t, the camera makes the decision for you.',
+      movie: 'The Shawshank Redemption',
+      subject: 'Have you seen the movie: The Shawshank Redemption? You\'re backlit.',
+      illustration: `${BASE_URL}/illustration-larry-lighting.png`,
+      poem: `Your main light source is behind you, not in front.<br><br>The camera exposes for the brightest thing in frame. Right now that's the window. Your face loses every time.<br><br>Andy Dufresne spent nineteen years in Shawshank before he finally walked out into the&nbsp;light. You can fix yours by moving a lamp.`,
+      fix: 'Put a light source — a lamp, a window, anything bright — in front of you, not behind you.',
       part: 'Part III: The Craft',
     },
   };

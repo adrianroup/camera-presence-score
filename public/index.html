@@ -1808,7 +1808,7 @@ async function handleLinkedInSubmit() {
     user = await sbGetUser(email);
     const uses = user ? user.uses_remaining : 3;
     setSession(email, name, uses);
-    klaviyoSubscribe(email, name, jobTitle, linkedIn || '');
+    klaviyoSubscribe(email, name, jobTitle, '');
     sessionStorage.removeItem('linkedin_profile');
     sessionStorage.removeItem('google_profile');
 
@@ -1991,6 +1991,10 @@ async function resendVerification(){
 }
 
 function startLoadingWithDecrement(email){
+  // After an OAuth redirect the page reloads — restore image from sessionStorage
+  if (!currentDataUrl) {
+    try { currentDataUrl = sessionStorage.getItem('pending_image') || null; } catch(e) {}
+  }
   decrementSession();
   sbDecrementUses(email);
   try { sessionStorage.removeItem('pending_image'); } catch(e) {}

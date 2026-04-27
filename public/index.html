@@ -150,10 +150,10 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 
 /* No uses left */
 .gate-paywall{display:none;flex-direction:column;align-items:center;text-align:center;width:100%;}
-.gate-paywall-heading{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;color:var(--gold);}
+.gate-paywall-heading{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:900;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:12px;color:var(--red);}
 .gate-paywall-copy{font-family:'Barlow',sans-serif;font-size:15px;color:var(--text-sec);line-height:1.65;margin-bottom:24px;max-width:380px;}
-.gate-paywall-btn{width:100%;background:var(--red);color:#ffffff;border:none;border-radius:2px;padding:18px 28px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:opacity 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);box-shadow:0 0 24px var(--red-glow),inset 0 1px 0 rgba(0,0,0,0.06);}
-.gate-paywall-btn:hover{opacity:1;box-shadow:0 0 40px var(--red-glow),inset 0 1px 0 rgba(0,0,0,0.06);transform:translateY(-2px);}
+.gate-paywall-btn{width:100%;background:transparent;color:var(--text);border:1px solid rgba(24,22,15,0.35);border-radius:2px;padding:18px 28px;font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:background 0.3s var(--ease-premium),color 0.3s var(--ease-premium),border-color 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);}
+.gate-paywall-btn:hover{background:var(--red);color:#ffffff;border-color:var(--red);box-shadow:0 0 40px var(--red-glow),inset 0 1px 0 rgba(0,0,0,0.06);transform:translateY(-2px);}
 
 /* ── LOADING ── */
 #screenLoading{padding:0 20px 60px;justify-content:flex-start;}
@@ -579,7 +579,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 
     <!-- No uses remaining state -->
     <div class="gate-paywall" id="gatePaywallState">
-      <div class="gate-paywall-heading">Your free scans are done.</div>
+      <div class="gate-paywall-heading">You've used up your complimentary scans.</div>
       <p class="gate-paywall-copy">You’ve used your 3 free analyses. Keep going — every scan is a clearer picture of how you land on camera.</p>
       <button class="gate-paywall-btn" onclick="window.open('https://anaudiencefromanywhere.myshopify.com/cart/53348902863147:1','_blank')">Get 10 more scans →</button>
     </div>

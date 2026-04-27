@@ -8,21 +8,20 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#0c0b0a;
-  --text:#edebe6;
-  --text-sec:rgba(237,235,230,0.6);
+  --bg:#f4f2ed;
+  --text:#18160f;
+  --text-sec:rgba(24,22,15,0.65);
   --red:#C0392B;
   --red-glow:rgba(192,57,43,0.28);
-  --gold:#E8E6E0;
-  --surface:#151311;
-  --border:rgba(255,248,235,0.07);
+  --surface:#eae7e0;
+  --border:rgba(24,22,15,0.12);
   --ease-premium:cubic-bezier(0.16,1,0.3,1);
 }
 html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Barlow',sans-serif;display:flex;align-items:center;justify-content:center;}
 .wrap{text-align:center;padding:40px 24px;max-width:420px;}
-.logo{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:rgba(200,204,212,0.7);margin-bottom:32px;}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:rgba(24,22,15,0.5);margin-bottom:32px;}
 .logo .red{color:var(--red);}
-.spinner-ring{width:48px;height:48px;border:3px solid rgba(232,230,224,0.1);border-top-color:rgba(232,230,224,0.6);border-radius:50%;animation:spin 0.9s linear infinite;margin:0 auto 28px;}
+.spinner-ring{width:48px;height:48px;border:3px solid rgba(24,22,15,0.12);border-top-color:rgba(24,22,15,0.6);border-radius:50%;animation:spin 0.9s linear infinite;margin:0 auto 28px;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .status{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text);margin-bottom:8px;}
 .sub{font-size:14px;color:var(--text-sec);line-height:1.6;}

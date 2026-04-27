@@ -59,7 +59,7 @@ export default async function handler(req, res) {
       movie: 'Apocalypse Now',
       subject: 'Have you seen the movie: Apocalypse Now? Your camera is below eye level.',
       illustration: `${BASE_URL}/illustration-alan-angle.png`,
-      poem: `Your camera is below eye level.<br><br>When the camera sits low, you get ceiling in the shot, nostrils in the frame, and authority quietly exits the call.<br><br>Captain Willard spent the entire opening of Apocalypse Now face-down on a Saigon hotel bed, staring at the ceiling fan. It was a cinematic choice. Your laptop on your desk is not.`,
+      poem: `Your camera is below eye level.<br><br>When the camera sits low, you get ceiling in the shot, nostrils in the frame, and authority quietly exits the call.<br><br>Captain Willard opened Apocalypse Now flat on his back in a Saigon hotel room, staring at the ceiling fan. It was a cinematic choice. Your laptop at that angle is not.`,
       fix: 'Stack some books under your laptop — or raise the monitor — until the lens is level with your eyes.',
       part: 'Part II: The World Changed. Did You?',
     },

@@ -28,22 +28,27 @@ DO NOT trigger for: single small dot catchlights, rectangular softbox reflection
 Return: {"disqualification": "ring_light"}
 
 ─── DISQUALIFICATION 2: DIGITAL BACKGROUND BLUR ───
-The ONE reliable signal is anatomy consumption. Everything else is noise.
+The primary test is blur uniformity. Real optical blur and digital virtual blur are physically distinct.
+
+REAL OPTICAL BLUR (do NOT trigger):
+- Gradual depth gradient — objects closest to the subject are least blurry, objects furthest away are most blurry
+- Smooth, continuous falloff in sharpness as depth increases
+- Background elements at different depths show different degrees of softness
+- Subject edges are clean, hair strands visible and sharp at the boundary
+
+DIGITAL VIRTUAL BLUR (DO trigger at 85%+ confidence):
+- Uniform, flat mush — the entire background is identically soft from edge to edge with no depth gradient whatsoever
+- No graduation: objects 1 metre behind the subject are equally blurred as objects 5 metres behind
+- The background looks like a single layer of identical softness rather than a scene with natural depth
+- Edge artefacts at the subject boundary — colour fringing, halo glow, pixel bleed, or an unnatural hard mask line where subject meets background
+- Part of the subject's body is consumed — an ear eaten, a shoulder dissolved, hair strands absorbed into the background
+
+The key question: does the background blur get progressively softer with distance, or is it uniformly, perfectly, identically soft everywhere? If it is perfectly uniform — that is a digital filter. Trigger it.
 
 DO NOT trigger for:
-- A background that is simply soft, dark, or out of focus
-- Real rooms where background objects are blurry due to proximity/lens
-- Any image where the subject's hair, ears, shoulders and face edges are all clean and sharp
-- Gallery walls, bookshelves, fireplaces, doors, or any real room element behind the subject
-- Background blur that looks natural — gradual, with depth variation
-
-DO trigger ONLY if you can see with 85%+ confidence that:
-- Part of the subject's body is literally missing — an ear eaten by blur, a shoulder dissolved, a chunk of hair gone into the background
-- The subject's face or hairline edge is being actively consumed — not just soft, but actually partially absorbed into the background blur
-- A hard artificial mask line is visible at the subject boundary (colour fringing, pixel artefacts)
-- The blur is so uniform and flat that it is physically impossible from a real lens
-
-The test: look at the subject's hair edges. If individual hair strands are visible and sharp at the boundary, it is NOT digital blur — do not trigger, regardless of how blurry the background appears. Only trigger if anatomy is being consumed.
+- A background that is simply soft, dark, or out of focus with a natural depth gradient
+- Real rooms where background objects are blurry due to proximity/lens with visible depth variation
+- Any background where different elements at different depths show meaningfully different degrees of softness
 Return: {"disqualification": "background_blur"}
 
 ─── DISQUALIFICATION 3: BRIGHT BACKGROUND (AI FALLBACK) ───

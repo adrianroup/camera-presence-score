@@ -309,8 +309,8 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 .book-callout-copy{font-family:'Barlow',sans-serif;font-size:15px;color:rgba(24,22,15,0.7);line-height:1.6;}
 
 /* Action buttons */
-.action-btn{width:100%;background:var(--red);color:#ffffff;border:none;border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.08em;cursor:pointer;transition:opacity 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);margin-bottom:12px;}
-.action-btn:hover{opacity:0.9;box-shadow:0 6px 24px rgba(192,57,43,0.35);transform:translateY(-2px);}
+.action-btn{width:100%;background:#d44b3a;color:#ffffff;border:none;border-radius:2px;padding:16px 28px;font-family:'Barlow',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.08em;cursor:pointer;transition:background 0.3s var(--ease-premium),box-shadow 0.3s var(--ease-premium),transform 0.3s var(--ease-premium);margin-bottom:12px;}
+.action-btn:hover{background:#a93226;box-shadow:0 6px 24px rgba(169,50,38,0.4);transform:translateY(-2px);}
 .action-btn.secondary{background:transparent;border:1px solid rgba(24,22,15,0.4);color:var(--text);font-size:15px;padding:11px 24px;}
 .action-btn.secondary:hover{border-color:rgba(24,22,15,0.8);color:var(--text);}
 
@@ -1419,7 +1419,7 @@ function buildBreakdown(score, criteria){
         <span class="audio-card-status" id="audioStatus" style="color:var(--text-muted)">Not tested</span>
       </div>
       <div class="audio-card-prompt">The camera scores what it sees. This scores what it hears. Say the sentence below twice, clearly, at the volume you would use on a call. Try smiling while you speak and see if you can hear the warmth in the playback.</div>
-      <div style="font-family:'Barlow',sans-serif;font-size:14px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:0.02em;">Try repeat this phrase while recording</div>
+      <div style="font-family:'Barlow',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;letter-spacing:0.02em;text-align:center;">Try repeating this phrase while recording:</div>
       <div class="audio-card-sentence">"The quick brown fox wouldn't be caught dead using a ring light."</div>
       <button class="audio-record-btn" id="audioRecordBtn" onclick="toggleRecording()">
         <span class="audio-record-dot"></span>

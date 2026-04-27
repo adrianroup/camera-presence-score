@@ -1580,7 +1580,7 @@ async function sbCreateUser(email, name, token, company, jobTitle, linkedIn){
   const res = await fetch(`${SUPABASE_URL}/rest/v1/camera_score_users`, {
     method:'POST',
     headers:{...SB_HEADERS, 'Prefer':'return=representation'},
-    body: JSON.stringify({email, name, verified:false, uses_remaining:3, verification_token:token, company: company||'', job_title: jobTitle||'', linkedin_url: linkedIn||''})
+    body: JSON.stringify({email, name, verified:false, uses_remaining:3, verification_token:token, job_title: jobTitle||'', linkedin_url: linkedIn||''})
   });
   const data = await res.json();
   return Array.isArray(data) ? data[0] : data;

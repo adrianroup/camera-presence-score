@@ -164,11 +164,11 @@ export default async function handler(req, res) {
   let illustrationUrl = '';
 
   if (noFace && !disqualification) {
-    // No face detected — all red, Groundhog Day email
-    poemHtml = `Everything came back amber.<br><br>Not red. Nothing is broken. But nothing is landing cleanly either — lighting, angle, background, framing, presence, all sitting in that particular shade of <em>close but not quite</em>.<br><br>Phil Connors wakes up on February 2nd. Again. He's not failing. He's not succeeding. He's looping — same day, same choices, same Sonny and Cher at 6am, same slight wrongness that he can't quite put his finger on until he finally decides to actually change something.<br><br>Every amber you've got is a <em>ground</em> that could be firmer, a <em>hog</em> that keeps doubling back on itself, a <em>day</em> that could break differently if one thing shifted.<br><br>The good news: amber means you're most of the way there. Each fix is small. Any one of them changes the frame.`;
-    fixHtml = 'Pick the one criterion that feels most fixable — start with your light source, since it affects everything downstream. Get that to green, then re-run the score. You don\'t need to fix everything at once. You just need to stop waking up on February 2nd.';
+    // No face detected — all red, Groundhog Day email (all-red version)
+    poemHtml = `Everything came back red.<br><br>Lighting, angle, background, framing, presence — all of it. Nothing is broken beyond repair. But right now, nothing is working either.<br><br>Phil Connors wakes up on February 2nd. Same alarm. Same Sonny and Cher. Same Punxsutawney. He doesn't have one thing to fix — he has everything to fix. His entire day is wrong from the moment it starts. And the only way out isn't to patch one thing. It's to understand that every single element of the day is connected. Change one, and the whole day starts to shift. Keep ignoring them, and the alarm goes off again tomorrow.<br><br>That's where you are. Not broken. Looping.<br><br>The good news — and there is good news — is that Phil got out. He learned piano. He learned ice sculpture. He caught a kid falling out of a tree. He did it one February 2nd at a time, one thing at a time, until the day finally looked different.<br><br>You have five things to fix. That's also five ways in.`;
+    fixHtml = 'Start with your light source. Light affects everything downstream — angle, background, framing, how your face reads on screen. Get light to green first. Then come back and run the score again. You don\'t need to fix everything at once. You just need to make today a little less February 2nd than yesterday.';
     partRef = 'Part III: The Craft';
-    subjectSuffix = 'Have you seen the movie: Groundhog Day? You\'re almost there. Almost.';
+    subjectSuffix = 'Have you seen the movie: Groundhog Day? It\'s February 2nd. Again.';
     illustrationUrl = `${BASE_URL}/illustration-groundhog-whackamole.jpg`;
   } else if (disqualification && disqContent[disqualification]) {
     // Disqualification email

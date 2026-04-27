@@ -180,7 +180,7 @@ export default async function handler(req, res) {
     fixHtml = 'Pick the one criterion that feels most fixable — start with your light source, since it affects everything downstream. Get that to green, then re-run the score. You don\'t need to fix everything at once. You just need to stop waking up on February 2nd.';
     partRef = 'Part III: The Craft';
     subjectSuffix = 'Have you seen the movie: Groundhog Day? You\'re almost there. Almost.';
-    illustrationUrl = '';
+    illustrationUrl = `${BASE_URL}/illustration-groundhog-whackamole.jpg`;
   } else if (redCount === 1 && amberCount >= 2) {
     // Mixed — The Big Lebowski
     const worst = content[worstCriterion.key] || content.lighting;

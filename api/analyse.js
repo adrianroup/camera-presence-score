@@ -28,27 +28,31 @@ DO NOT trigger for: single small dot catchlights, rectangular softbox reflection
 Return: {"disqualification": "ring_light"}
 
 ─── DISQUALIFICATION 2: DIGITAL BACKGROUND BLUR ───
-The primary test is blur uniformity. Real optical blur and digital virtual blur are physically distinct.
+This is a two-path disqualification. Either path alone is sufficient to trigger it. No confidence threshold required — if you can see it, call it.
+
+PATH A — ANATOMY CONSUMPTION (automatic trigger, no exceptions):
+Look at the boundary between the subject and the background. Check: face edges, hairline, ears, shoulders, neck, jawline. If ANY part of the subject's body is being consumed, dissolved, absorbed, softened, or partially erased by the background blur — one eye eaten, an ear missing, hair dissolved into background, side of face melting — trigger immediately. It does not matter how the rest of the blur looks. Anatomy consumption means the mask is eating the subject. That is always a disqualification. Always. No exceptions.
+
+PATH B — UNIFORM FLAT MUSH (trigger when clearly present):
+Real optical blur and digital virtual blur are physically distinct.
 
 REAL OPTICAL BLUR (do NOT trigger):
 - Gradual depth gradient — objects closest to the subject are least blurry, objects furthest away are most blurry
 - Smooth, continuous falloff in sharpness as depth increases
-- Background elements at different depths show different degrees of softness
+- Background elements at different depths show meaningfully different degrees of softness
 - Subject edges are clean, hair strands visible and sharp at the boundary
 
-DIGITAL VIRTUAL BLUR (DO trigger at 85%+ confidence):
+DIGITAL VIRTUAL BLUR (trigger when clearly present):
 - Uniform, flat mush — the entire background is identically soft from edge to edge with no depth gradient whatsoever
-- No graduation: objects 1 metre behind the subject are equally blurred as objects 5 metres behind
-- The background looks like a single layer of identical softness rather than a scene with natural depth
-- Edge artefacts at the subject boundary — colour fringing, halo glow, pixel bleed, or an unnatural hard mask line where subject meets background
-- Part of the subject's body is consumed — an ear eaten, a shoulder dissolved, hair strands absorbed into the background
+- No graduation: objects close behind the subject are equally blurred as objects far behind
+- The background looks like a single flat layer of identical softness rather than a scene with depth
+- Edge artefacts at the subject boundary — colour fringing, halo glow, pixel bleed, or an unnatural hard mask line
 
 The key question: does the background blur get progressively softer with distance, or is it uniformly, perfectly, identically soft everywhere? If it is perfectly uniform — that is a digital filter. Trigger it.
 
 DO NOT trigger for:
-- A background that is simply soft, dark, or out of focus with a natural depth gradient
-- Real rooms where background objects are blurry due to proximity/lens with visible depth variation
-- Any background where different elements at different depths show meaningfully different degrees of softness
+- A background that is simply soft or out of focus with a visible depth gradient
+- Real rooms where background objects are blurry with meaningful variation at different depths
 Return: {"disqualification": "background_blur"}
 
 ─── DISQUALIFICATION 3: BRIGHT BACKGROUND (AI FALLBACK) ───
@@ -67,10 +71,10 @@ Lighting is assessed client-side — do not score it. Score only: angle, backgro
 ─── CAMERA ANGLE (0–100) ───
 The camera should be at eye level or fractionally above. The test is simple: where is the camera relative to the eyes?
 
-85–100: Eye level or just above. The viewer feels like a peer. Professional.
-65–84: Slightly off — not a laptop problem, minor adjustment needed.
+90–100: Eye level or just above. The viewer feels like a peer. Professional.
+70–89: Slightly off — not a laptop problem, minor adjustment needed.
 0–45: Camera clearly below eye level — nostrils visible, chin prominent, ceiling in shot. OR camera clearly above eye level — top of head dominant, face compressed downward, subject appears to be looking up at the viewer. Both are fails. Score MUST be 45 or below. You are not permitted to score higher than 45 if ANY of these are visible.
-Skip 46–64 entirely.
+Skip 46–69 entirely.
 
 LOW ANGLE — MANDATORY FAIL TRIGGERS (score 0–45, no exceptions):
 - Nostrils visible from below
@@ -95,9 +99,9 @@ The background should be subordinate to the face. It should not compete, distrac
 CHECK THIS FIRST — DIGITAL BLUR ANATOMY FAIL (score 0–39, no exceptions):
 Before scoring anything else: look at the subject's face edges, hairline, ears, and shoulders. If any part of the subject's anatomy is being consumed, dissolved, or partially absorbed into the background blur — one eye softened, an ear missing, the side of the face melting into the background, hair strands dissolved — that is a digital background blur mask failure. It does not matter how clean the rest of the blur looks. Score 0–39 and name the specific anatomy that is being consumed. A blurred background that eats the subject is always worse than an honest busy background.
 
-85–100: Background clearly subordinate. Darker, softer, or plain. Face is unmistakably the focal point.
-70–84: Minor issues — slightly busy but face still holds primary attention.
-50–69: Background competes — visible clutter, colour clash, or sharp elements pulling the eye. Score MUST be 69 or below if the background contains multiple distinct, sharp, competing elements.
+90–100: Background clearly subordinate. Darker, softer, or plain. Face is unmistakably the focal point.
+75–89: Minor issues — slightly busy but face still holds primary attention.
+50–74: Background competes — visible clutter, colour clash, or sharp elements pulling the eye. Score MUST be 74 or below if the background contains multiple distinct, sharp, competing elements.
 25–49: Background dominant over face — eye is drawn away from the subject more than toward them.
 0–24: Background has taken control entirely.
 
@@ -123,9 +127,9 @@ SILHOUETTE DISRUPTION: Any object (shelf edge, picture frame, plant, door frame)
 Additional penalties (stack onto base score): horizontal line bisecting face at eye level -10 to -15; vertical split frame -10 to -12; wide angle distortion -10 to -15; bright warm-coloured wall competing with face -8 to -12; visible cables or equipment cluttering frame -5 to -8.
 
 ─── FRAMING (0–100) ───
-85–100: Face occupies 50–70% of frame. Eyes sit in the upper third. Shoulders visible. Subject centred.
-70–84: Face 40–49% or 71–79% of frame. Minor adjustment needed.
-45–69: Face below 40% (too far — Lawrence of Arabia) or above 80% (too close — Home Alone). Or pushed to edge of frame.
+90–100: Face occupies 50–70% of frame. Eyes sit in the upper third. Shoulders visible. Subject centred.
+72–89: Face 40–49% or 71–79% of frame. Minor adjustment needed.
+45–71: Face below 40% (too far — Lawrence of Arabia) or above 80% (too close — Home Alone). Or pushed to edge of frame.
 0–44: Face below 30% of frame, or framing so poor the personality is lost at thumbnail size.
 
 TOO CLOSE (Home Alone): Face fills most of the frame, forehead cut off, chin at bottom edge, no shoulders visible, camera is uncomfortably close.
@@ -133,9 +137,9 @@ TOO FAR (Lawrence of Arabia): Subject is small in the frame, surrounded by empty
 OFF-CENTRE: Subject pushed significantly to one side with empty space on the other. Name it.
 
 ─── PRESENCE (0–100) ───
-85–100: Eyes visible and directed at the camera lens. The subject is here, present, looking at us.
-70–84: Eyes visible but not directed at the lens — looking at their own image, at notes, at another screen.
-50–69: Eyes not clearly visible but gaze appears directed at lens.
+90–100: Eyes visible and directed at the camera lens. The subject is here, present, looking at us.
+72–89: Eyes visible but not directed at the lens — looking at their own image, at notes, at another screen.
+50–71: Eyes not clearly visible but gaze appears directed at lens.
 0–49: Eyes not visible and no lens gaze — subject looking away, head turned, face obscured.
 
 UNCERTAIN GAZE: A still image makes gaze direction genuinely hard to call. If uncertain, do not penalise. Score 80 and note: "It's hard to tell from a still frame whether the eyes are directed at the lens — worth checking on a live call."

@@ -740,9 +740,9 @@ const TIERS=[
    copy:"You're being chased. The camera knows it. But the gap between where you are and where you need to be is entirely fixable — and closer than you think."},
   {min:50,max:69, name:'Getting There',       color:'#BA7517', badge:'Score 50–69',
    copy:"Solid foundation. A few things are still working against you, and the camera is politely keeping that information to itself. We're not."},
-  {min:70,max:84, name:'The Room Notices',    color:'#378ADD', badge:'Score 70–84',
+  {min:70,max:89, name:'The Room Notices',    color:'#378ADD', badge:'Score 70–89',
    copy:"This is a professional setup. The camera respects you. One or two refinements away from the kind of presence people remember."},
-  {min:85,max:100,name:"You've Found the Husk",color:'#639922',badge:'Score 85–100',
+  {min:90,max:100,name:"You've Found the Husk",color:'#639922',badge:'Score 90–100',
    copy:"The camera sees someone who owns the room. Mandela would approve. Now stop reading this and go use it."},
 ];
 
@@ -1163,11 +1163,11 @@ function showRevealElements(s){
 function resetReveal(){['tierBadge','verdictBlock','charPlaceholder','nextBtn'].forEach(id=>document.getElementById(id).classList.remove('show'));setGauge(0,false);revealAnimating=false;}
 
 function pickCharacter(score) {
-  // Happy — 85 to 100
-  if (score >= 85) return '/lottie/happy.json';
-  // Good — 60 to 84
-  if (score >= 60) return '/lottie/good.json';
-  // Concerned — 40 to 59
+  // Happy — 90 to 100
+  if (score >= 90) return '/lottie/happy.json';
+  // Good — 65 to 89
+  if (score >= 65) return '/lottie/good.json';
+  // Concerned — 40 to 64
   if (score >= 40) return '/lottie/concerned.json';
   // Sad — 0 to 39
   return '/lottie/sad.json';
@@ -1357,7 +1357,7 @@ async function sendResultsEmail(email, name, overall, criteria){
 
 // Helper: score → traffic light signal
 function scoreToSignal(score) {
-  if (score >= 85) return 'green';
+  if (score >= 90) return 'green';
   if (score >= 50) return 'amber';
   return 'red';
 }
@@ -1850,6 +1850,50 @@ function showGateSent(email){ document.getElementById('gateFormState').style.dis
 function showGatePaywall(){ document.getElementById('gateFormState').style.display='none'; document.getElementById('gateSentState').style.display='none'; document.getElementById('gatePaywallState').style.display='flex'; }
 function showGateError(msg){ const el=document.getElementById('gateError'); el.textContent=msg; el.style.display='block'; }
 function hideGateError(){ document.getElementById('gateError').style.display='none'; }
+function showInlineError(msg){ const el=document.getElementById('gateErrorInline'); if(el){ el.textContent=msg; el.style.display='block'; } }
+function hideInlineError(){ const el=document.getElementById('gateErrorInline'); if(el) el.style.display='none'; }
+
+async function handleInlineManualSubmit(){
+  const firstName = (document.getElementById('gateFirstNameInline')?.value||'').trim();
+  const lastName  = (document.getElementById('gateLastNameInline')?.value||'').trim();
+  const email     = (document.getElementById('gateEmailInline')?.value||'').trim().toLowerCase();
+  const jobTitle  = (document.getElementById('gateJobTitleInline')?.value||'').trim();
+  const linkedIn  = (document.getElementById('gateLinkedInInline')?.value||'').trim();
+  if(!firstName){ showInlineError('Please enter your first name.'); return; }
+  if(!email || !email.includes('@')){ showInlineError('Please enter a valid email address.'); return; }
+  const name = (firstName + (lastName ? ' ' + lastName : '')).trim();
+  const btn = document.querySelector('#gateFormInline .gate-submit');
+  if(btn){ btn.disabled=true; btn.textContent='Checking…'; }
+  hideInlineError();
+  try {
+    let user = await sbGetUser(email);
+    if(user && user.verified){
+      if(user.uses_remaining <= 0){ showGatePaywall(); return; }
+      setSession(email, user.name || name, user.uses_remaining);
+      showScreen(document.getElementById('screenUpload'));
+      startLoadingWithDecrement(email);
+      return;
+    }
+    pendingEmail = email;
+    pendingToken = generateToken();
+    if(!user){
+      await sbCreateUser(email, name, pendingToken, '', jobTitle, linkedIn);
+    } else {
+      await sbUpdateToken(email, pendingToken);
+    }
+    const sent = await sendVerificationEmail(email, name || 'there', pendingToken);
+    if(sent){
+      showGateSent(email);
+    } else {
+      showInlineError('Could not send email. Please try again.');
+    }
+  } catch(err){
+    console.error('Inline gate error:', err);
+    showInlineError('Something went wrong. Please try again.');
+  } finally {
+    if(btn){ btn.disabled=false; btn.textContent='Get My Score →'; }
+  }
+}
 
 function isValidLinkedIn(url){
   // Normalise: strip protocol and trailing slash

@@ -44,7 +44,9 @@ html,body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'B
 .screen{min-height:100vh;width:100%;display:none;flex-direction:column;align-items:center;opacity:0;transition:opacity 0.4s var(--ease-premium);}
 .screen.visible{opacity:1;}
 .header{text-align:center;margin-bottom:16px;padding-top:64px;width:100%;max-width:680px;}
-.header-logo{font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#6b6560;margin-bottom:10px;}
+.header-logo{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(24,22,15,0.55);margin-bottom:10px;text-decoration:none;display:inline-block;padding:8px 14px;border:1px solid rgba(24,22,15,0.3);border-radius:3px;background:transparent;transition:background 0.18s ease,color 0.18s ease,border-color 0.18s ease;}
+.header-logo:hover{background:#C0392B;color:#ffffff;border-color:#C0392B;}
+.header-logo:hover .red{color:#ffffff;}
 .header-logo .red{color:var(--red);}
 .header-title{font-family:'Barlow Condensed',sans-serif;font-size:clamp(32px,6.5vw,54px);font-weight:900;letter-spacing:0.02em;text-transform:uppercase;line-height:0.9;white-space:nowrap;-webkit-text-stroke:1.5px rgba(192,57,43,0.22);text-stroke:1.5px rgba(192,57,43,0.22);text-shadow:0 0 40px rgba(24,22,15,0.12),0 0 14px rgba(24,22,15,0.08);}
 .header-title em{font-style:normal;color:var(--text);}
@@ -367,7 +369,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 <!-- SCREEN 1: UPLOAD -->
 <div class="screen" id="screenUpload">
   <header class="header">
-    <a class="header-logo" href="https://www.anaudiencefromanywhere.com" style="text-decoration:none;"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a>
+    <a class="header-logo" href="https://www.anaudiencefromanywhere.com" ><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a>
     <div class="header-title">Your Camera <em>Score™</em></div>
   </header>
   <main class="main">
@@ -418,7 +420,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 <!-- SCREEN 1b: EMAIL GATE -->
 <div class="screen" id="screenEmailGate">
   <header class="header">
-    <a class="header-logo" href="https://www.anaudiencefromanywhere.com" style="text-decoration:none;"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a>
+    <a class="header-logo" href="https://www.anaudiencefromanywhere.com" ><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a>
     <div class="header-title">Your Camera <em>Score™</em></div>
   </header>
   <div class="gate-wrap">
@@ -589,7 +591,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 
 <!-- SCREEN 2: LOADING -->
 <div class="screen" id="screenLoading">
-  <header class="header"><a class="header-logo" href="https://www.anaudiencefromanywhere.com" style="text-decoration:none;"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a><div class="header-title">Your Camera <em>Score™</em></div></header>
+  <header class="header"><a class="header-logo" href="https://www.anaudiencefromanywhere.com" ><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a><div class="header-title">Your Camera <em>Score™</em></div></header>
   <div class="loading-wrap">
     <div class="scan-container" id="scanContainer"><img class="scan-bg-img" id="scanBgImg" src="" alt=""><div class="scan-dark-overlay"></div><div class="scan-grid"></div><div class="scan-corner tl"></div><div class="scan-corner tr"></div><div class="scan-corner bl"></div><div class="scan-corner br"></div><div class="scan-line"></div><div class="scan-label" id="scanLabel">Analysing&nbsp;·&nbsp;·&nbsp;·</div><div class="scan-complete-overlay" id="scanCompleteOverlay"><button class="scan-score-btn" id="seeScoreBtn" onclick="handleSeeScore()">See My Score →</button></div></div>
     <h2 class="loading-title">Analysing your setup&hellip;</h2>
@@ -603,7 +605,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 
 <!-- SCREEN 3: SCORE REVEAL -->
 <div class="screen" id="screenReveal">
-  <header class="header"><a class="header-logo" href="https://www.anaudiencefromanywhere.com" style="text-decoration:none;"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a><div class="header-title">Your Camera <em>Score™</em></div></header>
+  <header class="header"><a class="header-logo" href="https://www.anaudiencefromanywhere.com" ><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a><div class="header-title">Your Camera <em>Score™</em></div></header>
   <div class="reveal-wrap">
     <div class="gauge-section"><div class="gauge-outer" id="gaugeOuter"><svg class="gauge-svg" viewBox="0 0 220 220"><circle class="gauge-track" cx="110" cy="110" r="90"/><circle class="gauge-fill" id="gaugeFill" cx="110" cy="110" r="90" stroke="#C0392B"/></svg><div class="gauge-center"><div class="gauge-number" id="gaugeNumber">0</div><div class="gauge-denom">/100</div></div></div></div>
     <div class="tier-badge" id="tierBadge"></div>
@@ -626,7 +628,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 
 <!-- SCREEN 4: CRITERIA BREAKDOWN -->
 <div class="screen" id="screenBreakdown">
-  <header class="header"><a class="header-logo" href="https://www.anaudiencefromanywhere.com" style="text-decoration:none;"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a><div class="header-title">Your Camera <em>Score™</em></div></header>
+  <header class="header"><a class="header-logo" href="https://www.anaudiencefromanywhere.com" ><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a><div class="header-title">Your Camera <em>Score™</em></div></header>
   <div class="breakdown-wrap">
     <div class="breakdown-summary" id="breakdownSummary">
       <div class="breakdown-score-circle" id="breakdownScoreCircle">
@@ -668,7 +670,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 
 <!-- SCREEN 5: RING LIGHT FAIL -->
 <div class="screen" id="screenRingLight">
-  <header class="header"><a class="header-logo" href="https://www.anaudiencefromanywhere.com" style="text-decoration:none;"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a><div class="header-title">Your Camera <em>Score™</em></div></header>
+  <header class="header"><a class="header-logo" href="https://www.anaudiencefromanywhere.com" ><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a><div class="header-title">Your Camera <em>Score™</em></div></header>
   <div class="disq-wrap">
     <div class="disq-warning-bar"><span class="disq-warning-text">✕ Ring Light Detected.</span></div>
     <h2 class="disq-title">Instant Disqualification</h2>
@@ -682,7 +684,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 
 <!-- SCREEN 6: BACKGROUND BLUR FAIL -->
 <div class="screen" id="screenBgBlur">
-  <header class="header"><a class="header-logo" href="https://www.anaudiencefromanywhere.com" style="text-decoration:none;"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a><div class="header-title">Your Camera <em>Score™</em></div></header>
+  <header class="header"><a class="header-logo" href="https://www.anaudiencefromanywhere.com" ><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a><div class="header-title">Your Camera <em>Score™</em></div></header>
   <div class="disq-wrap">
     <div class="disq-warning-bar"><span class="disq-warning-text">✕ Background Blur Detected.</span></div>
     <h2 class="disq-title">Instant Disqualification</h2>
@@ -697,7 +699,7 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 
 <!-- SCREEN 7: BRIGHT BACKGROUND FAIL -->
 <div class="screen" id="screenBrightBg">
-  <header class="header"><a class="header-logo" href="https://www.anaudiencefromanywhere.com" style="text-decoration:none;"><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a><div class="header-title">Your Camera <em>Score™</em></div></header>
+  <header class="header"><a class="header-logo" href="https://www.anaudiencefromanywhere.com" ><span class="red">An Audience From Anywhere</span> &nbsp;·&nbsp; Adrian Roup</a><div class="header-title">Your Camera <em>Score™</em></div></header>
   <div class="disq-wrap">
     <div class="disq-warning-bar"><span class="disq-warning-text">✕ Bright Background Detected.</span></div>
     <h2 class="disq-title">Instant Disqualification</h2>

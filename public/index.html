@@ -1259,11 +1259,11 @@ function routeResult() {
   // ── Background red = automatic fail ──────────────────────────────────────
   // If the AI scored background red (< 50), the overall result is a fail
   // regardless of every other signal. Cap the score at 44 (top of "Needs work").
-  // ── Client-side safety net: bg score ≤45 = force background_blur disqualification ──
+  // ── Client-side safety net: bg score ≤35 = force background_blur disqualification ──
   // The AI sometimes scores anatomy consumption without triggering the disqualification.
   // If background ≤45, the AI has seen a severe background failure — route to Garden State.
   const _bgScoreCheck = apiResult.criteria?.background?.score;
-  if (typeof _bgScoreCheck === 'number' && _bgScoreCheck <= 45 && !apiResult.disqualification) {
+  if (typeof _bgScoreCheck === 'number' && _bgScoreCheck <= 35 && !apiResult.disqualification) {
     showScreen(document.getElementById('screenBgBlur'));
     sendDisqEmail('background_blur');
     return;

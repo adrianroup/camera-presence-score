@@ -74,11 +74,11 @@ Lighting is assessed client-side — do not score it. Score only: angle, backgro
 ─── CAMERA ANGLE (0–100) ───
 The camera should be at eye level or fractionally above. The test is simple: where is the camera relative to the eyes?
 
-90–100: Camera is at precise eye level. The lens is level with the subject's eyes. The viewer feels like a peer. Reserve this for genuinely perfect alignment only.
-70–89: Any minor deviation from true eye level — camera slightly low (chin slightly raised, very slight upward look toward camera), camera slightly high (very slight downward gaze). If you can detect ANY angle deviation at all, even minor, score 70–89 not 90–100.
+90–100: Camera is at or near eye level. The lens appears level with the subject's eyes — the viewer feels like a peer. No obvious upward or downward tilt detectable. This is the DEFAULT score when the angle looks natural and comfortable. If you cannot clearly see a problem, score 90–100.
+70–89: Deviation is clearly visible and specific — camera is noticeably low (chin clearly raised, nostrils starting to show) or noticeably high (subject clearly looking slightly downward at camera). Only score here if you can name the specific deviation you see.
 0–45: Camera clearly below eye level — nostrils visible, chin prominent, ceiling in shot. OR camera clearly above eye level — top of head dominant, face compressed downward. Both are fails. Score MUST be 45 or below.
 Skip 46–69 entirely.
-When in doubt between 90–100 and 70–89, always choose 70–89. A 90+ angle requires perfect eye-level alignment with no detectable deviation.
+When in doubt between 90–100 and 70–89, always choose 90–100. Reserve amber for cases where the deviation is unmistakable and you can describe it specifically.
 
 LOW ANGLE — MANDATORY FAIL TRIGGERS (score 0–45, no exceptions):
 - Nostrils visible from below

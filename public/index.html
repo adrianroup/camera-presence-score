@@ -891,6 +891,7 @@ function startLoadingGated(){
 let apiResult = null;
 let apiError  = null;
 let apiDone   = false;
+let blurCheckResult = null;
 
 function resizeImage(dataUrl, maxPx, quality) {
   return new Promise((resolve) => {
@@ -1173,7 +1174,7 @@ async function analyseClientLighting(dataUrl) {
 
 
 async function callVisionAPI(dataUrl) {
-  apiResult = null; apiError = null; apiDone = false;
+  apiResult = null; apiError = null; apiDone = false; blurCheckResult = null;
   clientLightingSignal = null;
   clientBlurSignal = null;
 
@@ -1195,8 +1196,10 @@ async function callVisionAPI(dataUrl) {
     body: JSON.stringify({ imageData: base64, mediaType: mediaType })
   }).then(r => r.ok ? r.json() : null).catch(() => null);
 
+  let response;
   try {
-    const [response, lightingResult, blurCheckResult] = await Promise.all([
+    let lightingResult;
+    [response, lightingResult, blurCheckResult] = await Promise.all([
       fetch('/api/analyse', {
         method: 'POST',
         signal: controller.signal,

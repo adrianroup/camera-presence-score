@@ -34,16 +34,22 @@ TEST A — UNIFORM BLUR (most reliable tell):
 Is the background a uniform soft mush — every part of it equally blurred with no depth graduation whatsoever? Real optical blur from a camera lens always graduates: objects closer to the subject are less blurred than objects further away. You can see the falloff. Digital background blur produced by Zoom, Teams, Meet, or similar tools is flat and uniform — everything behind the subject is blurred to the same identical degree regardless of distance. There is no depth falloff. If the background blur appears uniform and flat with no visible depth graduation, this is digital blur.
 If YES → return {"disqualification": "background_blur"} immediately. Stop.
 
-TEST B — ANATOMY DISSOLUTION:
-Look at the edges of the subject where they meet the background. Check each specifically:
-- Left ear: is it sharp and clearly defined, or is it soft, dissolved, or missing where it meets the background?
-- Right ear: same check.
-- Hairline and crown: are individual hairs or the hairline sharp, or are they dissolving into blur?
-- Both shoulders: are they cleanly defined where they meet the background, or is either shoulder edge being eaten or softened by blur?
-- Jawline and neck: is the edge of the face clean and sharp, or is it melting into the background?
-If ANY of these anatomy boundaries are dissolved, eaten, softened, or missing → return {"disqualification": "background_blur"} immediately. Stop.
+TEST B — ANATOMY: EYES (zero tolerance):
+Look at the subject's eyes. Ask yourself: can I see BOTH eyes? Are BOTH eyes fully sharp, fully defined, and fully present?
+- If the LEFT EYE is missing, partially obscured, soft at its edges, or consumed by background blur in any way → return {"disqualification": "background_blur"} immediately. Stop.
+- If the RIGHT EYE is missing, partially obscured, soft at its edges, or consumed by background blur in any way → return {"disqualification": "background_blur"} immediately. Stop.
+Do not give partial credit. Do not hedge. If you cannot clearly see both eyes in full, sharp, and complete — disqualify.
 
-TEST C — EDGE ARTEFACTS:
+TEST C — ANATOMY: EDGES:
+Look at the edges of the subject where they meet the background:
+- Left ear: sharp and fully present, or soft/dissolved/missing?
+- Right ear: same.
+- Hairline: sharp, or dissolving into blur?
+- Both shoulders: cleanly defined, or being eaten by blur?
+- Jawline and neck: clean edge, or melting into background?
+If ANY of these are dissolved, softened, or missing → return {"disqualification": "background_blur"} immediately. Stop.
+
+TEST D — EDGE ARTEFACTS:
 Are there any unnatural artefacts at the boundary between the subject and the background — colour fringing, halo glow, pixel bleed, a hard mask line, or a green/white outline?
 If YES → return {"disqualification": "background_blur"} immediately. Stop.
 

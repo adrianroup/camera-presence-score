@@ -15,7 +15,6 @@
   gtag('config', 'G-7L4F1HMHKX');
 </script>
 <!-- MediaPipe Face Detection (client-side) -->
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4.1646425229/face_detection.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/face_mesh.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
 
@@ -1008,93 +1007,14 @@ function meanGradientMagnitude(ctx, x, y, w, h) {
   return count > 0 ? sum / count : null;
 }
 
-// Digital blur detection: sample background variance using same MediaPipe face bounding box.
-// Virtual background blur compresses all background pixels to near-identical luminance → variance < 0.003.
-// Real backgrounds (walls, artwork, bookshelves) have variance > 0.005.
-// VARIANCE THRESHOLD: 0.003 — below this = uniform mush = digital blur.
-async function analyseBackgroundVariance(dataUrl) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = async () => {
-      const W = img.naturalWidth;
-      const H = img.naturalHeight;
-      const canvas = document.createElement('canvas');
-      canvas.width = W; canvas.height = H;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-      try {
-        const faceDetection = new FaceDetection({
-          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4.1646425229/${file}`
-        });
-        faceDetection.setOptions({ model: 'short', minDetectionConfidence: 0.4 });
-        let resolved = false;
-        faceDetection.onResults((results) => {
-          if (resolved) return;
-          resolved = true;
-          const detections = results.detections || [];
-          if (detections.length === 0) { resolve(null); return; }
-          let best = detections[0];
-          if (detections.length > 1) {
-            best = detections.reduce((a, b) => {
-              const aA = a.boundingBox.width * a.boundingBox.height;
-              const bA = b.boundingBox.width * b.boundingBox.height;
-              return bA > aA ? b : a;
-            });
-          }
-          const bb = best.boundingBox;
-          const fx = bb.xCenter - bb.width / 2;
-          const fy = bb.yCenter - bb.height / 2;
-          const fw = bb.width;
-          const fh = bb.height;
-          const padX = fw * 0.75 * W;
-          const padY = fh * 0.75 * H;
-          const bgCenterX = (fx + fw / 2) * W;
-          const bgCenterY = (fy + fh / 2) * H;
-          const bgLumValues = [];
-          const strips = [
-            { x: 0, y: 0, w: W, h: Math.max(1, bgCenterY - padY) },
-            { x: 0, y: Math.min(H - 1, bgCenterY + padY), w: W, h: Math.max(1, H - (bgCenterY + padY)) },
-            { x: 0, y: 0, w: Math.max(1, bgCenterX - padX), h: H },
-            { x: Math.min(W - 1, bgCenterX + padX), y: 0, w: Math.max(1, W - (bgCenterX + padX)), h: H },
-          ];
-          for (const s of strips) {
-            const sw = Math.round(s.w), sh = Math.round(s.h);
-            if (sw < 4 || sh < 4) continue;
-            const sx = Math.round(s.x), sy = Math.round(s.y);
-            const data = ctx.getImageData(sx, sy, sw, sh).data;
-            for (let i = 0; i < data.length; i += 16) {
-              const r = data[i] / 255, g = data[i+1] / 255, b = data[i+2] / 255;
-              bgLumValues.push(0.2126 * r + 0.7152 * g + 0.0722 * b);
-            }
-          }
-          const variance = luminanceVariance(bgLumValues);
-          const signal = (variance !== null && variance < 0.003) ? 'blur' : 'clean';
-          console.log('[BgVariance] variance:', variance?.toFixed(5), '→', signal);
-          resolve(signal);
-        });
-        await faceDetection.send({ image: canvas });
-        setTimeout(() => { if (!resolved) { resolved = true; resolve(null); } }, 3000);
-      } catch (e) {
-        console.warn('[BgVariance] error:', e.message);
-        resolve(null);
-      }
-    };
-    img.onerror = () => resolve(null);
-    img.src = dataUrl;
-  });
-}
-
-// ── Face Mesh eye-completeness blur detector ─────────────────────────────────
-// Uses MediaPipe Face Mesh 468 landmarks to check whether both eyes are present
-// and geometrically intact. Digital background blur masks eat the edges of the
-// face — ears, hairline, sometimes eyes — producing collapsed or missing landmarks.
-// Key eye landmarks:
-//   Left eye:  outer=33, inner=133, upper=159, lower=145
-//   Right eye: outer=362, inner=263, upper=386, lower=374
-// A healthy eye has a measurable width (outer→inner distance) and height (upper→lower).
-// If either dimension collapses to near-zero, the eye is dissolved.
-async function analyseEyeCompleteness(dataUrl) {
+// ═══════════════════════════════════════════════════════════════════════
+// UNIFIED FACE MESH ANALYSIS — single MediaPipe pass for lighting + blur
+// Face Mesh (468 landmarks) replaces Face Detection entirely.
+// Bounding box derived from landmarks: top=10, chin=152, left=234, right=454.
+// Eye landmarks: LE outer=33, inner=133, upper=159, lower=145
+//                RE outer=362, inner=263, upper=386, lower=374
+// ═══════════════════════════════════════════════════════════════════════
+async function analyseClientLighting(dataUrl) {
   return new Promise((resolve) => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
@@ -1121,162 +1041,58 @@ async function analyseEyeCompleteness(dataUrl) {
           resolved = true;
           const faces = results.multiFaceLandmarks;
           if (!faces || faces.length === 0) {
-            console.log('[EyeCheck] No face landmarks detected — skipping');
-            resolve(null);
-            return;
-          }
-          const lm = faces[0];
-          // Helper: get pixel coords of a landmark
-          const pt = (idx) => ({ x: lm[idx].x * W, y: lm[idx].y * H });
-          // Left eye metrics
-          const leOuter = pt(33),  leInner = pt(133);
-          const leUpper = pt(159), leLower = pt(145);
-          const leWidth  = Math.abs(leOuter.x - leInner.x);
-          const leHeight = Math.abs(leUpper.y - leLower.y);
-          // Right eye metrics
-          const reOuter = pt(362), reInner = pt(263);
-          const reUpper = pt(386), reLower = pt(374);
-          const reWidth  = Math.abs(reOuter.x - reInner.x);
-          const reHeight = Math.abs(reUpper.y - reLower.y);
-          // Face width for normalisation (outer eye corners)
-          const faceWidth = Math.abs(leOuter.x - reOuter.x) || W * 0.3;
-          const leWNorm = leWidth / faceWidth;
-          const reWNorm = reWidth / faceWidth;
-          const leHNorm = leHeight / faceWidth;
-          const reHNorm = reHeight / faceWidth;
-          console.log('[EyeCheck] LE w:', leWNorm.toFixed(3), 'h:', leHNorm.toFixed(3),
-                                   '| RE w:', reWNorm.toFixed(3), 'h:', reHNorm.toFixed(3));
-          // Thresholds: a healthy eye width is ~15–25% of face width.
-          // A dissolved/consumed eye collapses to < 5% width or < 1% height.
-          const MIN_EYE_WIDTH  = 0.05;  // < 5% of face width = eye collapsed
-          const MIN_EYE_HEIGHT = 0.008; // < 0.8% of face width = eye vertically collapsed
-          const leGone = leWNorm < MIN_EYE_WIDTH || leHNorm < MIN_EYE_HEIGHT;
-          const reGone = reWNorm < MIN_EYE_WIDTH || reHNorm < MIN_EYE_HEIGHT;
-          if (leGone || reGone) {
-            console.log('[EyeCheck] Eye dissolved — blur disqualification:', leGone ? 'LEFT' : 'RIGHT');
-            resolve('blur');
-          } else {
-            console.log('[EyeCheck] Both eyes intact');
-            resolve('clean');
-          }
-        });
-        await faceMesh.send({ image: canvas });
-        setTimeout(() => { if (!resolved) { resolved = true; console.warn('[EyeCheck] timeout'); resolve(null); } }, 5000);
-      } catch (e) {
-        console.warn('[EyeCheck] FaceMesh error:', e.message);
-        resolve(null);
-      }
-    };
-    img.onerror = () => resolve(null);
-    img.src = dataUrl;
-  });
-}
-
-// Draw image onto canvas and run MediaPipe face detection
-async function analyseClientLighting(dataUrl) {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = async () => {
-      const W = img.naturalWidth;
-      const H = img.naturalHeight;
-
-      // Draw full image to canvas
-      const canvas = document.createElement('canvas');
-      canvas.width = W; canvas.height = H;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
-
-      // Try MediaPipe face detection
-      try {
-        const faceDetection = new FaceDetection({
-          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4.1646425229/${file}`
-        });
-        faceDetection.setOptions({
-          model: 'short',       // fast short-range model
-          minDetectionConfidence: 0.4
-        });
-
-        let resolved = false;
-        faceDetection.onResults((results) => {
-          if (resolved) return;
-          resolved = true;
-
-          const detections = results.detections || [];
-          if (detections.length === 0) {
-            // No face detected — can't do brightness analysis, signal null
             resolve({ lighting: null, blur: null });
             return;
           }
+          const lm = faces[0];
+          const pt = (idx) => ({ x: lm[idx].x * W, y: lm[idx].y * H });
 
-          // Use the largest (most prominent) face
-          let best = detections[0];
-          if (detections.length > 1) {
-            best = detections.reduce((a, b) => {
-              const aA = a.boundingBox.width * a.boundingBox.height;
-              const bA = b.boundingBox.width * b.boundingBox.height;
-              return bA > aA ? b : a;
-            });
-          }
+          // ── Bounding box from landmarks ──
+          const top   = pt(10).y;
+          const chin  = pt(152).y;
+          const left  = pt(234).x;
+          const right = pt(454).x;
+          const faceHpx = chin - top;
+          const faceWpx = right - left;
+          const fx = left / W;
+          const fy = top / H;
+          const fw = faceWpx / W;
+          const fh = faceHpx / H;
 
-          const bb = best.boundingBox;
-          // MediaPipe returns normalised coords (0–1 relative to image)
-          const fx = bb.xCenter - bb.width / 2;
-          const fy = bb.yCenter - bb.height / 2;
-          const fw = bb.width;
-          const fh = bb.height;
-
-          // Face region (in pixels) — inset slightly to avoid edge noise
+          // ── Lighting: face luminance vs background ──
           const inset = 0.08;
-          const faceX = (fx + fw * inset) * W;
-          const faceY = (fy + fh * inset) * H;
-          const faceW = fw * (1 - inset * 2) * W;
-          const faceH = fh * (1 - inset * 2) * H;
+          const faceX  = (fx + fw * inset) * W;
+          const faceY  = (fy + fh * inset) * H;
+          const faceWi = fw * (1 - inset * 2) * W;
+          const faceHi = fh * (1 - inset * 2) * H;
+          const faceLum = regionLuminance(ctx, faceX, faceY, faceWi, faceHi, W, H);
 
-          const faceLum = regionLuminance(ctx, faceX, faceY, faceW, faceH, W, H);
-
-          // Background: full image minus a generous face zone (150% bounding box)
-          // We sample four background strips: top, bottom, left, right
           const padX = fw * 0.75 * W;
           const padY = fh * 0.75 * H;
-          const bgCenterX = (fx + fw / 2) * W;
-          const bgCenterY = (fy + fh / 2) * H;
-
-          // Collect all background pixel luminances (strips avoiding the face zone)
-          // We use p90 so a blown-out window spike is caught even when surrounded by dark bg
-          const bgLumValues = [];
+          const bgCX = (fx + fw / 2) * W;
+          const bgCY = (fy + fh / 2) * H;
           const strips = [
-            // top strip
-            { x: 0, y: 0, w: W, h: Math.max(1, bgCenterY - padY) },
-            // bottom strip
-            { x: 0, y: Math.min(H - 1, bgCenterY + padY), w: W, h: Math.max(1, H - (bgCenterY + padY)) },
-            // left strip
-            { x: 0, y: 0, w: Math.max(1, bgCenterX - padX), h: H },
-            // right strip
-            { x: Math.min(W - 1, bgCenterX + padX), y: 0, w: Math.max(1, W - (bgCenterX + padX)), h: H },
+            { x: 0,                         y: 0,                         w: W,                            h: Math.max(1, bgCY - padY) },
+            { x: 0,                         y: Math.min(H-1, bgCY+padY),  w: W,                            h: Math.max(1, H-(bgCY+padY)) },
+            { x: 0,                         y: 0,                         w: Math.max(1, bgCX - padX),     h: H },
+            { x: Math.min(W-1, bgCX+padX),  y: 0,                         w: Math.max(1, W-(bgCX+padX)),   h: H },
           ];
-
+          const bgLumValues = [];
           for (const s of strips) {
             const sw = Math.round(s.w), sh = Math.round(s.h);
             if (sw < 4 || sh < 4) continue;
-            const sx = Math.round(s.x), sy = Math.round(s.y);
-            const data = ctx.getImageData(sx, sy, sw, sh).data;
-            // Sample every 4th pixel to keep it fast
+            const data = ctx.getImageData(Math.round(s.x), Math.round(s.y), sw, sh).data;
             for (let i = 0; i < data.length; i += 16) {
-              const r = data[i] / 255, g = data[i+1] / 255, b = data[i+2] / 255;
-              bgLumValues.push(0.2126 * r + 0.7152 * g + 0.0722 * b);
+              bgLumValues.push(0.2126*data[i]/255 + 0.7152*data[i+1]/255 + 0.0722*data[i+2]/255);
             }
           }
           const bgP90 = percentile90(bgLumValues);
-          const signal = fStopSignal(faceLum, bgP90);
+          const lightingSignal = fStopSignal(faceLum, bgP90);
 
-          // ── Sobel gradient blur detection ──────────────────────────────────
-          // Sample each background strip for mean gradient magnitude.
-          // Digital blur = near-zero gradients (no hard edges).
-          // Real backgrounds = higher gradients (picture frames, shelves, objects).
-          // JPEG noise creates luminance variance but very weak gradients — immune to false positives.
-          // Threshold 0.025 chosen conservatively: Zoom blur typically ~0.005–0.015,
-          // real rooms typically ~0.04–0.12.
+          // ── Sobel gradient (background sharpness / blur detection) ──
+          // Digital blur eliminates hard edges → low gradient.
+          // Real backgrounds (frames, shelves, objects) → higher gradient.
+          // JPEG noise creates luminance variance but only weak gradients.
           let totalGrad = 0, gradCount = 0;
           for (const s of strips) {
             const sw = Math.round(s.w), sh = Math.round(s.h);
@@ -1285,27 +1101,52 @@ async function analyseClientLighting(dataUrl) {
             if (g !== null) { totalGrad += g; gradCount++; }
           }
           const meanGrad = gradCount > 0 ? totalGrad / gradCount : null;
-          const blurSignal = (meanGrad !== null && meanGrad < 0.025) ? 'blur' : 'clean';
-          console.log('[Lighting] face:', faceLum?.toFixed(3), 'bg p90:', bgP90?.toFixed(3), 'ratio:', bgP90 && faceLum ? (bgP90/faceLum).toFixed(2) : 'n/a', '→', signal);
+          let blurSignal = (meanGrad !== null && meanGrad < 0.025) ? 'blur' : 'clean';
+
+          // ── Eye completeness (zero tolerance) ──
+          // Blur masks dissolve anatomy — eyes shrink or disappear at their boundary.
+          // Normalise eye dimensions against inter-eye distance.
+          // Healthy eye width ≈ 20–30% of inter-eye distance.
+          // Dissolved eye < 5%.
+          const leOuter = pt(33),  leInner = pt(133);
+          const leUpper = pt(159), leLower = pt(145);
+          const reOuter = pt(362), reInner = pt(263);
+          const reUpper = pt(386), reLower = pt(374);
+          const leW = Math.abs(leOuter.x - leInner.x);
+          const leH = Math.abs(leUpper.y - leLower.y);
+          const reW = Math.abs(reOuter.x - reInner.x);
+          const reH = Math.abs(reUpper.y - reLower.y);
+          const interEye = Math.abs(leOuter.x - reOuter.x) || W * 0.3;
+          const leWn = leW / interEye, leHn = leH / interEye;
+          const reWn = reW / interEye, reHn = reH / interEye;
+          console.log('[EyeCheck] LE w:', leWn.toFixed(3), 'h:', leHn.toFixed(3),
+                               '| RE w:', reWn.toFixed(3), 'h:', reHn.toFixed(3));
+          const MIN_W = 0.05, MIN_H = 0.008;
+          const leGone = leWn < MIN_W || leHn < MIN_H;
+          const reGone = reWn < MIN_W || reHn < MIN_H;
+          if (leGone || reGone) {
+            console.log('[EyeCheck] Eye dissolved —', leGone ? 'LEFT' : 'RIGHT', '— forcing blur disqualification');
+            blurSignal = 'blur';
+          } else {
+            console.log('[EyeCheck] Both eyes intact');
+          }
+
+          console.log('[Lighting] face:', faceLum?.toFixed(3), 'bg p90:', bgP90?.toFixed(3), '→', lightingSignal);
           console.log('[BgGradient] meanGrad:', meanGrad?.toFixed(5), '→', blurSignal);
-          resolve({ lighting: signal, blur: blurSignal });
+          resolve({ lighting: lightingSignal, blur: blurSignal });
         });
-
-        // Send the canvas frame to MediaPipe
-        await faceDetection.send({ image: canvas });
-
-        // Safety timeout — if MediaPipe never calls back
-        setTimeout(() => { if (!resolved) { resolved = true; resolve({ lighting: null, blur: null }); } }, 3000);
-
+        await faceMesh.send({ image: canvas });
+        setTimeout(() => { if (!resolved) { resolved = true; resolve({ lighting: null, blur: null }); } }, 5000);
       } catch (e) {
-        console.warn('[Lighting] MediaPipe error:', e.message);
-        resolve({ lighting: null, blur: null }); // graceful fallback — AI handles it
+        console.warn('[Lighting] FaceMesh error:', e.message);
+        resolve({ lighting: null, blur: null });
       }
     };
     img.onerror = () => resolve({ lighting: null, blur: null });
     img.src = dataUrl;
   });
 }
+
 
 async function callVisionAPI(dataUrl) {
   apiResult = null; apiError = null; apiDone = false;
@@ -1317,32 +1158,25 @@ async function callVisionAPI(dataUrl) {
   const base64 = resizedDataUrl.split(',')[1];
   const mediaType = 'image/jpeg';
 
-  // Kick off client lighting + blur gradient analysis + eye completeness (all in parallel)
+  // Kick off unified Face Mesh analysis (lighting + blur + eye check) in parallel with API
   const lightingPromise = analyseClientLighting(dataUrl);
-  const eyePromise = analyseEyeCompleteness(dataUrl);
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 45000);
 
   try {
-    const [response, lightingResult, eyeResult] = await Promise.all([
+    const [response, lightingResult] = await Promise.all([
       fetch('/api/analyse', {
         method: 'POST',
         signal: controller.signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageData: base64, mediaType: mediaType })
       }),
-      lightingPromise,
-      eyePromise
+      lightingPromise
     ]);
     clearTimeout(timeout);
     clientLightingSignal = lightingResult?.lighting ?? null; // 'green'|'amber'|'red'|null
     clientBlurSignal = lightingResult?.blur ?? null;          // 'blur'|'clean'|null
-    // Eye completeness: if Face Mesh reports a dissolved eye, override blur signal
-    if (eyeResult === 'blur') {
-      console.log('[EyeCheck] Overriding blur signal — eye dissolved');
-      clientBlurSignal = 'blur';
-    }
 
     if (!response.ok) {
       const errText = await response.text();

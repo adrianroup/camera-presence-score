@@ -1904,8 +1904,12 @@ async function handleLinkedInSubmit() {
       setSession(email, user.name || name, user.uses_remaining);
       sessionStorage.removeItem('linkedin_profile');
       sessionStorage.removeItem('google_profile');
-      showScreen(document.getElementById('screenUpload'));
-      showVerifiedBanner(user.uses_remaining);
+      if (currentDataUrl) {
+        startLoadingWithDecrement(email);
+      } else {
+        showScreen(document.getElementById('screenUpload'));
+        showVerifiedBanner(user.uses_remaining);
+      }
       return;
     }
 
@@ -1925,8 +1929,12 @@ async function handleLinkedInSubmit() {
     sessionStorage.removeItem('linkedin_profile');
     sessionStorage.removeItem('google_profile');
 
-    showScreen(document.getElementById('screenUpload'));
-    showVerifiedBanner(uses);
+    if (currentDataUrl) {
+      startLoadingWithDecrement(email);
+    } else {
+      showScreen(document.getElementById('screenUpload'));
+      showVerifiedBanner(uses);
+    }
 
   } catch(err) {
     console.error('LinkedIn submit error:', err);
@@ -1983,8 +1991,12 @@ async function handleInlineManualSubmit(){
     if(user && user.verified){
       if(user.uses_remaining <= 0){ showGatePaywall(); return; }
       setSession(email, user.name || name, user.uses_remaining);
-      showScreen(document.getElementById('screenUpload'));
-      showVerifiedBanner(user.uses_remaining);
+      if (currentDataUrl) {
+        startLoadingWithDecrement(email);
+      } else {
+        showScreen(document.getElementById('screenUpload'));
+        showVerifiedBanner(user.uses_remaining);
+      }
       return;
     }
     pendingEmail = email;
@@ -2063,8 +2075,12 @@ async function handleGateSubmit(){
       }
       // Already verified — set session and proceed
       setSession(email, user.name || name, user.uses_remaining);
-      showScreen(document.getElementById('screenUpload'));
-      showVerifiedBanner(user.uses_remaining);
+      if (currentDataUrl) {
+        startLoadingWithDecrement(email);
+      } else {
+        showScreen(document.getElementById('screenUpload'));
+        showVerifiedBanner(user.uses_remaining);
+      }
       return;
     }
 

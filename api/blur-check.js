@@ -1,6 +1,6 @@
 // api/blur-check.js — Vercel serverless function
-// Focused binary blur detection using GPT-4o Vision.
-// Returns { blur: true } or { blur: false }
+// Blur detection + glasses eye obstruction check using GPT-4o Vision.
+// Returns { blur: true|false, eyeObstruction: 'none'|'partial'|'full' }
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -12,20 +12,26 @@ export default async function handler(req, res) {
   const { imageData, mediaType } = req.body;
   if (!imageData) return res.status(400).json({ error: 'No image data' });
 
-  const PROMPT = `Look at the background of this image — the area behind the person.
+  const PROMPT = `Analyse this image and answer TWO questions. Reply with EXACTLY two lines, nothing else.
 
-Answer ONE question only: Is the background digitally blurred by software such as Zoom, Teams, or Google Meet?
+QUESTION 1 — BACKGROUND BLUR:
+Is the background digitally blurred by software such as Zoom, Teams, or Google Meet?
+- Digital blur is UNIFORM — every part of the background is equally soft, with no depth graduation.
+- Real rooms and optical lens blur show DEPTH GRADUATION — objects closer to the person are sharper than objects far away.
+- Digital blur often dissolves the edges of the person — ears, hairline, shoulders become soft or partially missing.
+- Real backgrounds have visible texture and hard edges even if plain.
+Answer YES if the background blur is uniform flat mush with no depth graduation. Answer NO if it is a real room or real optical blur.
 
-How to tell:
-- Digital blur is UNIFORM — every part of the background is equally soft, with no depth graduation. Objects close to the person are just as blurred as objects far away.
-- Real rooms and optical lens blur always show DEPTH GRADUATION — objects closer to the person are sharper than objects further away.
-- Digital blur often dissolves the edges of the person — ears, hairline, shoulders become soft or partially missing where they meet the background.
-- Real backgrounds have visible texture and hard edges even if plain or low-contrast.
+QUESTION 2 — EYE OBSTRUCTION:
+Can you clearly see both of the person's eyes through their glasses (if wearing any)?
+- NONE: No glasses, OR glasses present with both eyes clearly visible through the lenses (no reflections blocking the eyes).
+- PARTIAL: Glasses are present AND one or both eyes are partially obscured by lens reflections or glare — you can see the eyes but they are degraded.
+- FULL: Glasses are present AND one or both eyes are completely hidden behind bright reflections — the eyes are not visible at all.
+If no glasses are visible, answer NONE.
 
-If the background blur is uniform flat mush with no depth graduation — answer YES.
-If the background is a real room, real wall, or real optical blur with visible depth falloff — answer NO.
-
-Reply with ONLY the single word YES or NO. Nothing else.`;
+Reply with EXACTLY this format (two lines, no other text):
+BLUR: YES
+EYES: NONE`;
 
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -52,9 +58,14 @@ Reply with ONLY the single word YES or NO. Nothing else.`;
     }
     const data = await response.json();
     const raw = (data.choices?.[0]?.message?.content || '').trim().toUpperCase();
-    const blur = raw.startsWith('YES');
-    console.log('[BlurCheck] GPT-4o response:', raw, '→', blur ? 'BLUR' : 'CLEAN');
-    return res.status(200).json({ blur });
+    // Parse BLUR line
+    const blurMatch = raw.match(/BLUR:\s*(YES|NO)/);
+    const blur = blurMatch ? blurMatch[1] === 'YES' : raw.startsWith('YES');
+    // Parse EYES line
+    const eyesMatch = raw.match(/EYES:\s*(NONE|PARTIAL|FULL)/);
+    const eyeObstruction = eyesMatch ? eyesMatch[1].toLowerCase() : 'none';
+    console.log('[BlurCheck] GPT-4o blur:', blur ? 'YES' : 'NO', '| eyes:', eyeObstruction);
+    return res.status(200).json({ blur, eyeObstruction });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

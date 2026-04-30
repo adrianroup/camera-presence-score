@@ -1093,6 +1093,26 @@ async function analyseClientLighting(dataUrl) {
           const bgP90 = percentile90(bgLumValues);
           const lightingSignal = fStopSignal(faceLum, bgP90);
 
+          // ── Bright spike detection ──────────────────────────────────────────
+          // If 1%+ of background pixels are 2.5+ stops brighter than the face,
+          // flag as bright spike — routed to bright_background disqualification.
+          // 2.5 stops = 2^2.5 ≈ 5.66× face luminance.
+          // Guards against: backlit signs, lamps, bright windows behind subject.
+          let bgSpikeSignal = 'clean';
+          if (faceLum !== null && faceLum >= 0.05) {
+            const spikeThreshold = faceLum * 5.66;
+            let spikeCount = 0;
+            for (const lv of bgLumValues) {
+              if (lv > spikeThreshold) spikeCount++;
+            }
+            const spikeRatio = bgLumValues.length > 0 ? spikeCount / bgLumValues.length : 0;
+            console.log('[BgSpike] spike%:', (spikeRatio * 100).toFixed(2), 'threshold lum:', spikeThreshold.toFixed(3));
+            if (spikeRatio >= 0.01) {
+              bgSpikeSignal = 'disqualify';
+              console.log('[BgSpike] 1%+ pixels above 2.5 stops — bright spike disqualification');
+            }
+          }
+
           // ── Sobel gradient (background sharpness / blur detection) ──
           // Digital blur eliminates hard edges → low gradient.
           // Real backgrounds (frames, shelves, objects) → higher gradient.
@@ -1137,7 +1157,7 @@ async function analyseClientLighting(dataUrl) {
 
           console.log('[Lighting] face:', faceLum?.toFixed(3), 'bg p90:', bgP90?.toFixed(3), '→', lightingSignal);
           console.log('[BgGradient] meanGrad:', meanGrad?.toFixed(5), '→', blurSignal);
-          resolve({ lighting: lightingSignal, blur: blurSignal });
+          resolve({ lighting: lightingSignal, blur: blurSignal, bgSpike: bgSpikeSignal });
         });
         await faceMesh.send({ image: canvas });
         setTimeout(() => { if (!resolved) { resolved = true; resolve({ lighting: null, blur: null }); } }, 5000);
@@ -1189,9 +1209,17 @@ async function callVisionAPI(dataUrl) {
     clearTimeout(timeout);
     clientLightingSignal = lightingResult?.lighting ?? null;
     clientBlurSignal = lightingResult?.blur ?? null;
-    // Bright background disqualification: 2.5+ stops brighter than face
+    // Bright background disqualification: average 2.5+ stops brighter than face
     if (clientLightingSignal === 'disqualify') {
-      console.log('[Lighting] 2.5+ stops brighter — forcing bright background disqualification');
+      console.log('[Lighting] avg 2.5+ stops brighter — bright background disqualification');
+      apiDone = true;
+      showScreen(document.getElementById('screenBrightBg'));
+      sendDisqEmail('bright_background');
+      return;
+    }
+    // Bright spike disqualification: 1%+ background pixels 2.5+ stops brighter than face
+    if (lightingResult?.bgSpike === 'disqualify') {
+      console.log('[BgSpike] Bright spike disqualification — routing to bright background screen');
       apiDone = true;
       showScreen(document.getElementById('screenBrightBg'));
       sendDisqEmail('bright_background');

@@ -1164,19 +1164,34 @@ async function callVisionAPI(dataUrl) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 45000);
 
+  // Dedicated blur pre-check — focused binary question to Claude
+  const blurCheckPromise = fetch('/api/blur-check', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ imageData: base64, mediaType: mediaType })
+  }).then(r => r.ok ? r.json() : null).catch(() => null);
+
   try {
-    const [response, lightingResult] = await Promise.all([
+    const [response, lightingResult, blurCheckResult] = await Promise.all([
       fetch('/api/analyse', {
         method: 'POST',
         signal: controller.signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageData: base64, mediaType: mediaType })
       }),
-      lightingPromise
+      lightingPromise,
+      blurCheckPromise
     ]);
     clearTimeout(timeout);
     clientLightingSignal = lightingResult?.lighting ?? null; // 'green'|'amber'|'red'|null
     clientBlurSignal = lightingResult?.blur ?? null;          // 'blur'|'clean'|null
+    // Dedicated blur check overrides everything
+    if (blurCheckResult?.blur === true) {
+      console.log('[BlurCheck] Dedicated blur API: YES — forcing disqualification');
+      clientBlurSignal = 'blur';
+    } else {
+      console.log('[BlurCheck] Dedicated blur API:', blurCheckResult?.blur === false ? 'NO' : 'no result');
+    }
 
     if (!response.ok) {
       const errText = await response.text();

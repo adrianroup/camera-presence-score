@@ -97,7 +97,12 @@ TOO CLOSE: If the face fills more than 80% of the frame AND the angle is wrong, 
 The background should be subordinate to the face. It should not compete, distract, or dominate.
 
 CHECK THIS FIRST — DIGITAL BLUR ANATOMY FAIL (score 0–39, no exceptions):
-Before scoring anything else: look at the subject's face edges, hairline, ears, and shoulders. If any part of the subject's anatomy is being consumed, dissolved, or partially absorbed into the background blur — one eye softened, an ear missing, the side of the face melting into the background, hair strands dissolved — that is a digital background blur mask failure. It does not matter how clean the rest of the blur looks. Score 0–39 and name the specific anatomy that is being consumed. A blurred background that eats the subject is always worse than an honest busy background.
+Before scoring anything else: look at the subject's face edges, hairline, ears, and shoulders. Check each of these specifically:
+- Is either eye fully sharp and clearly defined at its outer edge? If one eye is soft, dissolved, or fading where it meets the background blur — even partially — that is a fail.
+- Are both ears sharp where they meet the background? A dissolved or missing ear is a fail.
+- Is the hairline sharp? Hair strands dissolving into blur is a fail.
+- Are both shoulders sharp where they meet the background? A shoulder being eaten by blur is a fail.
+If ANY of the above are present — even partially, even on just one side — that is a digital background blur mask failure. Score 0–39 and name the specific anatomy being consumed. You are not permitted to score higher than 39 if any anatomy is being dissolved. A blurred background that eats the subject is always worse than an honest busy background.
 
 90–100: Background clearly subordinate. Darker, softer, or plain. Face is unmistakably the focal point.
 75–89: Minor issues — slightly busy but face still holds primary attention.
@@ -106,7 +111,7 @@ Before scoring anything else: look at the subject's face edges, hairline, ears, 
 0–24: Background has taken control entirely.
 
 HARD RED TRIGGERS — score MUST be 49 or below, no exceptions:
-- GALLERY WALL / ART WALL: Multiple framed pictures, artwork, or photographs covering the wall behind the subject. Even if the subject is sharp, the gallery competes directly. Score 35–49.
+- GALLERY WALL / ART WALL: A chaotic or overwhelming collection of framed pictures, artwork, or photographs covering most of the wall behind the subject — so many that the eye is drawn away from the face. Score 35–49. DO NOT apply this trigger for a modest arrangement of 2–6 framed pictures that is clearly decorative and intentional — that is amber territory (50–64), not a hard red fail.
 - KITCHEN: Cabinets, appliances, countertops, or food visible. The setting undermines any professional context. Score 30–44.
 - BEDROOM: Bed, headboard, pillows, or bedroom furniture visible. Score 30–44.
 - CAR INTERIOR: Dashboard, seats, windows, or car interior visible. Score 25–39.

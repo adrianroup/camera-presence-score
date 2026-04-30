@@ -1100,7 +1100,7 @@ async function analyseClientLighting(dataUrl) {
           // Guards against: backlit signs, lamps, bright windows behind subject.
           let bgSpikeSignal = 'clean';
           if (faceLum !== null && faceLum >= 0.05) {
-            const spikeThreshold = faceLum * 5.66;
+            const spikeThreshold = Math.min(faceLum * 5.66, 0.98); // cap at near-white — luminance max is 1.0
             let spikeCount = 0;
             for (const lv of bgLumValues) {
               if (lv > spikeThreshold) spikeCount++;

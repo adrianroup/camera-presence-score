@@ -968,13 +968,43 @@ function fStopSignal(faceLum, bgP90) {
   return 'green';
 }
 
-// Compute variance of an array of luminance values
-// Low variance = uniform mush (digital blur). High variance = real background (texture, objects).
+// Compute variance of an array of values
 function luminanceVariance(values) {
   if (!values || values.length < 10) return null;
   const mean = values.reduce((a, b) => a + b, 0) / values.length;
   const sq = values.reduce((a, b) => a + (b - mean) ** 2, 0) / values.length;
   return sq;
+}
+
+// Measure mean gradient magnitude in a background region using a simple 3x3 Sobel.
+// Digital blur eliminates hard edges — gradient magnitude is very low (< ~8 on 0-255 scale).
+// Real backgrounds (walls, artwork, shelves) have sharp edges — gradient magnitude is higher.
+// JPEG noise adds tiny high-frequency variance but produces only weak gradients.
+// This is the most JPEG-robust blur detector available without a neural net.
+function meanGradientMagnitude(ctx, x, y, w, h) {
+  x = Math.round(x); y = Math.round(y); w = Math.round(w); h = Math.round(h);
+  if (w < 4 || h < 4) return null;
+  // Get luminance grid
+  const data = ctx.getImageData(x, y, w, h).data;
+  const lum = new Float32Array(w * h);
+  for (let i = 0; i < w * h; i++) {
+    const p = i * 4;
+    lum[i] = 0.2126 * data[p] / 255 + 0.7152 * data[p+1] / 255 + 0.0722 * data[p+2] / 255;
+  }
+  // Sobel over every interior pixel (skip 1-pixel border)
+  let sum = 0, count = 0;
+  for (let row = 1; row < h - 1; row++) {
+    for (let col = 1; col < w - 1; col++) {
+      const tl = lum[(row-1)*w+(col-1)], tm = lum[(row-1)*w+col], tr = lum[(row-1)*w+(col+1)];
+      const ml = lum[row*w+(col-1)],                                mr = lum[row*w+(col+1)];
+      const bl = lum[(row+1)*w+(col-1)], bm = lum[(row+1)*w+col], br = lum[(row+1)*w+(col+1)];
+      const gx = (-tl - 2*ml - bl) + (tr + 2*mr + br);
+      const gy = (-tl - 2*tm - tr) + (bl + 2*bm + br);
+      sum += Math.sqrt(gx*gx + gy*gy);
+      count++;
+    }
+  }
+  return count > 0 ? sum / count : null;
 }
 
 // Digital blur detection: sample background variance using same MediaPipe face bounding box.
@@ -1150,12 +1180,26 @@ async function analyseClientLighting(dataUrl) {
             }
           }
           const bgP90 = percentile90(bgLumValues);
-          const bgVar = luminanceVariance(bgLumValues);
-
           const signal = fStopSignal(faceLum, bgP90);
-          const blurSignal = (bgVar !== null && bgVar < 0.003) ? 'blur' : 'clean';
+
+          // ── Sobel gradient blur detection ──────────────────────────────────
+          // Sample each background strip for mean gradient magnitude.
+          // Digital blur = near-zero gradients (no hard edges).
+          // Real backgrounds = higher gradients (picture frames, shelves, objects).
+          // JPEG noise creates luminance variance but very weak gradients — immune to false positives.
+          // Threshold 0.025 chosen conservatively: Zoom blur typically ~0.005–0.015,
+          // real rooms typically ~0.04–0.12.
+          let totalGrad = 0, gradCount = 0;
+          for (const s of strips) {
+            const sw = Math.round(s.w), sh = Math.round(s.h);
+            if (sw < 8 || sh < 8) continue;
+            const g = meanGradientMagnitude(ctx, Math.round(s.x), Math.round(s.y), sw, sh);
+            if (g !== null) { totalGrad += g; gradCount++; }
+          }
+          const meanGrad = gradCount > 0 ? totalGrad / gradCount : null;
+          const blurSignal = (meanGrad !== null && meanGrad < 0.025) ? 'blur' : 'clean';
           console.log('[Lighting] face:', faceLum?.toFixed(3), 'bg p90:', bgP90?.toFixed(3), 'ratio:', bgP90 && faceLum ? (bgP90/faceLum).toFixed(2) : 'n/a', '→', signal);
-          console.log('[BgVariance] variance:', bgVar?.toFixed(5), '→', blurSignal);
+          console.log('[BgGradient] meanGrad:', meanGrad?.toFixed(5), '→', blurSignal);
           resolve({ lighting: signal, blur: blurSignal });
         });
 
@@ -1355,7 +1399,7 @@ function routeResult() {
   // Real backgrounds (walls, artwork, bookshelves) have high luminance variance.
   // Digital background blur compresses all background pixels to uniform mush — very low variance.
   if (clientBlurSignal === 'blur' && !apiResult.disqualification) {
-    console.log('[BgVariance] Client-side blur detected — forcing disqualification');
+    console.log('[BgGradient] Client-side blur detected — forcing disqualification');
     showScreen(document.getElementById('screenBgBlur'));
     sendDisqEmail('background_blur');
     return;

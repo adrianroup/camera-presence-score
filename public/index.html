@@ -1398,11 +1398,17 @@ function routeResult() {
   // ── Client-side blur detection: pixel variance < 0.003 = digital blur disqualification ──
   // Real backgrounds (walls, artwork, bookshelves) have high luminance variance.
   // Digital background blur compresses all background pixels to uniform mush — very low variance.
-  if (clientBlurSignal === 'blur' && !apiResult.disqualification) {
+  // GPT-4o is the authority on blur. If it explicitly returned NO, do not let the
+  // Sobel gradient override it — real optical bokeh from a fast lens reads as low gradient.
+  const gpt4oSaidClean = blurCheckResult?.blur === false;
+  if (clientBlurSignal === 'blur' && !apiResult.disqualification && !gpt4oSaidClean) {
     console.log('[BgGradient] Client-side blur detected — forcing disqualification');
     showScreen(document.getElementById('screenBgBlur'));
     sendDisqEmail('background_blur');
     return;
+  }
+  if (clientBlurSignal === 'blur' && gpt4oSaidClean) {
+    console.log('[BgGradient] Sobel flagged blur but GPT-4o said clean — deferring to GPT-4o');
   }
   // ── Client-side safety net: bg score ≤35 = force background_blur disqualification ──
   const _bgScoreCheck = apiResult.criteria?.background?.score;

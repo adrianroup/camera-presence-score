@@ -2199,6 +2199,14 @@ async function checkVerificationToken(){
       if(user){
         setSession(decodeURIComponent(email), user.name || '', user.uses_remaining);
         klaviyoSubscribe(decodeURIComponent(email), user.name || '', user.job_title || '', user.linkedin_url || '');
+        // Restore image uploaded before verification redirect
+        restorePendingImage();
+        if (currentDataUrl) {
+          document.getElementById('previewImg').src = currentDataUrl;
+          showUploadState('Preview');
+          analyseBtn.disabled = false;
+          analyseBtn.classList.add('ready');
+        }
         // Show upload screen with success banner
         showScreen(document.getElementById('screenUpload'));
         showVerifiedBanner(user.uses_remaining);

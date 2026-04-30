@@ -16,6 +16,7 @@
 </script>
 <!-- MediaPipe Face Detection (client-side) -->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4.1646425229/face_detection.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/face_mesh.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
 
 
@@ -1084,6 +1085,93 @@ async function analyseBackgroundVariance(dataUrl) {
   });
 }
 
+// ── Face Mesh eye-completeness blur detector ─────────────────────────────────
+// Uses MediaPipe Face Mesh 468 landmarks to check whether both eyes are present
+// and geometrically intact. Digital background blur masks eat the edges of the
+// face — ears, hairline, sometimes eyes — producing collapsed or missing landmarks.
+// Key eye landmarks:
+//   Left eye:  outer=33, inner=133, upper=159, lower=145
+//   Right eye: outer=362, inner=263, upper=386, lower=374
+// A healthy eye has a measurable width (outer→inner distance) and height (upper→lower).
+// If either dimension collapses to near-zero, the eye is dissolved.
+async function analyseEyeCompleteness(dataUrl) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = async () => {
+      const W = img.naturalWidth;
+      const H = img.naturalHeight;
+      const canvas = document.createElement('canvas');
+      canvas.width = W; canvas.height = H;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      try {
+        const faceMesh = new FaceMesh({
+          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4.1633559619/${file}`
+        });
+        faceMesh.setOptions({
+          maxNumFaces: 1,
+          refineLandmarks: false,
+          minDetectionConfidence: 0.4,
+          minTrackingConfidence: 0.4
+        });
+        let resolved = false;
+        faceMesh.onResults((results) => {
+          if (resolved) return;
+          resolved = true;
+          const faces = results.multiFaceLandmarks;
+          if (!faces || faces.length === 0) {
+            console.log('[EyeCheck] No face landmarks detected — skipping');
+            resolve(null);
+            return;
+          }
+          const lm = faces[0];
+          // Helper: get pixel coords of a landmark
+          const pt = (idx) => ({ x: lm[idx].x * W, y: lm[idx].y * H });
+          // Left eye metrics
+          const leOuter = pt(33),  leInner = pt(133);
+          const leUpper = pt(159), leLower = pt(145);
+          const leWidth  = Math.abs(leOuter.x - leInner.x);
+          const leHeight = Math.abs(leUpper.y - leLower.y);
+          // Right eye metrics
+          const reOuter = pt(362), reInner = pt(263);
+          const reUpper = pt(386), reLower = pt(374);
+          const reWidth  = Math.abs(reOuter.x - reInner.x);
+          const reHeight = Math.abs(reUpper.y - reLower.y);
+          // Face width for normalisation (outer eye corners)
+          const faceWidth = Math.abs(leOuter.x - reOuter.x) || W * 0.3;
+          const leWNorm = leWidth / faceWidth;
+          const reWNorm = reWidth / faceWidth;
+          const leHNorm = leHeight / faceWidth;
+          const reHNorm = reHeight / faceWidth;
+          console.log('[EyeCheck] LE w:', leWNorm.toFixed(3), 'h:', leHNorm.toFixed(3),
+                                   '| RE w:', reWNorm.toFixed(3), 'h:', reHNorm.toFixed(3));
+          // Thresholds: a healthy eye width is ~15–25% of face width.
+          // A dissolved/consumed eye collapses to < 5% width or < 1% height.
+          const MIN_EYE_WIDTH  = 0.05;  // < 5% of face width = eye collapsed
+          const MIN_EYE_HEIGHT = 0.008; // < 0.8% of face width = eye vertically collapsed
+          const leGone = leWNorm < MIN_EYE_WIDTH || leHNorm < MIN_EYE_HEIGHT;
+          const reGone = reWNorm < MIN_EYE_WIDTH || reHNorm < MIN_EYE_HEIGHT;
+          if (leGone || reGone) {
+            console.log('[EyeCheck] Eye dissolved — blur disqualification:', leGone ? 'LEFT' : 'RIGHT');
+            resolve('blur');
+          } else {
+            console.log('[EyeCheck] Both eyes intact');
+            resolve('clean');
+          }
+        });
+        await faceMesh.send({ image: canvas });
+        setTimeout(() => { if (!resolved) { resolved = true; console.warn('[EyeCheck] timeout'); resolve(null); } }, 5000);
+      } catch (e) {
+        console.warn('[EyeCheck] FaceMesh error:', e.message);
+        resolve(null);
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = dataUrl;
+  });
+}
+
 // Draw image onto canvas and run MediaPipe face detection
 async function analyseClientLighting(dataUrl) {
   return new Promise((resolve) => {
@@ -1229,25 +1317,32 @@ async function callVisionAPI(dataUrl) {
   const base64 = resizedDataUrl.split(',')[1];
   const mediaType = 'image/jpeg';
 
-  // Kick off client lighting + blur variance analysis (blur computed inside lighting fn)
+  // Kick off client lighting + blur gradient analysis + eye completeness (all in parallel)
   const lightingPromise = analyseClientLighting(dataUrl);
+  const eyePromise = analyseEyeCompleteness(dataUrl);
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 45000);
 
   try {
-    const [response, lightingResult] = await Promise.all([
+    const [response, lightingResult, eyeResult] = await Promise.all([
       fetch('/api/analyse', {
         method: 'POST',
         signal: controller.signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageData: base64, mediaType: mediaType })
       }),
-      lightingPromise
+      lightingPromise,
+      eyePromise
     ]);
     clearTimeout(timeout);
     clientLightingSignal = lightingResult?.lighting ?? null; // 'green'|'amber'|'red'|null
     clientBlurSignal = lightingResult?.blur ?? null;          // 'blur'|'clean'|null
+    // Eye completeness: if Face Mesh reports a dissolved eye, override blur signal
+    if (eyeResult === 'blur') {
+      console.log('[EyeCheck] Overriding blur signal — eye dissolved');
+      clientBlurSignal = 'blur';
+    }
 
     if (!response.ok) {
       const errText = await response.text();

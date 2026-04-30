@@ -28,31 +28,28 @@ DO NOT trigger for: single small dot catchlights, rectangular softbox reflection
 Return: {"disqualification": "ring_light"}
 
 ─── DISQUALIFICATION 2: DIGITAL BACKGROUND BLUR ───
-Before doing anything else, answer these questions by looking at the image carefully:
+Before doing anything else, look at the background carefully. Answer these tests in order. If ANY test triggers, return {"disqualification": "background_blur"} immediately and stop.
 
-ANATOMY CHECK — answer each one:
-- Is the LEFT EYE fully visible and sharp? If it is missing, dissolved, or partially eaten by blur → DISQUALIFY.
-- Is the RIGHT EYE fully visible and sharp? If it is missing, dissolved, or partially eaten by blur → DISQUALIFY.
-- Is the LEFT EAR present and recognisable? If it is missing or dissolved into background blur → DISQUALIFY.
-- Is the RIGHT EAR present and recognisable (where it should be visible given the head angle)? If it is missing or dissolved → DISQUALIFY.
-- Is the top of the head present and sharp? If the hairline or crown is dissolving into blur → DISQUALIFY.
-- Are both shoulders present and sharp where they meet the background? If either shoulder is being eaten or dissolved by blur → DISQUALIFY.
-If ANY anatomy check above triggers → return {"disqualification": "background_blur"} immediately. Stop. Do not score anything.
-
-QUESTION 1: Is any part of the subject's body being dissolved, softened, or partially erased at the boundary where they meet the background? Check specifically: the edges of the face, the ears, the hairline, the shoulders, the neck, the jawline. Is any of it melting into the background? Is an eye partially eaten? Is an ear missing or soft where it should be sharp?
-If YES to any part of Question 1 → return {"disqualification": "background_blur"} immediately. Stop. Do not score anything.
-
-QUESTION 2: Is the background blur identical in softness everywhere — near objects behind the subject equally blurred as far objects, with no graduation in depth? Digital blur is uniformly flat. Real lens blur graduates — objects closer to the subject are less blurred than objects further away.
-If YES (uniform flat mush, no depth graduation) → return {"disqualification": "background_blur"} immediately. Stop.
-
-QUESTION 3: Are there any edge artefacts at the boundary between the subject and the background — colour fringing, halo glow, pixel bleed, a hard unnatural mask line?
+TEST A — UNIFORM BLUR (most reliable tell):
+Is the background a uniform soft mush — every part of it equally blurred with no depth graduation whatsoever? Real optical blur from a camera lens always graduates: objects closer to the subject are less blurred than objects further away. You can see the falloff. Digital background blur produced by Zoom, Teams, Meet, or similar tools is flat and uniform — everything behind the subject is blurred to the same identical degree regardless of distance. There is no depth falloff. If the background blur appears uniform and flat with no visible depth graduation, this is digital blur.
 If YES → return {"disqualification": "background_blur"} immediately. Stop.
 
-QUESTION 4: Is the background real optical blur from a camera lens (graduated, progressive, natural), with no anatomy consumed and no edge artefacts?
-If YES to Question 4 only → do NOT trigger. Continue to scoring.
+TEST B — ANATOMY DISSOLUTION:
+Look at the edges of the subject where they meet the background. Check each specifically:
+- Left ear: is it sharp and clearly defined, or is it soft, dissolved, or missing where it meets the background?
+- Right ear: same check.
+- Hairline and crown: are individual hairs or the hairline sharp, or are they dissolving into blur?
+- Both shoulders: are they cleanly defined where they meet the background, or is either shoulder edge being eaten or softened by blur?
+- Jawline and neck: is the edge of the face clean and sharp, or is it melting into the background?
+If ANY of these anatomy boundaries are dissolved, eaten, softened, or missing → return {"disqualification": "background_blur"} immediately. Stop.
 
-DO NOT trigger for: real rooms, walls, artwork, bookshelves, or any background that is simply plain, low-contrast, or monochromatic. A plain wall is not blur.
-DO NOT trigger for real optical blur with a visible depth gradient and clean subject edges.
+TEST C — EDGE ARTEFACTS:
+Are there any unnatural artefacts at the boundary between the subject and the background — colour fringing, halo glow, pixel bleed, a hard mask line, or a green/white outline?
+If YES → return {"disqualification": "background_blur"} immediately. Stop.
+
+SAFE HARBOURS — do NOT trigger for these:
+- A real room, wall, bookshelf, or artwork that is simply plain, low-contrast, or monochromatic. A plain wall is not blur.
+- Real optical lens blur where you can clearly see depth falloff (closer objects less blurred than farther ones) AND subject anatomy is clean and sharp at all edges.
 Return: {"disqualification": "background_blur"}
 
 ─── DISQUALIFICATION 3: BRIGHT BACKGROUND (AI FALLBACK) ───

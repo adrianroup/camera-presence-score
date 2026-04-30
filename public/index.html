@@ -924,6 +924,7 @@ function resizeImage(dataUrl, maxPx, quality) {
 // ═══════════════════════════════════════
 
 let clientLightingSignal = null; // 'green' | 'amber' | 'red' | null (null = face not detected)
+let clientBlurSignal = null;     // 'blur' | 'clean' | null (null = face not detected)
 
 // Calculate average perceptual luminance of a pixel region from canvas ImageData
 function regionLuminance(ctx, x, y, w, h, imgW, imgH) {
@@ -965,6 +966,92 @@ function fStopSignal(faceLum, bgP90) {
   if (ratio > 2.0)   return 'red';
   if (ratio > 1.414) return 'amber';
   return 'green';
+}
+
+// Compute variance of an array of luminance values
+// Low variance = uniform mush (digital blur). High variance = real background (texture, objects).
+function luminanceVariance(values) {
+  if (!values || values.length < 10) return null;
+  const mean = values.reduce((a, b) => a + b, 0) / values.length;
+  const sq = values.reduce((a, b) => a + (b - mean) ** 2, 0) / values.length;
+  return sq;
+}
+
+// Digital blur detection: sample background variance using same MediaPipe face bounding box.
+// Virtual background blur compresses all background pixels to near-identical luminance → variance < 0.003.
+// Real backgrounds (walls, artwork, bookshelves) have variance > 0.005.
+// VARIANCE THRESHOLD: 0.003 — below this = uniform mush = digital blur.
+async function analyseBackgroundVariance(dataUrl) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = async () => {
+      const W = img.naturalWidth;
+      const H = img.naturalHeight;
+      const canvas = document.createElement('canvas');
+      canvas.width = W; canvas.height = H;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      try {
+        const faceDetection = new FaceDetection({
+          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection@0.4.1646425229/${file}`
+        });
+        faceDetection.setOptions({ model: 'short', minDetectionConfidence: 0.4 });
+        let resolved = false;
+        faceDetection.onResults((results) => {
+          if (resolved) return;
+          resolved = true;
+          const detections = results.detections || [];
+          if (detections.length === 0) { resolve(null); return; }
+          let best = detections[0];
+          if (detections.length > 1) {
+            best = detections.reduce((a, b) => {
+              const aA = a.boundingBox.width * a.boundingBox.height;
+              const bA = b.boundingBox.width * b.boundingBox.height;
+              return bA > aA ? b : a;
+            });
+          }
+          const bb = best.boundingBox;
+          const fx = bb.xCenter - bb.width / 2;
+          const fy = bb.yCenter - bb.height / 2;
+          const fw = bb.width;
+          const fh = bb.height;
+          const padX = fw * 0.75 * W;
+          const padY = fh * 0.75 * H;
+          const bgCenterX = (fx + fw / 2) * W;
+          const bgCenterY = (fy + fh / 2) * H;
+          const bgLumValues = [];
+          const strips = [
+            { x: 0, y: 0, w: W, h: Math.max(1, bgCenterY - padY) },
+            { x: 0, y: Math.min(H - 1, bgCenterY + padY), w: W, h: Math.max(1, H - (bgCenterY + padY)) },
+            { x: 0, y: 0, w: Math.max(1, bgCenterX - padX), h: H },
+            { x: Math.min(W - 1, bgCenterX + padX), y: 0, w: Math.max(1, W - (bgCenterX + padX)), h: H },
+          ];
+          for (const s of strips) {
+            const sw = Math.round(s.w), sh = Math.round(s.h);
+            if (sw < 4 || sh < 4) continue;
+            const sx = Math.round(s.x), sy = Math.round(s.y);
+            const data = ctx.getImageData(sx, sy, sw, sh).data;
+            for (let i = 0; i < data.length; i += 16) {
+              const r = data[i] / 255, g = data[i+1] / 255, b = data[i+2] / 255;
+              bgLumValues.push(0.2126 * r + 0.7152 * g + 0.0722 * b);
+            }
+          }
+          const variance = luminanceVariance(bgLumValues);
+          const signal = (variance !== null && variance < 0.003) ? 'blur' : 'clean';
+          console.log('[BgVariance] variance:', variance?.toFixed(5), '→', signal);
+          resolve(signal);
+        });
+        await faceDetection.send({ image: canvas });
+        setTimeout(() => { if (!resolved) { resolved = true; resolve(null); } }, 3000);
+      } catch (e) {
+        console.warn('[BgVariance] error:', e.message);
+        resolve(null);
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = dataUrl;
+  });
 }
 
 // Draw image onto canvas and run MediaPipe face detection
@@ -1088,30 +1175,34 @@ async function analyseClientLighting(dataUrl) {
 async function callVisionAPI(dataUrl) {
   apiResult = null; apiError = null; apiDone = false;
   clientLightingSignal = null;
+  clientBlurSignal = null;
 
   // Run client-side lighting analysis AND API call in parallel
   const [resizedDataUrl] = await Promise.all([resizeImage(dataUrl, 1200, 0.85)]);
   const base64 = resizedDataUrl.split(',')[1];
   const mediaType = 'image/jpeg';
 
-  // Kick off client lighting analysis (uses original full-res dataUrl for accuracy)
+  // Kick off client lighting + blur variance analysis in parallel
   const lightingPromise = analyseClientLighting(dataUrl);
+  const blurPromise = analyseBackgroundVariance(dataUrl);
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 45000);
 
   try {
-    const [response, lightingResult] = await Promise.all([
+    const [response, lightingResult, blurResult] = await Promise.all([
       fetch('/api/analyse', {
         method: 'POST',
         signal: controller.signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageData: base64, mediaType: mediaType })
       }),
-      lightingPromise
+      lightingPromise,
+      blurPromise
     ]);
     clearTimeout(timeout);
     clientLightingSignal = lightingResult; // 'green'|'amber'|'red'|null
+    clientBlurSignal = blurResult;         // 'blur'|'clean'|null
 
     if (!response.ok) {
       const errText = await response.text();
@@ -1259,9 +1350,16 @@ function routeResult() {
   // ── Background red = automatic fail ──────────────────────────────────────
   // If the AI scored background red (< 50), the overall result is a fail
   // regardless of every other signal. Cap the score at 44 (top of "Needs work").
+  // ── Client-side blur detection: pixel variance < 0.003 = digital blur disqualification ──
+  // Real backgrounds (walls, artwork, bookshelves) have high luminance variance.
+  // Digital background blur compresses all background pixels to uniform mush — very low variance.
+  if (clientBlurSignal === 'blur' && !apiResult.disqualification) {
+    console.log('[BgVariance] Client-side blur detected — forcing disqualification');
+    showScreen(document.getElementById('screenBgBlur'));
+    sendDisqEmail('background_blur');
+    return;
+  }
   // ── Client-side safety net: bg score ≤35 = force background_blur disqualification ──
-  // The AI sometimes scores anatomy consumption without triggering the disqualification.
-  // If background ≤45, the AI has seen a severe background failure — route to Garden State.
   const _bgScoreCheck = apiResult.criteria?.background?.score;
   if (typeof _bgScoreCheck === 'number' && _bgScoreCheck <= 35 && !apiResult.disqualification) {
     showScreen(document.getElementById('screenBgBlur'));

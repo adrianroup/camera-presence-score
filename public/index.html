@@ -1087,7 +1087,7 @@ async function analyseClientLighting(dataUrl) {
           const detections = results.detections || [];
           if (detections.length === 0) {
             // No face detected — can't do brightness analysis, signal null
-            resolve(null);
+            resolve({ lighting: null, blur: null });
             return;
           }
 
@@ -1150,24 +1150,27 @@ async function analyseClientLighting(dataUrl) {
             }
           }
           const bgP90 = percentile90(bgLumValues);
+          const bgVar = luminanceVariance(bgLumValues);
 
           const signal = fStopSignal(faceLum, bgP90);
+          const blurSignal = (bgVar !== null && bgVar < 0.003) ? 'blur' : 'clean';
           console.log('[Lighting] face:', faceLum?.toFixed(3), 'bg p90:', bgP90?.toFixed(3), 'ratio:', bgP90 && faceLum ? (bgP90/faceLum).toFixed(2) : 'n/a', '→', signal);
-          resolve(signal);
+          console.log('[BgVariance] variance:', bgVar?.toFixed(5), '→', blurSignal);
+          resolve({ lighting: signal, blur: blurSignal });
         });
 
         // Send the canvas frame to MediaPipe
         await faceDetection.send({ image: canvas });
 
         // Safety timeout — if MediaPipe never calls back
-        setTimeout(() => { if (!resolved) { resolved = true; resolve(null); } }, 3000);
+        setTimeout(() => { if (!resolved) { resolved = true; resolve({ lighting: null, blur: null }); } }, 3000);
 
       } catch (e) {
         console.warn('[Lighting] MediaPipe error:', e.message);
-        resolve(null); // graceful fallback — AI handles it
+        resolve({ lighting: null, blur: null }); // graceful fallback — AI handles it
       }
     };
-    img.onerror = () => resolve(null);
+    img.onerror = () => resolve({ lighting: null, blur: null });
     img.src = dataUrl;
   });
 }
@@ -1182,27 +1185,25 @@ async function callVisionAPI(dataUrl) {
   const base64 = resizedDataUrl.split(',')[1];
   const mediaType = 'image/jpeg';
 
-  // Kick off client lighting + blur variance analysis in parallel
+  // Kick off client lighting + blur variance analysis (blur computed inside lighting fn)
   const lightingPromise = analyseClientLighting(dataUrl);
-  const blurPromise = analyseBackgroundVariance(dataUrl);
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 45000);
 
   try {
-    const [response, lightingResult, blurResult] = await Promise.all([
+    const [response, lightingResult] = await Promise.all([
       fetch('/api/analyse', {
         method: 'POST',
         signal: controller.signal,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageData: base64, mediaType: mediaType })
       }),
-      lightingPromise,
-      blurPromise
+      lightingPromise
     ]);
     clearTimeout(timeout);
-    clientLightingSignal = lightingResult; // 'green'|'amber'|'red'|null
-    clientBlurSignal = blurResult;         // 'blur'|'clean'|null
+    clientLightingSignal = lightingResult?.lighting ?? null; // 'green'|'amber'|'red'|null
+    clientBlurSignal = lightingResult?.blur ?? null;          // 'blur'|'clean'|null
 
     if (!response.ok) {
       const errText = await response.text();

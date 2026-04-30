@@ -1232,7 +1232,15 @@ async function callVisionAPI(dataUrl) {
       console.log('[BlurCheck] GPT-4o:', blurCheckResult?.blur === false ? 'NO — clean' : 'no result');
     }
 
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error('API error ' + response.status + ': ' + errText.slice(0,200));
+    }
+    const parsed = await response.json();
+    apiResult = parsed;
+
     // ── Glasses eye obstruction — clamp presence score ──
+    // Must run AFTER apiResult is populated from response.json()
     // partial (one or both eyes partially blocked) → presence capped at 65 (amber)
     // full (one or both eyes completely hidden)    → presence capped at 40 (red)
     const eyeObstruction = blurCheckResult?.eyeObstruction || 'none';
@@ -1248,13 +1256,6 @@ async function callVisionAPI(dataUrl) {
     } else {
       console.log('[EyeObstruction] none — presence unchanged');
     }
-
-    if (!response.ok) {
-      const errText = await response.text();
-      throw new Error('API error ' + response.status + ': ' + errText.slice(0,200));
-    }
-    const parsed = await response.json();
-    apiResult = parsed;
   } catch (err) {
     clearTimeout(timeout);
     if (err.name === 'AbortError') {

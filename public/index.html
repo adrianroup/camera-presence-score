@@ -363,6 +363,112 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
   .gauge-number{font-size:52px;}
 }
 </style>
+  <!-- UTM Passthrough — captures UTM params on arrival, persists in sessionStorage,
+       appends to all Shopify-bound links so attribution survives to checkout.
+       UTMs are not personal data — no cookie consent required. -->
+  <script>
+    (function () {
+      var UTM_KEYS = ['utm_source','utm_medium','utm_campaign','utm_id','utm_term','utm_content'];
+      var STORAGE_KEY = 'afa_utms';
+
+      // 1. On page load: capture UTMs from URL and store in sessionStorage
+      //    Only overwrite stored UTMs if new ones are present in the URL
+      function captureUTMs() {
+        var params = new URLSearchParams(window.location.search);
+        var found = {};
+        UTM_KEYS.forEach(function(k) {
+          var v = params.get(k);
+          if (v) found[k] = v;
+        });
+        if (Object.keys(found).length > 0) {
+          sessionStorage.setItem(STORAGE_KEY, JSON.stringify(found));
+        }
+      }
+
+      // 2. Build a query string from stored UTMs
+      function getUTMString() {
+        try {
+          var stored = sessionStorage.getItem(STORAGE_KEY);
+          if (!stored) return '';
+          var utms = JSON.parse(stored);
+          var pairs = [];
+          UTM_KEYS.forEach(function(k) {
+            if (utms[k]) pairs.push(encodeURIComponent(k) + '=' + encodeURIComponent(utms[k]));
+          });
+          return pairs.length ? pairs.join('&') : '';
+        } catch(e) { return ''; }
+      }
+
+      // 3. Determine if a URL is Shopify-bound
+      function isShopifyBound(href) {
+        if (!href || href.charAt(0) === '#') return false;
+        // Absolute Shopify URLs
+        if (href.indexOf('myshopify.com') !== -1) return true;
+        if (href.indexOf('shopify.com') !== -1) return true;
+        if (href.indexOf('afascore.com') !== -1) return true;
+        // Relative paths to cart/checkout
+        var path = href.split('?')[0].split('#')[0];
+        if (/^\/cart(\/|$)/.test(path)) return true;
+        if (/^\/checkout(\/|$)/.test(path)) return true;
+        return false;
+      }
+
+      // 4. Append UTMs to a URL (handles existing query params correctly)
+      function appendUTMs(href, utmString) {
+        if (!utmString) return href;
+        // Don't double-append if UTMs already present
+        if (href.indexOf('utm_') !== -1) return href;
+        var separator = href.indexOf('?') !== -1 ? '&' : '?';
+        return href + separator + utmString;
+      }
+
+      // 5. Rewrite all Shopify-bound links on the page
+      function rewriteLinks() {
+        var utmString = getUTMString();
+        if (!utmString) return; // Nothing to append — leave links untouched
+        var links = document.querySelectorAll('a[href]');
+        links.forEach(function(a) {
+          if (isShopifyBound(a.getAttribute('href'))) {
+            a.href = appendUTMs(a.href, utmString);
+          }
+        });
+      }
+
+      // 6. MutationObserver — rewrites any links added to the DOM after initial load
+      function observeNewLinks() {
+        var utmString = getUTMString();
+        if (!utmString) return;
+        var observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(m) {
+            m.addedNodes.forEach(function(node) {
+              if (node.nodeType !== 1) return;
+              var links = node.tagName === 'A' ? [node] : Array.from(node.querySelectorAll('a[href]'));
+              links.forEach(function(a) {
+                if (isShopifyBound(a.getAttribute('href'))) {
+                  a.href = appendUTMs(a.href, utmString);
+                }
+              });
+            });
+          });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+      }
+
+      // Run capture immediately (before DOM ready — URLSearchParams works without DOM)
+      captureUTMs();
+
+      // Rewrite links once DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          rewriteLinks();
+          observeNewLinks();
+        });
+      } else {
+        rewriteLinks();
+        observeNewLinks();
+      }
+    })();
+  </script>
 </head>
 <body>
 

@@ -1647,7 +1647,7 @@ function routeResult() {
   }
   // ── Client-side safety net: bg score ≤35 = force background_blur disqualification ──
   const _bgScoreCheck = apiResult.criteria?.background?.score;
-  if (typeof _bgScoreCheck === 'number' && _bgScoreCheck <= 35 && !apiResult.disqualification) {
+  if (typeof _bgScoreCheck === 'number' && _bgScoreCheck <= 35 && !apiResult.disqualification && clientLightingSignal !== 'disqualify') {
     showScreen(document.getElementById('screenBgBlur'));
     sendDisqEmail('background_blur');
     return;

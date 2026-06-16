@@ -1426,15 +1426,23 @@ async function callVisionAPI(dataUrl) {
       console.log('[EyeObstruction] none — presence unchanged');
     }
 
-    // ── Geometric angle — cap angle score if client measurement flags bad angle ──
+    // ── Geometric angle — cap angle + presence scores if client measurement flags bad angle ──
     // 'low' = camera below eye level (nostrils up), 'high' = camera above eye level
-    // Both are hard fails — cap angle score to 40 (red)
+    // Angle: hard fail — cap to 40 (red)
+    // Presence: eye contact geometry is broken by bad angle — cap to 65 (amber)
     if (clientAngleSignal === 'low' || clientAngleSignal === 'high') {
       if (apiResult?.criteria?.angle) {
         const originalAngle = apiResult.criteria.angle.score;
         if (originalAngle > 40) {
           apiResult.criteria.angle.score = 40;
-          console.log('[Angle]', clientAngleSignal, '— score capped from', originalAngle, 'to 40');
+          console.log('[Angle]', clientAngleSignal, '— angle score capped from', originalAngle, 'to 40');
+        }
+      }
+      if (apiResult?.criteria?.presence) {
+        const originalPresence = apiResult.criteria.presence.score;
+        if (originalPresence > 65) {
+          apiResult.criteria.presence.score = 65;
+          console.log('[Angle]', clientAngleSignal, '— presence capped from', originalPresence, 'to 65 (angle penalty)');
         }
       }
     } else {

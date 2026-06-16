@@ -1607,6 +1607,13 @@ function routeResult() {
   const charSrc = pickCharacter(revealScore);
   setCharacter(charSrc);
   startReveal(revealScore);
+  // Fire results email on score reveal — not gated on breakdown click
+  try {
+    const _s = getSession();
+    if (_s && _s.email && apiResult && apiResult.criteria) {
+      sendResultsEmail(_s.email, _s.name || '', revealScore, apiResult.criteria);
+    }
+  } catch(e) {}
 }
 
 function showApiError(msg) {
@@ -1631,12 +1638,6 @@ function showApiError(msg) {
 function goToBreakdown(){
   buildBreakdown(revealScore, currentCriteria);
   showScreen(document.getElementById('screenBreakdown'));
-  try {
-    const _s = getSession();
-    if(_s && _s.email && apiResult && apiResult.criteria){
-      sendResultsEmail(_s.email, _s.name || '', revealScore, apiResult.criteria);
-    }
-  } catch(e) {}
 }
 
 async function sendDisqEmail(disqType) {

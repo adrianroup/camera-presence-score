@@ -1088,7 +1088,10 @@ function percentile90(values) {
 
 function fStopSignal(faceLum, bgP90) {
   if (faceLum === null || bgP90 === null || faceLum <= 0) return null;
-  if (faceLum < 0.05) return null; // bad detection — bounding box on hair/turned face
+  // Guard: very dark face lum usually = bad bounding box on hair/turned face.
+  // Exception: if background is clearly bright (backlit), it's real data — disqualify.
+  if (faceLum < 0.05 && bgP90 < 0.5) return null;
+  if (faceLum < 0.05 && bgP90 >= 0.5) return 'disqualify';
   const ratio = bgP90 / faceLum;
   // Stops-based rubric:
   // Green:  ratio ≤ 0.71  (background 1+ stops darker than face — ideal)

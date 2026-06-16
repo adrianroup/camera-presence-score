@@ -217,17 +217,26 @@ export default async function handler(req, res) {
       illustrationUrl = `${BASE_URL}/illustration-dude-lebowski.jpg`;
     }
   } else if (worstCriterion.key === 'framing') {
-    const { framingComment = '' } = req.body;
-    const fc = framingComment.toLowerCase();
-    const isTooFar = fc.includes('too far') ||
-                     fc.includes('lawrence') ||
-                     fc.includes('small in the frame') ||
-                     fc.includes('small in frame') ||
-                     fc.includes('surrounded by') ||
-                     fc.includes('face unreadable') ||
-                     fc.includes('subject is small') ||
-                     fc.includes('face below 30') ||
-                     fc.includes('face below 40');
+    const { framingComment = '', framingDirection = '' } = req.body;
+    let isTooFar;
+    if (framingDirection === 'too_far') {
+      // Primary signal: client-side face area measurement confirmed too far
+      isTooFar = true;
+    } else if (framingDirection === 'too_close' || framingDirection === 'ok') {
+      isTooFar = false;
+    } else {
+      // Fallback: keyword scan of GPT-4o framing comment
+      const fc = framingComment.toLowerCase();
+      isTooFar = fc.includes('too far') ||
+                 fc.includes('lawrence') ||
+                 fc.includes('small in the frame') ||
+                 fc.includes('small in frame') ||
+                 fc.includes('surrounded by') ||
+                 fc.includes('face unreadable') ||
+                 fc.includes('subject is small') ||
+                 fc.includes('face below 30') ||
+                 fc.includes('face below 40');
+    }
     const c = isTooFar ? content.framing_far : content.framing;
     poemHtml = c.poem;
     fixHtml  = c.fix;

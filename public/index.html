@@ -1049,8 +1049,10 @@ function resizeImage(dataUrl, maxPx, quality) {
 // MediaPipe face detection + Canvas brightness → f-stop threshold
 // ═══════════════════════════════════════
 
-let clientLightingSignal = null; // 'green' | 'amber' | 'red' | null (null = face not detected)
-let clientBlurSignal = null;     // 'blur' | 'clean' | null (null = face not detected)
+let clientLightingSignal = null;    // 'green' | 'amber' | 'red' | null
+let clientBlurSignal = null;        // 'blur' | 'clean' | null
+let clientFramingDirection = null;  // 'too_far' | null — set when face area ≤ 9% of frame
+let clientFaceArea = null;          // fw × fh — fraction of frame occupied by face bounding box
 
 // Calculate average perceptual luminance of a pixel region from canvas ImageData
 function regionLuminance(ctx, x, y, w, h, imgW, imgH) {
@@ -1281,9 +1283,11 @@ async function analyseClientLighting(dataUrl) {
             console.log('[EyeCheck] Both eyes intact');
           }
 
+          const faceArea = fw * fh;
           console.log('[Lighting] face:', faceLum?.toFixed(3), 'bg p90:', bgP90?.toFixed(3), '→', lightingSignal);
           console.log('[BgGradient] meanGrad:', meanGrad?.toFixed(5), '→', blurSignal);
-          resolve({ lighting: lightingSignal, blur: blurSignal, bgSpike: bgSpikeSignal });
+          console.log('[Framing] faceArea (fw×fh):', faceArea.toFixed(4), '=', (faceArea*100).toFixed(2) + '% of frame');
+          resolve({ lighting: lightingSignal, blur: blurSignal, bgSpike: bgSpikeSignal, faceArea });
         });
         await faceMesh.send({ image: canvas });
         setTimeout(() => { if (!resolved) { resolved = true; resolve({ lighting: null, blur: null }); } }, 5000);
@@ -1302,6 +1306,8 @@ async function callVisionAPI(dataUrl) {
   apiResult = null; apiError = null; apiDone = false; blurCheckResult = null;
   clientLightingSignal = null;
   clientBlurSignal = null;
+  clientFramingDirection = null;
+  clientFaceArea = null;
 
   // Run client-side lighting analysis AND API call in parallel
   const [resizedDataUrl] = await Promise.all([resizeImage(dataUrl, 1200, 0.85)]);
@@ -1391,6 +1397,26 @@ async function callVisionAPI(dataUrl) {
       }
     } else {
       console.log('[EyeObstruction] none — presence unchanged');
+    }
+
+    // ── Face area ≤ 9% — framing too far — cap framing score ──
+    // Must run AFTER apiResult is populated from response.json()
+    // faceArea = fw × fh — fraction of total frame occupied by face bounding box
+    // ≤ 0.09 (9%) → subject is too small in frame → Lawrence of Arabia routing
+    const faceAreaVal = lightingResult?.faceArea ?? null;
+    if (typeof faceAreaVal === 'number' && faceAreaVal <= 0.09) {
+      clientFramingDirection = 'too_far';
+      clientFaceArea = faceAreaVal;
+      console.log('[Framing] faceArea', faceAreaVal.toFixed(4), '≤ 0.09 — clientFramingDirection = too_far');
+      if (apiResult?.criteria?.framing) {
+        const originalFraming = apiResult.criteria.framing.score;
+        if (originalFraming > 30) {
+          apiResult.criteria.framing.score = 30;
+          console.log('[Framing] score capped from', originalFraming, 'to 30 (too far)');
+        }
+      }
+    } else {
+      console.log('[Framing] faceArea', faceAreaVal !== null ? faceAreaVal.toFixed(4) : 'n/a', '— no too-far cap applied');
     }
   } catch (err) {
     clearTimeout(timeout);
@@ -1565,6 +1591,15 @@ function routeResult() {
     finalScore = Math.min(44, finalScore); // already failing — just cap at 44
   }
   // ─────────────────────────────────────────────────────────────────────────
+  // ── Framing too far — pull finalScore into fail range if needed ──
+  // Mirrors bgIsRed pattern: framing score capped to 30, finalScore dragged down if it snuck through
+  if (clientFramingDirection === 'too_far' && finalScore >= 50) {
+    finalScore = Math.min(44, finalScore - 20);
+    console.log('[Framing] too_far finalScore pulled down to', finalScore);
+  } else if (clientFramingDirection === 'too_far') {
+    finalScore = Math.min(44, finalScore);
+    console.log('[Framing] too_far finalScore capped at', finalScore);
+  }
   revealScore = finalScore;
   const charSrc = pickCharacter(revealScore);
   setCharacter(charSrc);
@@ -1652,6 +1687,9 @@ async function sendResultsEmail(email, name, overall, criteria){
         framingComment: (Array.isArray(criteria)
           ? (criteria.find(c => c.key === 'framing')?.comment || '')
           : (criteria?.framing?.comment || '')),
+        framingDirection: clientFramingDirection || (Array.isArray(criteria)
+          ? (criteria.find(c => c.key === 'framing')?.framingDirection || '')
+          : (criteria?.framing?.framingDirection || '')),
       })
     });
   } catch(e) {

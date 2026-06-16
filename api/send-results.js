@@ -85,7 +85,7 @@ export default async function handler(req, res) {
     framing_far: {
       movie: 'Lawrence of Arabia',
       subject: 'Have you seen the movie: Lawrence of Arabia? You\'re too far from the camera.',
-      illustration: `${BASE_URL}/illustration-dennis-distance.png`,
+      illustration: `${BASE_URL}/illustration-Lawrence-distance.png`,
       poem: `You\'re too far from the camera — small in the frame, the whole room around you.<br><br>The audience has to hunt for your face. Most won\'t. You become scenery.<br><br>In <em>Lawrence of Arabia</em>, a man rides in as a speck on the horizon and takes a full minute to resolve into a face. Magnificent across a desert. Less so across a conference call.`,
       fix: 'Move closer, or bring the camera to you — until your shoulders fill the frame and your face reads without effort.',
       part: 'Part II: The World Changed. Did You?',

@@ -77,9 +77,17 @@ export default async function handler(req, res) {
     framing: {
       movie: 'Home Alone',
       subject: 'Have you seen the movie: Home Alone? You\'re too close to the camera.',
-      illustration: `${BASE_URL}/illustration-dennis-distance.png`,
-      poem: `The frame is mostly your face — shoulders aren\'t visible, and there\'s no breathing room.<br><br>It feels claustrophobic. The audience can\'t settle. They spend the whole call half-braced, like Kevin McCallister pressing his cheeks in the mirror before he realizes the burglars are real.`,
+      illustration: `${BASE_URL}/illustration-framing-close.png`,
+      poem: `The frame is mostly your face — shoulders gone, forehead grazing the top edge, no air to breathe.<br><br>The audience can\'t settle. They spend the whole call half-braced, like Kevin McCallister pressing his cheeks in the mirror, bracing for something that hasn\'t happened yet.`,
       fix: 'Back away from the camera until your shoulders are in frame and there\'s a little air above your head.',
+      part: 'Part II: The World Changed. Did You?',
+    },
+    framing_far: {
+      movie: 'Lawrence of Arabia',
+      subject: 'Have you seen the movie: Lawrence of Arabia? You\'re too far from the camera.',
+      illustration: `${BASE_URL}/illustration-dennis-distance.png`,
+      poem: `You\'re too far from the camera — small in the frame, the whole room around you.<br><br>The audience has to hunt for your face. Most won\'t. You become scenery.<br><br>In <em>Lawrence of Arabia</em>, a man rides in as a speck on the horizon and takes a full minute to resolve into a face. Magnificent across a desert. Less so across a conference call.`,
+      fix: 'Move closer, or bring the camera to you — until your shoulders fill the frame and your face reads without effort.',
       part: 'Part II: The World Changed. Did You?',
     },
     presence: {
@@ -208,6 +216,24 @@ export default async function handler(req, res) {
       subjectSuffix = 'Have you seen the movie: The Big Lebowski? One red flag. A few amber ones.';
       illustrationUrl = `${BASE_URL}/illustration-dude-lebowski.jpg`;
     }
+  } else if (worstCriterion.key === 'framing') {
+    const { framingComment = '' } = req.body;
+    const fc = framingComment.toLowerCase();
+    const isTooFar = fc.includes('too far') ||
+                     fc.includes('lawrence') ||
+                     fc.includes('small in the frame') ||
+                     fc.includes('small in frame') ||
+                     fc.includes('surrounded by') ||
+                     fc.includes('face unreadable') ||
+                     fc.includes('subject is small') ||
+                     fc.includes('face below 30') ||
+                     fc.includes('face below 40');
+    const c = isTooFar ? content.framing_far : content.framing;
+    poemHtml = c.poem;
+    fixHtml  = c.fix;
+    partRef  = c.part;
+    subjectSuffix = c.subject;
+    illustrationUrl = c.illustration || '';
   } else {
     const c = content[worstCriterion.key] || content.lighting;
     poemHtml = c.poem;

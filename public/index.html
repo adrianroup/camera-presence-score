@@ -1640,7 +1640,10 @@ async function sendResultsEmail(email, name, overall, criteria){
         name,
         overall,
         lightingSignal: clientLightingSignal,
-        signals
+        signals,
+        framingComment: (Array.isArray(criteria)
+          ? (criteria.find(c => c.key === 'framing')?.comment || '')
+          : (criteria?.framing?.comment || '')),
       })
     });
   } catch(e) {

@@ -1053,6 +1053,7 @@ let clientLightingSignal = null;    // 'green' | 'amber' | 'red' | null
 let clientBlurSignal = null;        // 'blur' | 'clean' | null
 let clientFramingDirection = null;  // 'too_far' | null — set when face area ≤ 9% of frame
 let clientFaceArea = null;          // fw × fh — fraction of frame occupied by face bounding box
+let clientAngleSignal = null;       // 'low' | 'high' | 'ok' | null — geometric camera angle measurement
 
 // Calculate average perceptual luminance of a pixel region from canvas ImageData
 function regionLuminance(ctx, x, y, w, h, imgW, imgH) {
@@ -1287,10 +1288,31 @@ async function analyseClientLighting(dataUrl) {
           }
 
           const faceArea = fw * fh;
+
+          // ── Camera angle: geometric measurement from landmarks ──
+          // Nose tip y vs eye midpoint y, normalised by face height.
+          // At eye level: nose sits ~25–40% below eye midpoint (ratio 0.25–0.40).
+          // Low angle (camera below eye level): nose rises toward or above eyes → ratio < 0.10.
+          // High angle (camera above eye level): nose drops far below → ratio > 0.55.
+          const noseTip  = pt(1);
+          const leOuter2 = pt(33);
+          const reOuter2 = pt(263);
+          const eyeMidY  = (leOuter2.y + reOuter2.y) / 2;
+          const noseRatio = faceHpx > 0 ? (noseTip.y - eyeMidY) / faceHpx : null;
+          let angleSignal = 'ok'; // 'low' | 'high' | 'ok'
+          if (noseRatio !== null) {
+            if (noseRatio < 0.10) {
+              angleSignal = 'low';  // nose at or above eye level — camera is below face
+            } else if (noseRatio > 0.55) {
+              angleSignal = 'high'; // nose far below eyes — camera is above face
+            }
+          }
+          console.log('[Angle] noseRatio:', noseRatio?.toFixed(3), '→', angleSignal);
+
           console.log('[Lighting] face:', faceLum?.toFixed(3), 'bg p90:', bgP90?.toFixed(3), '→', lightingSignal);
           console.log('[BgGradient] meanGrad:', meanGrad?.toFixed(5), '→', blurSignal);
           console.log('[Framing] faceArea (fw×fh):', faceArea.toFixed(4), '=', (faceArea*100).toFixed(2) + '% of frame');
-          resolve({ lighting: lightingSignal, blur: blurSignal, bgSpike: bgSpikeSignal, faceArea });
+          resolve({ lighting: lightingSignal, blur: blurSignal, bgSpike: bgSpikeSignal, faceArea, angleSignal });
         });
         await faceMesh.send({ image: canvas });
         setTimeout(() => { if (!resolved) { resolved = true; resolve({ lighting: null, blur: null }); } }, 5000);
@@ -1311,6 +1333,7 @@ async function callVisionAPI(dataUrl) {
   clientBlurSignal = null;
   clientFramingDirection = null;
   clientFaceArea = null;
+  clientAngleSignal = null;
 
   // Run client-side lighting analysis AND API call in parallel
   const [resizedDataUrl] = await Promise.all([resizeImage(dataUrl, 1200, 0.85)]);
@@ -1346,6 +1369,7 @@ async function callVisionAPI(dataUrl) {
     clearTimeout(timeout);
     clientLightingSignal = lightingResult?.lighting ?? null;
     clientBlurSignal = lightingResult?.blur ?? null;
+    clientAngleSignal = lightingResult?.angleSignal ?? null;
     // ── GPT-4o blur check takes priority over lighting checks ──
     // Digital blur can wash out background luminance and falsely trigger the
     // bright background threshold. Check blur FIRST — if GPT-4o says blur,
@@ -1400,6 +1424,21 @@ async function callVisionAPI(dataUrl) {
       }
     } else {
       console.log('[EyeObstruction] none — presence unchanged');
+    }
+
+    // ── Geometric angle — cap angle score if client measurement flags bad angle ──
+    // 'low' = camera below eye level (nostrils up), 'high' = camera above eye level
+    // Both are hard fails — cap angle score to 40 (red)
+    if (clientAngleSignal === 'low' || clientAngleSignal === 'high') {
+      if (apiResult?.criteria?.angle) {
+        const originalAngle = apiResult.criteria.angle.score;
+        if (originalAngle > 40) {
+          apiResult.criteria.angle.score = 40;
+          console.log('[Angle]', clientAngleSignal, '— score capped from', originalAngle, 'to 40');
+        }
+      }
+    } else {
+      console.log('[Angle] clientAngleSignal:', clientAngleSignal, '— no cap applied');
     }
 
     // ── Face area ≤ 9% — framing too far — cap framing score ──
@@ -1694,6 +1733,7 @@ async function sendResultsEmail(email, name, overall, criteria){
         framingDirection: clientFramingDirection || (Array.isArray(criteria)
           ? (criteria.find(c => c.key === 'framing')?.framingDirection || '')
           : (criteria?.framing?.framingDirection || '')),
+        angleSignal: clientAngleSignal || '',
       })
     });
   } catch(e) {

@@ -41,13 +41,20 @@ export default async function handler(req, res) {
     if (rankDiff !== 0) return rankDiff;
     return b.weight - a.weight; // tie-break: higher weight first
   });
-  // ── Too-far framing override — bypasses weight sort ──
-  // When client-side face area measurement confirms too far, framing is the
-  // definitive worst criterion regardless of other signal weights.
-  const { framingDirection = '' } = req.body;
-  const worstCriterion = (framingDirection === 'too_far')
-    ? { key: 'framing', signal: 'red', weight: 0.20 }
-    : sorted[0];
+  // ── Client-side geometric overrides — bypass weight sort ──
+  // Geometric measurements are more reliable than model scoring for angle and framing.
+  // When triggered, they pin worstCriterion directly regardless of other signal weights.
+  const { framingDirection = '', angleSignal = '' } = req.body;
+  let worstCriterion;
+  if (angleSignal === 'low' || angleSignal === 'high') {
+    // Geometric angle measurement confirmed bad angle — route to Apocalypse Now
+    worstCriterion = { key: 'angle', signal: 'red', weight: 0.20 };
+  } else if (framingDirection === 'too_far') {
+    // Client face area ≤ 9% confirmed too far — route to Lawrence of Arabia
+    worstCriterion = { key: 'framing', signal: 'red', weight: 0.20 };
+  } else {
+    worstCriterion = sorted[0];
+  }
 
   // ─── Poem + fix content per criterion ───────────────────────────────────
   // Each: { movie, poem (HTML), fix, part }

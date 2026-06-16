@@ -2003,7 +2003,17 @@ function showLinkedInJobStep(profile) {
 function restorePendingImage() {
   try {
     const saved = sessionStorage.getItem('pending_image');
-    if (saved) { currentDataUrl = saved; }
+    if (!saved) return;
+    currentDataUrl = saved;
+    // Restore visual preview state so the user sees their image is ready
+    const previewImg = document.getElementById('previewImg');
+    if (previewImg) previewImg.src = saved;
+    const fileName = document.getElementById('fileName');
+    if (fileName) fileName.textContent = 'screenshot';
+    const fileSize = document.getElementById('fileSize');
+    if (fileSize) fileSize.textContent = '';
+    showUploadState('Preview');
+    if (analyseBtn) { analyseBtn.disabled = false; analyseBtn.classList.add('ready'); }
   } catch(e) {}
 }
 
@@ -2511,20 +2521,83 @@ showUploadState('Default');
   // LinkedIn
   const linkedInProfile = checkLinkedInReturn();
   if (linkedInProfile) {
-    showScreen(document.getElementById('screenEmailGate'));
-    showGateForm();
-    showLinkedInJobStep(linkedInProfile);
     restorePendingImage();
+    const liEmail = linkedInProfile.email || '';
+    if (liEmail) {
+      // Check if already verified — if so, skip job title form and go straight to scan
+      sbGetUser(liEmail).then(function(user) {
+        if (user && user.verified) {
+          if (user.uses_remaining <= 0) {
+            showScreen(document.getElementById('screenUpload'));
+            showGatePaywall();
+            return;
+          }
+          setSession(liEmail, user.name || '', user.uses_remaining);
+          sessionStorage.removeItem('linkedin_profile');
+          sessionStorage.removeItem('google_profile');
+          if (currentDataUrl) {
+            startLoadingWithDecrement(liEmail);
+          } else {
+            showScreen(document.getElementById('screenUpload'));
+            showVerifiedBanner(user.uses_remaining);
+          }
+        } else {
+          // New user — show job title form
+          showScreen(document.getElementById('screenEmailGate'));
+          showGateForm();
+          showLinkedInJobStep(linkedInProfile);
+        }
+      }).catch(function() {
+        // Supabase error — fall back to job title form
+        showScreen(document.getElementById('screenEmailGate'));
+        showGateForm();
+        showLinkedInJobStep(linkedInProfile);
+      });
+    } else {
+      showScreen(document.getElementById('screenEmailGate'));
+      showGateForm();
+      showLinkedInJobStep(linkedInProfile);
+    }
     return;
   }
 
   // Google
   const googleProfile = checkGoogleReturn();
   if (googleProfile) {
-    showScreen(document.getElementById('screenEmailGate'));
-    showGateForm();
-    showLinkedInJobStep(googleProfile); // reuses same job-title UI
     restorePendingImage();
+    const gEmail = googleProfile.email || '';
+    if (gEmail) {
+      sbGetUser(gEmail).then(function(user) {
+        if (user && user.verified) {
+          if (user.uses_remaining <= 0) {
+            showScreen(document.getElementById('screenUpload'));
+            showGatePaywall();
+            return;
+          }
+          setSession(gEmail, user.name || '', user.uses_remaining);
+          sessionStorage.removeItem('linkedin_profile');
+          sessionStorage.removeItem('google_profile');
+          if (currentDataUrl) {
+            startLoadingWithDecrement(gEmail);
+          } else {
+            showScreen(document.getElementById('screenUpload'));
+            showVerifiedBanner(user.uses_remaining);
+          }
+        } else {
+          showScreen(document.getElementById('screenEmailGate'));
+          showGateForm();
+          showLinkedInJobStep(googleProfile);
+        }
+      }).catch(function() {
+        showScreen(document.getElementById('screenEmailGate'));
+        showGateForm();
+        showLinkedInJobStep(googleProfile);
+      });
+    } else {
+      showScreen(document.getElementById('screenEmailGate'));
+      showGateForm();
+      showLinkedInJobStep(googleProfile);
+    }
     return;
   }
 

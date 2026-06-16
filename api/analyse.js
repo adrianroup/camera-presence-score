@@ -72,6 +72,11 @@ Only reach here if no disqualification was triggered.
 Lighting is assessed client-side — do not score it. Score only: angle, background, framing, presence.
 
 ─── CAMERA ANGLE (0–100) ───
+BEFORE SCORING: Answer these two questions about the image.
+1. Can you see the subject's nostrils from below, or does the chin and neck dominate the lower frame? → YES = LOW ANGLE FAIL → score 0–45 immediately.
+2. Are the subject's eyes angled sharply downward, or is the top of their head filling the upper frame? → YES = HIGH ANGLE FAIL → score 0–45 immediately.
+If either answer is YES, do not proceed to the scale below. Score 0–45 and move on.
+
 The camera should be at eye level or fractionally above. The test is simple: where is the camera relative to the eyes?
 
 90–100: Camera is at or near eye level. The lens appears level with the subject's eyes — the viewer feels like a peer. No obvious upward or downward tilt detectable. This is the DEFAULT score when the angle looks natural and comfortable. If you cannot clearly see a problem, score 90–100.

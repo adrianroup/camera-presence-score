@@ -1283,9 +1283,11 @@ async function analyseClientLighting(dataUrl) {
           const MIN_W = 0.05, MIN_H = 0.008;
           const leGone = leWn < MIN_W || leHn < MIN_H;
           const reGone = reWn < MIN_W || reHn < MIN_H;
+          let eyeDissolved = false;
           if (leGone || reGone) {
             console.log('[EyeCheck] Eye dissolved —', leGone ? 'LEFT' : 'RIGHT', '— forcing blur disqualification');
             blurSignal = 'blur';
+            eyeDissolved = true;
           } else {
             console.log('[EyeCheck] Both eyes intact');
           }
@@ -1315,7 +1317,7 @@ async function analyseClientLighting(dataUrl) {
           console.log('[Lighting] face:', faceLum?.toFixed(3), 'bg p90:', bgP90?.toFixed(3), '→', lightingSignal);
           console.log('[BgGradient] meanGrad:', meanGrad?.toFixed(5), '→', blurSignal);
           console.log('[Framing] faceArea (fw×fh):', faceArea.toFixed(4), '=', (faceArea*100).toFixed(2) + '% of frame');
-          resolve({ lighting: lightingSignal, blur: blurSignal, bgSpike: bgSpikeSignal, faceArea, angleSignal, meanGrad });
+          resolve({ lighting: lightingSignal, blur: blurSignal, bgSpike: bgSpikeSignal, faceArea, angleSignal, meanGrad, eyeDissolved });
         });
         await faceMesh.send({ image: canvas });
         setTimeout(() => { if (!resolved) { resolved = true; resolve({ lighting: null, blur: null }); } }, 5000);
@@ -1380,6 +1382,15 @@ async function callVisionAPI(dataUrl) {
     // EXCEPTION: if Sobel gradient is clearly clean (meanGrad > 0.025), GPT-4o
     // is likely misfiring on a plain flat wall (uniform but real). Both must agree
     // to disqualify. Real digital blur always has low Sobel — this only saves plain walls.
+    // Eye dissolution is authoritative — blur ate an eye, disqualify regardless of GPT-4o
+    if (lightingResult?.eyeDissolved === true) {
+      console.log('[EyeCheck] Eye dissolved — blur disqualification (overrides lighting priority)');
+      clientBlurSignal = 'blur';
+      apiDone = true;
+      showScreen(document.getElementById('screenBgBlur'));
+      sendDisqEmail('background_blur');
+      return;
+    }
     const sobelSaysClean = lightingResult?.blur === 'clean' && (lightingResult?.meanGrad ?? 0) > 0.025;
     if (blurCheckResult?.blur === true && !sobelSaysClean) {
       console.log('[BlurCheck] GPT-4o: YES — blur disqualification (checked before lighting)');

@@ -41,7 +41,13 @@ export default async function handler(req, res) {
     if (rankDiff !== 0) return rankDiff;
     return b.weight - a.weight; // tie-break: higher weight first
   });
-  const worstCriterion = sorted[0];
+  // ── Too-far framing override — bypasses weight sort ──
+  // When client-side face area measurement confirms too far, framing is the
+  // definitive worst criterion regardless of other signal weights.
+  const { framingDirection = '' } = req.body;
+  const worstCriterion = (framingDirection === 'too_far')
+    ? { key: 'framing', signal: 'red', weight: 0.20 }
+    : sorted[0];
 
   // ─── Poem + fix content per criterion ───────────────────────────────────
   // Each: { movie, poem (HTML), fix, part }
@@ -217,7 +223,7 @@ export default async function handler(req, res) {
       illustrationUrl = `${BASE_URL}/illustration-dude-lebowski.jpg`;
     }
   } else if (worstCriterion.key === 'framing') {
-    const { framingComment = '', framingDirection = '' } = req.body;
+    const { framingComment = '' } = req.body;
     let isTooFar;
     if (framingDirection === 'too_far') {
       // Primary signal: client-side face area measurement confirmed too far

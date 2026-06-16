@@ -1173,7 +1173,10 @@ async function analyseClientLighting(dataUrl) {
           resolved = true;
           const faces = results.multiFaceLandmarks;
           if (!faces || faces.length === 0) {
-            resolve({ lighting: null, blur: null });
+            // No face detected — subject likely too small/far for MediaPipe to register
+            // Treat as faceArea: 0 so the ≤ 9% too-far cap fires downstream
+            console.log('[Framing] FaceMesh: no face detected — faceArea set to 0 (too far sentinel)');
+            resolve({ lighting: null, blur: null, faceArea: 0 });
             return;
           }
           const lm = faces[0];

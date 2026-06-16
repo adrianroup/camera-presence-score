@@ -1049,8 +1049,9 @@ function resizeImage(dataUrl, maxPx, quality) {
 // MediaPipe face detection + Canvas brightness → f-stop threshold
 // ═══════════════════════════════════════
 
-let clientLightingSignal = null; // 'green' | 'amber' | 'red' | null (null = face not detected)
-let clientBlurSignal = null;     // 'blur' | 'clean' | null (null = face not detected)
+let clientLightingSignal = null;    // 'green' | 'amber' | 'red' | null (null = face not detected)
+let clientBlurSignal = null;        // 'blur' | 'clean' | null (null = face not detected)
+let clientFramingDirection = null;  // 'too_far' | 'too_close' | null (null = not determined client-side)
 
 // Calculate average perceptual luminance of a pixel region from canvas ImageData
 function regionLuminance(ctx, x, y, w, h, imgW, imgH) {
@@ -1283,7 +1284,8 @@ async function analyseClientLighting(dataUrl) {
 
           console.log('[Lighting] face:', faceLum?.toFixed(3), 'bg p90:', bgP90?.toFixed(3), '→', lightingSignal);
           console.log('[BgGradient] meanGrad:', meanGrad?.toFixed(5), '→', blurSignal);
-          resolve({ lighting: lightingSignal, blur: blurSignal, bgSpike: bgSpikeSignal });
+          console.log('[Framing] faceHeightFraction:', fh?.toFixed(3));
+          resolve({ lighting: lightingSignal, blur: blurSignal, bgSpike: bgSpikeSignal, faceHeightFraction: fh });
         });
         await faceMesh.send({ image: canvas });
         setTimeout(() => { if (!resolved) { resolved = true; resolve({ lighting: null, blur: null }); } }, 5000);
@@ -1302,6 +1304,7 @@ async function callVisionAPI(dataUrl) {
   apiResult = null; apiError = null; apiDone = false; blurCheckResult = null;
   clientLightingSignal = null;
   clientBlurSignal = null;
+  clientFramingDirection = null;
 
   // Run client-side lighting analysis AND API call in parallel
   const [resizedDataUrl] = await Promise.all([resizeImage(dataUrl, 1200, 0.85)]);
@@ -1337,6 +1340,18 @@ async function callVisionAPI(dataUrl) {
     clearTimeout(timeout);
     clientLightingSignal = lightingResult?.lighting ?? null;
     clientBlurSignal = lightingResult?.blur ?? null;
+    // Face height fraction: set framing direction client-side
+    // fh < 0.39 = subject too far from camera — routes to Lawrence of Arabia email
+    const faceHf = lightingResult?.faceHeightFraction ?? null;
+    if (faceHf !== null) {
+      if (faceHf < 0.39) {
+        clientFramingDirection = 'too_far';
+        console.log('[Framing] fh', faceHf.toFixed(3), '< 0.39 — too_far');
+      } else {
+        clientFramingDirection = null; // within normal range — defer to Claude
+        console.log('[Framing] fh', faceHf.toFixed(3), '≥ 0.39 — deferring to Claude');
+      }
+    }
     // ── GPT-4o blur check takes priority over lighting checks ──
     // Digital blur can wash out background luminance and falsely trigger the
     // bright background threshold. Check blur FIRST — if GPT-4o says blur,
@@ -1652,6 +1667,10 @@ async function sendResultsEmail(email, name, overall, criteria){
         framingComment: (Array.isArray(criteria)
           ? (criteria.find(c => c.key === 'framing')?.comment || '')
           : (criteria?.framing?.comment || '')),
+        framingDirection: clientFramingDirection ||
+          (Array.isArray(criteria)
+            ? (criteria.find(c => c.key === 'framing')?.framingDirection || '')
+            : (criteria?.framing?.framingDirection || '')),
       })
     });
   } catch(e) {

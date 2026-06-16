@@ -19,8 +19,9 @@ Is the background digitally blurred by software such as Zoom, Teams, or Google M
 - Digital blur is UNIFORM — every part of the background is equally soft, with no depth graduation.
 - Real rooms and optical lens blur show DEPTH GRADUATION — objects closer to the person are sharper than objects far away.
 - Digital blur often dissolves the edges of the person — ears, hairline, shoulders become soft or partially missing.
-- Real backgrounds have visible texture and hard edges even if plain.
-Answer YES if the background blur is uniform flat mush with no depth graduation. Answer NO if it is a real room or real optical blur.
+- A plain flat wall, painted surface, or solid colour backdrop is NOT blur — it is a real background with no texture. Answer NO for plain walls.
+- A bright window or overexposed background is NOT blur — it is a lighting problem. Answer NO.
+- Only answer YES if you can see the characteristic uniform software blur mush with dissolved edges.
 
 QUESTION 2 — EYE OBSTRUCTION:
 Can you clearly see both of the person's eyes through their glasses (if wearing any)?

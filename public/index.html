@@ -1391,20 +1391,16 @@ async function callVisionAPI(dataUrl) {
       sendDisqEmail('background_blur');
       return;
     }
-    // Sobel tiebreaker: only override GPT-4o blur verdict if gradient is CLEARLY high.
-    // Chris plain wall: meanGrad ~0.028 (barely above 0.025 — real flat surface, no blur)
-    // Amber digital blur: meanGrad ~0.114 (high because blur is partial, not uniform mush)
-    // Threshold raised to 0.06 — catches plain walls, lets blurred bright backgrounds through.
-    const sobelSaysClean = lightingResult?.blur === 'clean' && (lightingResult?.meanGrad ?? 0) > 0.06;
-    if (blurCheckResult?.blur === true && !sobelSaysClean) {
-      console.log('[BlurCheck] GPT-4o: YES — blur disqualification (checked before lighting)');
+    // GPT-4o is the sole authority on blur disqualification.
+    // Sobel tiebreaker removed — unreliable across partial blur + bright backgrounds.
+    // Plain wall false positives handled via improved GPT-4o prompt in blur-check.js.
+    if (blurCheckResult?.blur === true) {
+      console.log('[BlurCheck] GPT-4o: YES — blur disqualification');
       clientBlurSignal = 'blur';
       apiDone = true;
       showScreen(document.getElementById('screenBgBlur'));
       sendDisqEmail('background_blur');
       return;
-    } else if (blurCheckResult?.blur === true && sobelSaysClean) {
-      console.log('[BlurCheck] GPT-4o said blur but Sobel clearly clean (meanGrad:', lightingResult?.meanGrad?.toFixed(5), ') — plain wall, not digital blur. Continuing.');
     } else {
       console.log('[BlurCheck] GPT-4o:', blurCheckResult?.blur === false ? 'NO — clean' : 'no result');
     }

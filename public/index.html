@@ -1391,7 +1391,11 @@ async function callVisionAPI(dataUrl) {
       sendDisqEmail('background_blur');
       return;
     }
-    const sobelSaysClean = lightingResult?.blur === 'clean' && (lightingResult?.meanGrad ?? 0) > 0.025;
+    // Sobel tiebreaker: only override GPT-4o blur verdict if gradient is CLEARLY high.
+    // Chris plain wall: meanGrad ~0.028 (barely above 0.025 — real flat surface, no blur)
+    // Amber digital blur: meanGrad ~0.114 (high because blur is partial, not uniform mush)
+    // Threshold raised to 0.06 — catches plain walls, lets blurred bright backgrounds through.
+    const sobelSaysClean = lightingResult?.blur === 'clean' && (lightingResult?.meanGrad ?? 0) > 0.06;
     if (blurCheckResult?.blur === true && !sobelSaysClean) {
       console.log('[BlurCheck] GPT-4o: YES — blur disqualification (checked before lighting)');
       clientBlurSignal = 'blur';
@@ -1413,12 +1417,15 @@ async function callVisionAPI(dataUrl) {
       return;
     }
     // Bright spike disqualification: 1%+ background pixels 2.5+ stops brighter than face
-    if (lightingResult?.bgSpike === 'disqualify') {
+    // Skip if GPT-4o confirmed blur — blur takes priority over bright background spike.
+    if (lightingResult?.bgSpike === 'disqualify' && blurCheckResult?.blur !== true) {
       console.log('[BgSpike] Bright spike disqualification — routing to bright background screen');
       apiDone = true;
       showScreen(document.getElementById('screenBrightBg'));
       sendDisqEmail('bright_background');
       return;
+    } else if (lightingResult?.bgSpike === 'disqualify' && blurCheckResult?.blur === true) {
+      console.log('[BgSpike] Bright spike present but GPT-4o confirmed blur — blur takes priority, continuing to blur disqualification path');
     }
 
     if (!response.ok) {

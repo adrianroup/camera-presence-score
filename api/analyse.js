@@ -198,6 +198,7 @@ Return ONLY valid JSON, no markdown:
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
+        temperature: 0,
         max_tokens: 800,
         messages: [{ role: 'user', content: [
           { type: 'image', source: { type: 'base64', media_type: mediaType || 'image/jpeg', data: imageData } },

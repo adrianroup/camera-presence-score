@@ -1468,6 +1468,23 @@ async function callVisionAPI(dataUrl) {
     } else {
       console.log('[Framing] faceArea', faceAreaVal !== null ? faceAreaVal.toFixed(4) : 'n/a', '— no too-far cap applied');
     }
+
+    // ── Recompute overall from capped criteria scores ──
+    // The API overall is calculated before client-side caps are applied.
+    // After all caps, recompute: Angle 25% + Background 25% + Framing 25% + Presence 25%
+    if (apiResult?.criteria) {
+      const c = apiResult.criteria;
+      const angleS    = typeof c.angle?.score      === 'number' ? c.angle.score      : null;
+      const bgS       = typeof c.background?.score === 'number' ? c.background.score : null;
+      const framingS  = typeof c.framing?.score    === 'number' ? c.framing.score    : null;
+      const presenceS = typeof c.presence?.score   === 'number' ? c.presence.score   : null;
+      const allScores = [angleS, bgS, framingS, presenceS].filter(s => s !== null);
+      if (allScores.length === 4) {
+        const recomputed = Math.round((angleS + bgS + framingS + presenceS) / 4);
+        console.log('[Overall] recomputed from capped criteria:', recomputed, '(was', apiResult.overall, ')');
+        apiResult.overall = recomputed;
+      }
+    }
   } catch (err) {
     clearTimeout(timeout);
     if (err.name === 'AbortError') {

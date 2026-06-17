@@ -127,7 +127,11 @@ WHAT DOES NOT COMPETE:
 
 MANDATORY GREEN ANCHOR — score 75 or above if ALL of the following are true:
 (1) The background is a plain or near-plain wall with no readable text, no framed objects, no shelving, no windows, and no bright warm colours.
-(2) The background is not brighter than the brightest part of the face — compare background luminance to the highlight zone of the face (forehead, cheekbones, bridge of nose under direct light), not the average or the shadowed areas. If the background is darker than the face highlights, it passes this test even if it is close in brightness to the face shadows or mid-tones.
+(2) The background is darker than the face by all three of these luminance tests:
+    PRIMARY: The darkest visible wall pixel is darker than the brightest face highlight pixel (forehead, cheekbone, bridge of nose). If the wall's darkest point cannot beat the face's brightest point, the background is subordinate.
+    SECONDARY A: The background mean luminance is darker than the face highlight zone mean (forehead + cheekbones region).
+    SECONDARY B: The background's brightest pixel does not exceed the face highlight p90 — i.e. no single wall pixel is brighter than the top 10% of face highlights.
+    If all three tests pass, the background is fully subordinate. If the PRIMARY test passes but one secondary fails, still score green but at the lower end (75–78). If the PRIMARY test fails — meaning the wall's darkest point is brighter than the face's brightest highlight — the background is not subordinate and cannot score green.
 (3) The background is not so dark that the subject appears to float in a black void — some wall texture or tonal detail is still visible. A completely crushed black background with no detail is a "floating head" effect and scores 50–65, not green.
 (4) Any furniture visible (chair backs, headrests) is dark and tonally merges with the background rather than contrasting against it.
 If all four are true, the background is doing its job. Score 75–89. A dark office chair visible behind a normally lit subject on a plain wall is the textbook correct Zoom setup. It is not a penalty.

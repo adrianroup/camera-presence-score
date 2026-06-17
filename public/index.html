@@ -1204,7 +1204,9 @@ async function analyseClientLighting(dataUrl) {
                 for (const lv of bgLumValues) { if (lv > spikeThresholdFB) spikeCountFB++; }
                 const spikeRatioFB = bgLumValues.length > 0 ? spikeCountFB / bgLumValues.length : 0;
                 console.log('[FaceMesh-Fallback BgSpike] spike%:', (spikeRatioFB * 100).toFixed(2), 'threshold:', spikeThresholdFB.toFixed(3));
-                if (spikeRatioFB >= 0.01) fallbackBgSpike = 'disqualify';
+                // Fallback uses stricter 5% threshold (vs 1% for face-detected path)
+                // — estimated face region is imprecise, so require stronger signal
+                if (spikeRatioFB >= 0.05) fallbackBgSpike = 'disqualify';
               }
               console.log('[FaceMesh-Fallback] face lum:', faceLumFallback?.toFixed(3), 'bg p90:', bgP90Fallback?.toFixed(3), '→', fallbackSignal, '| bgSpike:', fallbackBgSpike);
               resolve({ lighting: fallbackSignal, blur: null, bgSpike: fallbackBgSpike, faceArea: null, angleSignal: null, meanGrad: null, eyeDissolved: false });

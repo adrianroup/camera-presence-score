@@ -1086,7 +1086,7 @@ function percentile90(values) {
   return sorted[Math.min(idx, sorted.length - 1)];
 }
 
-function fStopSignal(faceLum, bgP90) {
+function fStopSignal(faceLum, bgP90, isFallback = false) {
   if (faceLum === null || bgP90 === null || faceLum <= 0) return null;
   // Guard: very dark face lum usually = bad bounding box on hair/turned face.
   // Exception: if background is clearly bright (backlit), it's real data — disqualify.
@@ -1095,8 +1095,9 @@ function fStopSignal(faceLum, bgP90) {
   const ratio = bgP90 / faceLum;
   // Face luminance floor: if face is well-lit (≥ 0.45), lighting is green
   // regardless of background ratio — provided BgSpike didn't fire.
-  // A face this bright is properly exposed; background colour ≠ lighting problem.
-  if (faceLum >= 0.45) return 'green';
+  // Only applies on FaceMesh-detected path (isFallback = false) — fallback uses
+  // an estimated region, not actual face landmarks, so the floor doesn't apply.
+  if (!isFallback && faceLum >= 0.45) return 'green';
   // Stops-based rubric for darker faces:
   // Green:  ratio ≤ 0.71  (background 1+ stops darker than face — ideal)
   // Amber:  ratio 0.71–1.8  (background somewhat brighter than face)
@@ -1199,7 +1200,7 @@ async function analyseClientLighting(dataUrl) {
                 bgLumValues.push(0.2126 * bgRawData[i]/255 + 0.7152 * bgRawData[i+1]/255 + 0.0722 * bgRawData[i+2]/255);
               }
               const bgP90Fallback = percentile90(bgLumValues);
-              const fallbackSignal = fStopSignal(faceLumFallback, bgP90Fallback);
+              const fallbackSignal = fStopSignal(faceLumFallback, bgP90Fallback, true);
               // Also compute BgSpike: 1%+ pixels more than 2.5 stops brighter than face
               let fallbackBgSpike = 'clean';
               if (faceLumFallback !== null && faceLumFallback > 0) {
@@ -1535,6 +1536,14 @@ async function callVisionAPI(dataUrl) {
         if (originalFraming > 30) {
           apiResult.criteria.framing.score = 30;
           console.log('[Framing] score capped from', originalFraming, 'to 30 (too far — no face detected)');
+        }
+      }
+      // Presence: subject too far to be present — cap to red (49)
+      if (apiResult?.criteria?.presence) {
+        const originalPresence = apiResult.criteria.presence.score;
+        if (originalPresence > 49) {
+          apiResult.criteria.presence.score = 49;
+          console.log('[Presence] too far (no face) — presence capped from', originalPresence, 'to 49 (red)');
         }
       }
     } else {

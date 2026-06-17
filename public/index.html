@@ -1510,23 +1510,11 @@ async function callVisionAPI(dataUrl) {
       console.log('[Angle] clientAngleSignal:', clientAngleSignal, '— no cap applied');
     }
 
-    // ── Face area ≤ 3% — framing too far — cap framing score ──
-    // Must run AFTER apiResult is populated from response.json()
-    // faceArea = fw × fh — fraction of total frame occupied by face bounding box
-    // FaceMesh landmark boxes are tight — 3% is the threshold for genuinely too-small faces.
-    // True too-far cases (Zoom3-style) are caught by the no-face path below.
+    // ── faceArea threshold cap removed — FaceMesh boxes are too tight for reliable measurement ──
+    // True too-far cases caught by no-face path below. AI prompt handles borderline cases.
     const faceAreaVal = lightingResult?.faceArea ?? null;
-    if (typeof faceAreaVal === 'number' && faceAreaVal <= 0.03) {
-      clientFramingDirection = 'too_far';
-      clientFaceArea = faceAreaVal;
-      console.log('[Framing] faceArea', faceAreaVal.toFixed(4), '≤ 0.03 — clientFramingDirection = too_far');
-      if (apiResult?.criteria?.framing) {
-        const originalFraming = apiResult.criteria.framing.score;
-        if (originalFraming > 30) {
-          apiResult.criteria.framing.score = 30;
-          console.log('[Framing] score capped from', originalFraming, 'to 30 (too far)');
-        }
-      }
+    if (false) {
+      // placeholder — faceArea numeric threshold intentionally disabled
     } else if (faceAreaVal === null && clientLightingSignal !== 'disqualify' && !blurCheckResult?.blur) {
       // FaceMesh detected no face, image is not disqualified by blur or BgSpike.
       // A clean image with no detectable face = subject is too far from camera.

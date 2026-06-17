@@ -1525,6 +1525,18 @@ async function callVisionAPI(dataUrl) {
           console.log('[Framing] score capped from', originalFraming, 'to 30 (too far)');
         }
       }
+    } else if (faceAreaVal === null && clientLightingSignal !== 'disqualify' && !blurCheckResult?.blur) {
+      // FaceMesh detected no face, image is not disqualified by blur or BgSpike.
+      // A clean image with no detectable face = subject is too far from camera.
+      clientFramingDirection = 'too_far';
+      console.log('[Framing] faceArea n/a + no disqualification — too far, clientFramingDirection = too_far');
+      if (apiResult?.criteria?.framing) {
+        const originalFraming = apiResult.criteria.framing.score;
+        if (originalFraming > 30) {
+          apiResult.criteria.framing.score = 30;
+          console.log('[Framing] score capped from', originalFraming, 'to 30 (too far — no face detected)');
+        }
+      }
     } else {
       console.log('[Framing] faceArea', faceAreaVal !== null ? faceAreaVal.toFixed(4) : 'n/a', '— no too-far cap applied');
     }

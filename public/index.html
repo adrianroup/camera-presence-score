@@ -1177,10 +1177,31 @@ async function analyseClientLighting(dataUrl) {
           resolved = true;
           const faces = results.multiFaceLandmarks;
           if (!faces || faces.length === 0) {
-            // No face detected — ambiguous (too far, bad angle, low light, detection failure)
-            // Do not fire too-far sentinel — only real measurements should trigger caps
-            console.log('[FaceMesh] no face detected — resolving without measurement');
-            resolve({ lighting: null, blur: null });
+            // No face detected — FaceMesh blind (extreme angle, too close, low light)
+            // Still run fallback luminance check: estimate face region as centre-bottom third
+            // of frame. If background is dramatically brighter, fire lighting signal.
+            console.log('[FaceMesh] no face detected — running fallback luminance check');
+            try {
+              // Estimated face region: centre 40% wide, lower-middle 30% of frame
+              const fbx = Math.round(W * 0.30);
+              const fby = Math.round(H * 0.35);
+              const fbw = Math.round(W * 0.40);
+              const fbh = Math.round(H * 0.30);
+              const faceLumFallback = regionLuminance(ctx, fbx, fby, fbw, fbh, W, H);
+              // Background: top 30% of frame — collect per-pixel lum values for p90
+              const bgRawData = ctx.getImageData(0, 0, W, Math.round(H * 0.30)).data;
+              const bgLumValues = [];
+              for (let i = 0; i < bgRawData.length; i += 4) {
+                bgLumValues.push(0.2126 * bgRawData[i]/255 + 0.7152 * bgRawData[i+1]/255 + 0.0722 * bgRawData[i+2]/255);
+              }
+              const bgP90Fallback = percentile90(bgLumValues);
+              const fallbackSignal = fStopSignal(faceLumFallback, bgP90Fallback);
+              console.log('[FaceMesh-Fallback] face lum:', faceLumFallback?.toFixed(3), 'bg p90:', bgP90Fallback?.toFixed(3), '→', fallbackSignal);
+              resolve({ lighting: fallbackSignal, blur: null, bgSpike: null, faceArea: null, angleSignal: null, meanGrad: null, eyeDissolved: false });
+            } catch(e) {
+              console.log('[FaceMesh] fallback luminance failed:', e.message);
+              resolve({ lighting: null, blur: null });
+            }
             return;
           }
           const lm = faces[0];

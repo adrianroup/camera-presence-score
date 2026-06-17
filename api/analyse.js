@@ -125,6 +125,12 @@ WHAT DOES NOT COMPETE:
 - A plain wall — even mid-grey — does not compete if it is darker than the face. Neutral, darker, plain = green.
 - A dark chair, dark wall texture, or any dark element behind the face that is clearly subordinate in luminance is professional and correct. Subordinate = not competing.
 
+MANDATORY GREEN ANCHOR — score 75 or above if ALL of the following are true:
+(1) The background is a plain or near-plain wall with no readable text, no framed objects, no shelving, no windows, and no bright warm colours.
+(2) The background has no elements brighter than or equal to the face — it is darker overall.
+(3) Any furniture visible (chair backs, headrests) is dark and tonally merges with the background rather than contrasting against it.
+If all three are true, the background is doing its job. Score 75–89. A dark office chair visible behind a normally lit subject on a plain wall is the textbook correct Zoom setup. It is not a penalty.
+
 90–100: Background clearly subordinate. Darker, softer, or plain. Face unmistakably the focal point.
 75–89: Minor issues — slightly busy or slightly close in luminance, but face still holds primary attention.
 50–74: Background competes — elements similar in brightness to face OR carrying sharp high-contrast edges that draw the eye. Score MUST be 74 or below if background has both luminance parity AND sharp edges simultaneously.

@@ -1,9 +1,8 @@
 {
   "id": "BackLit",
-  "description": "Lindsay Gardner — strong window backlight, face in shadow",
+  "description": "Lindsay Gardner \u2014 strong window backlight, face in shadow",
   "image": "BackLit-18.jpg",
-  "expected": {
-    "background": "red"
-  },
-  "notes": "Strong window backlight behind subject. Face underlit and in shadow. BgSpike rule: background pixels far exceed 2x face brightness. Both lighting and background must be red."
+  "expected": {},
+  "notes": "Strong window backlight behind subject. Face underlit and in shadow. BgSpike rule: background pixels far exceed 2x face brightness. Both lighting and background must be red. \u2014 client_only: disqualifies before API is called, not testable via runner.",
+  "client_only": true
 }

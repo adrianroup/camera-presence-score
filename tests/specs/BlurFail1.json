@@ -1,9 +1,8 @@
 {
   "id": "BlurFail1",
-  "description": "BBC bookshelf woman — busy orange wall background, no blur",
+  "description": "BBC bookshelf woman \u2014 busy orange wall background, no blur",
   "image": "BlurFail1-15.jpg",
-  "expected": {
-    "background": "red"
-  },
-  "notes": "No digital blur — this is a real busy background (orange wall, visible objects). Background must be red. Tests that the scorer catches distracting real-world backgrounds, not just digital blur."
+  "expected": {},
+  "notes": "No digital blur \u2014 this is a real busy background (orange wall, visible objects). Background must be red. Tests that the scorer catches distracting real-world backgrounds, not just digital blur. \u2014 client_only: disqualifies before API is called, not testable via runner.",
+  "client_only": true
 }

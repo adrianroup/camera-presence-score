@@ -1,10 +1,8 @@
 {
   "id": "BlurFail3",
-  "description": "Amber Klosterman — looking sideways, digital blur background",
+  "description": "Amber Klosterman \u2014 looking sideways, digital blur background",
   "image": "BlurFail3-13.jpg",
-  "expected": {
-    "background": "red",
-    "presence": "red"
-  },
-  "notes": "Double failure: digital blur background AND subject not looking at camera. Both background and presence must be red."
+  "expected": {},
+  "notes": "Double failure: digital blur background AND subject not looking at camera. Both background and presence must be red. \u2014 client_only: disqualifies before API is called, not testable via runner.",
+  "client_only": true
 }

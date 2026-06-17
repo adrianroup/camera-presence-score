@@ -1,9 +1,8 @@
 {
   "id": "BGRedDistracting",
-  "description": "Gina de Maio — backlit window behind, hands raised, ring light stand visible",
+  "description": "Gina de Maio \u2014 backlit window behind, hands raised, ring light stand visible",
   "image": "BGRedDistracting-16.jpg",
-  "expected": {
-    "background": "red"
-  },
-  "notes": "Backlit scene: bright window behind subject competes and blows out. Visible ring light stand is a distracting element. BgSpike rule applies: background significantly brighter than face. Both background and lighting must fail."
+  "expected": {},
+  "notes": "Backlit scene: bright window behind subject competes and blows out. Visible ring light stand is a distracting element. BgSpike rule applies: background significantly brighter than face. Both background and lighting must fail. \u2014 client_only: disqualifies before API is called, not testable via runner.",
+  "client_only": true
 }

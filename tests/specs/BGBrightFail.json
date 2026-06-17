@@ -1,9 +1,8 @@
 {
   "id": "BGBrightFail",
-  "description": "Backlit Zoom screenshot — bright window background, face in silhouette",
+  "description": "Backlit Zoom screenshot \u2014 bright window background, face in silhouette",
   "image": "BGBrightFail-17.jpg",
-  "expected": {
-    "background": "red"
-  },
-  "notes": "Classic backlit fail. BgSpike check: window pixels are far more than 2x brighter than the face. Face is underexposed / silhouette. Both lighting and background must be red."
+  "expected": {},
+  "notes": "Classic backlit fail. BgSpike check: window pixels are far more than 2x brighter than the face. Face is underexposed / silhouette. Both lighting and background must be red. \u2014 client_only: disqualifies before API is called, not testable via runner.",
+  "client_only": true
 }

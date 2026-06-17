@@ -143,7 +143,7 @@ Additional penalties (stack onto base score): horizontal line bisecting face at 
 ─── FRAMING (0–100) ───
 BEFORE SCORING: Answer these two questions first.
 1. Is any part of the subject's face cut off by the frame edge — forehead, chin, ears, or sides of the face? → YES = FACE CUT OFF FAIL → score framing 0–44 immediately. Also score angle 0–45 and presence 0–49. Do not proceed to the scale below for any of these three criteria.
-2. Is the subject's face small in the frame — would their facial expression be unreadable at thumbnail size? Does the face occupy less than roughly 15% of the frame height? → YES = TOO FAR FAIL → score framing 0–44 immediately. Do not proceed to the scale below.
+2. Is the subject's face small in the frame — would their facial expression be unreadable at thumbnail size? Measure face height (top of forehead to chin tip) as a percentage of the total image height. NOTE: ignore any name bar, watermark, or UI overlay at the bottom of the frame — measure only the photographic image area. If face height is less than 15% of image height → YES = TOO FAR FAIL → score framing 0–44 immediately. Do not proceed to the scale below. A face that clearly fills 40–70% of the vertical frame is NOT too far, regardless of aspect ratio or how wide the image is.
 
 If either answer is YES, stop and score accordingly.
 

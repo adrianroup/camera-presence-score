@@ -127,7 +127,7 @@ WHAT DOES NOT COMPETE:
 
 MANDATORY GREEN ANCHOR — score 75 or above if ALL of the following are true:
 (1) The background is a plain or near-plain wall with no readable text, no framed objects, no shelving, no windows, and no bright warm colours.
-(2) The background is not brighter than the face — it is equal to or darker overall.
+(2) The background is not brighter than the brightest part of the face — compare background luminance to the highlight zone of the face (forehead, cheekbones, bridge of nose under direct light), not the average or the shadowed areas. If the background is darker than the face highlights, it passes this test even if it is close in brightness to the face shadows or mid-tones.
 (3) The background is not so dark that the subject appears to float in a black void — some wall texture or tonal detail is still visible. A completely crushed black background with no detail is a "floating head" effect and scores 50–65, not green.
 (4) Any furniture visible (chair backs, headrests) is dark and tonally merges with the background rather than contrasting against it.
 If all four are true, the background is doing its job. Score 75–89. A dark office chair visible behind a normally lit subject on a plain wall is the textbook correct Zoom setup. It is not a penalty.

@@ -1510,15 +1510,16 @@ async function callVisionAPI(dataUrl) {
       console.log('[Angle] clientAngleSignal:', clientAngleSignal, '— no cap applied');
     }
 
-    // ── Face area ≤ 9% — framing too far — cap framing score ──
+    // ── Face area ≤ 3% — framing too far — cap framing score ──
     // Must run AFTER apiResult is populated from response.json()
     // faceArea = fw × fh — fraction of total frame occupied by face bounding box
-    // ≤ 0.09 (9%) → subject is too small in frame → Lawrence of Arabia routing
+    // FaceMesh landmark boxes are tight — 3% is the threshold for genuinely too-small faces.
+    // True too-far cases (Zoom3-style) are caught by the no-face path below.
     const faceAreaVal = lightingResult?.faceArea ?? null;
-    if (typeof faceAreaVal === 'number' && faceAreaVal <= 0.09) {
+    if (typeof faceAreaVal === 'number' && faceAreaVal <= 0.03) {
       clientFramingDirection = 'too_far';
       clientFaceArea = faceAreaVal;
-      console.log('[Framing] faceArea', faceAreaVal.toFixed(4), '≤ 0.09 — clientFramingDirection = too_far');
+      console.log('[Framing] faceArea', faceAreaVal.toFixed(4), '≤ 0.03 — clientFramingDirection = too_far');
       if (apiResult?.criteria?.framing) {
         const originalFraming = apiResult.criteria.framing.score;
         if (originalFraming > 30) {

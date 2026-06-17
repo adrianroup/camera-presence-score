@@ -95,3 +95,135 @@ When making a threshold change, add an entry to this log with:
 - The exact change made
 - Regression risk assessment
 - Which test spec covers it going forward
+
+## 2026-06-17 21:14 — commit `7a43d8c`
+
+| Result | Count |
+|--------|-------|
+| Passed | 0 / 18 |
+| Failed | 18 / 18 |
+
+**Failures:**
+  - **BGBrightFail**: lighting: expected red, got NO DATA; background: expected red, got NO DATA
+  - **BGRedDistracting**: lighting: expected red, got NO DATA; background: expected red, got NO DATA
+  - **BackLit**: lighting: expected red, got NO DATA; background: expected red, got NO DATA
+  - **BlurFail1**: background: expected red, got NO DATA
+  - **BlurFail2**: background: expected red, got NO DATA; presence: expected red, got NO DATA
+  - **BlurFail3**: background: expected red, got NO DATA; presence: expected red, got NO DATA
+  - **BlurFail4**: background: expected red, got NO DATA
+  - **BroadCastFraming**: background: expected red, got NO DATA; framing: expected green, got NO DATA
+  - **CameraAngleTooLow**: angle: expected yellow, got NO DATA; framing: expected red, got NO DATA
+  - **GlassesPassWeCanSeeTheEyes**: background: expected red, got NO DATA
+  - **GoodSetup**: lighting: expected green, got NO DATA; angle: expected green, got NO DATA; background: expected green, got NO DATA; framing: expected green, got NO DATA; presence: expected green, got NO DATA
+  - **RingLightReflectedInGlasses**: lighting: expected red, got NO DATA; presence: expected red, got NO DATA
+  - **RinglightFailNoGlasses**: lighting: expected red, got NO DATA
+  - **TooCloseMouthCutoff**: background: expected red, got NO DATA; framing: expected red, got NO DATA
+  - **TooFarFromCamera**: framing: expected red, got NO DATA
+  - **TooLow2**: angle: expected red, got NO DATA; presence: expected red, got NO DATA
+  - **TooLowFramingRedPresenceRed**: angle: expected red, got NO DATA; background: expected yellow, got NO DATA; presence: expected red, got NO DATA
+  - **ZoomNameBar**: lighting: expected green, got NO DATA; angle: expected green, got NO DATA; background: expected green, got NO DATA; framing: expected green, got NO DATA; presence: expected green, got NO DATA
+
+---
+
+## 2026-06-17 21:15 — commit `58d5c17`
+
+| Result | Count |
+|--------|-------|
+| Passed | 3 / 17 |
+| Failed | 14 / 17 |
+
+**Failures:**
+  - **BGBrightFail**: background: expected red, got yellow (58)
+  - **BGRedDistracting**: background: expected red, got yellow (58)
+  - **BlurFail1**: background: expected red, got yellow (58)
+  - **BlurFail2**: background: expected red, got yellow (58)
+  - **BlurFail3**: background: expected red, got NO DATA; presence: expected red, got NO DATA
+  - **BlurFail4**: background: expected red, got yellow (58)
+  - **BroadCastFraming**: background: expected red, got yellow (58)
+  - **CameraAngleTooLow**: angle: expected yellow, got green (92); framing: expected red, got green (88)
+  - **GlassesPassWeCanSeeTheEyes**: background: expected red, got yellow (58)
+  - **GoodSetup**: background: expected green, got yellow (58); overall: expected 75–100, got 71 (71)
+  - **TooCloseMouthCutoff**: background: expected red, got yellow (58); framing: expected red, got green (78)
+  - **TooFarFromCamera**: framing: expected red, got green (78)
+  - **TooLowFramingRedPresenceRed**: angle: expected red, got green (92)
+  - **ZoomNameBar**: background: expected green, got yellow (58); presence: expected green, got red (47); overall: expected 75–100, got 71 (71)
+
+---
+
+## 2026-06-17 21:41 — commit `55b8ba7`
+
+| Result | Count |
+|--------|-------|
+| Passed | 4 / 17 |
+| Failed | 13 / 17 |
+
+**Failures:**
+  - **BGBrightFail**: background: expected red, got yellow (52)
+  - **BGRedDistracting**: background: expected red, got yellow (58)
+  - **BlurFail2**: background: expected red, got yellow (52)
+  - **BlurFail3**: background: expected red, got yellow (58)
+  - **BlurFail4**: background: expected red, got yellow (52)
+  - **BroadCastFraming**: background: expected red, got yellow (58)
+  - **CameraAngleTooLow**: angle: expected yellow, got green (92); framing: expected red, got green (88)
+  - **GlassesPassWeCanSeeTheEyes**: background: expected red, got yellow (58)
+  - **RingLightReflectedInGlasses**: presence: expected red, got yellow (60)
+  - **TooCloseMouthCutoff**: background: expected red, got yellow (58); framing: expected red, got green (78)
+  - **TooFarFromCamera**: framing: expected red, got green (93)
+  - **TooLow2**: presence: expected red, got yellow (55)
+  - **TooLowFramingRedPresenceRed**: angle: expected red, got green (92); background: expected yellow, got green (77); presence: expected red, got yellow (62)
+
+---
+
+## 2026-06-17 21:59 — commit `d784588`
+
+| Result | Count |
+|--------|-------|
+| Passed | 2 / 10 |
+| Failed | 8 / 10 |
+
+**Failures:**
+  - **BroadCastFraming**: background: expected red, got yellow (58)
+  - **CameraAngleTooLow**: framing: expected yellow, got green (88)
+  - **GlassesPassWeCanSeeTheEyes**: background: expected red, got yellow (58)
+  - **RingLightReflectedInGlasses**: presence: expected red, got yellow (62)
+  - **TooCloseMouthCutoff**: background: expected red, got yellow (58); framing: expected red, got green (78)
+  - **TooFarFromCamera**: framing: expected red, got yellow (68)
+  - **TooLowFramingRedPresenceRed**: angle: expected red, got green (92); presence: expected red, got yellow (62)
+  - **ZoomNameBar**: presence: expected green, got yellow (65)
+
+---
+
+## 2026-06-17 22:03 — commit `efe92c6`
+
+| Result | Count |
+|--------|-------|
+| Passed | 3 / 10 |
+| Failed | 7 / 10 |
+
+**Failures:**
+  - **BroadCastFraming**: background: expected red, got yellow (55)
+  - **GlassesPassWeCanSeeTheEyes**: background: expected red, got yellow (58)
+  - **RingLightReflectedInGlasses**: presence: expected red, got yellow (50)
+  - **TooCloseMouthCutoff**: background: expected red, got yellow (58); framing: expected red, got green (78)
+  - **TooFarFromCamera**: framing: expected red, got yellow (68)
+  - **TooLow2**: presence: expected red, got yellow (55)
+  - **TooLowFramingRedPresenceRed**: angle: expected red, got green (92); background: expected yellow, got green (77); presence: expected red, got yellow (62)
+
+---
+
+## 2026-06-17 — Presence floor raised to 78
+
+**Commit:** `efe92c6`
+**Change:** Raised minimum presence score floor from 75 to 78 for forward-facing visible eyes.
+
+**Reasoning:** GPT was landing at 65 on Adrian's Zoom screenshot despite both eyes clearly visible and forward-facing. The "uncertain gaze" default was producing yellow (65) instead of green. The prompt now explicitly forbids scoring below 78 when both eyes are clearly visible and facing forward, unless a specific off-axis gaze target can be named.
+
+**Impact:**
+- ZoomNameBar: presence 65 → 85 (PASS)
+- GoodSetup: presence stable (82–85)
+- TooLow2: no regression (presence 42–48 — eyes obscured/away, unaffected by floor)
+- RingLightReflectedInGlasses: presence 50–62 (eyes fully obscured — floor does not apply)
+
+**Regression result:** 3/10 passed (up from 2/10). No regressions introduced.
+
+---

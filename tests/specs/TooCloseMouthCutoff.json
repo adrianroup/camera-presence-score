@@ -1,7 +1,7 @@
 {
   "id": "TooCloseMouthCutoff",
   "description": "Paul Puri — extreme close-up, top of head cut off, face fills entire frame, busy bookshelf",
-  "image": "TooClose_MouthCutoff-6.png",
+  "image": "TooClose_MouthCutoff-6.jpg",
   "expected": {
     "framing": "red",
     "background": "red"

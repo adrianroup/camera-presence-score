@@ -1,7 +1,7 @@
 {
   "id": "CameraAngleTooLow",
   "description": "Woman — full Zoom toolbar visible, subject very far from camera, low angle",
-  "image": "CameraAngleTooLow-10.png",
+  "image": "CameraAngleTooLow-10.jpg",
   "expected": {
     "framing": "red",
     "angle": "yellow"

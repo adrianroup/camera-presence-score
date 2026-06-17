@@ -1,7 +1,7 @@
 {
   "id": "GoodSetup",
   "description": "Adrian — identical to ZoomNameBar, second copy of good baseline",
-  "image": "GoodSetup-8.png",
+  "image": "GoodSetup-8.jpg",
   "expected": {
     "lighting": "green",
     "angle": "green",

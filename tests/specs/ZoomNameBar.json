@@ -1,7 +1,7 @@
 {
   "id": "ZoomNameBar",
   "description": "Adrian — Zoom screenshot with name bar visible, direct gaze, controlled setup",
-  "image": "ZoomNameBar.png",
+  "image": "ZoomNameBar.jpg",
   "expected": {
     "lighting": "green",
     "angle": "green",

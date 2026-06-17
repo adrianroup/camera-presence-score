@@ -1,7 +1,7 @@
 {
   "id": "BlurFail3",
   "description": "Amber Klosterman — looking sideways, digital blur background",
-  "image": "BlurFail3-13.png",
+  "image": "BlurFail3-13.jpg",
   "expected": {
     "background": "red",
     "presence": "red"

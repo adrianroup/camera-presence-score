@@ -1,7 +1,7 @@
 {
   "id": "TooFarFromCamera",
   "description": "Brittany — full Zoom UI visible, subject tiny in frame, very far from camera",
-  "image": "TooFarFromCamera-4.png",
+  "image": "TooFarFromCamera-4.jpg",
   "expected": {
     "framing": "red"
   },

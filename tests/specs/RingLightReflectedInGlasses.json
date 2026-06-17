@@ -1,7 +1,7 @@
 {
   "id": "RingLightReflectedInGlasses",
   "description": "Woman — glasses with large ring light FULLY filling lenses, eyes completely obscured",
-  "image": "RingLightReflectedInGlasses-5.png",
+  "image": "RingLightReflectedInGlasses-5.jpg",
   "expected": {
     "lighting": "red",
     "presence": "red"

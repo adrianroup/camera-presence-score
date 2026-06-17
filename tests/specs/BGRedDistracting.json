@@ -1,7 +1,7 @@
 {
   "id": "BGRedDistracting",
   "description": "Gina de Maio — backlit window behind, hands raised, ring light stand visible",
-  "image": "BGRedDistracting-16.png",
+  "image": "BGRedDistracting-16.jpg",
   "expected": {
     "background": "red",
     "lighting": "red"

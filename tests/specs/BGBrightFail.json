@@ -1,7 +1,7 @@
 {
   "id": "BGBrightFail",
   "description": "Backlit Zoom screenshot — bright window background, face in silhouette",
-  "image": "BGBrightFail-17.png",
+  "image": "BGBrightFail-17.jpg",
   "expected": {
     "lighting": "red",
     "background": "red"

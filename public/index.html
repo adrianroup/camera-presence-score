@@ -1344,7 +1344,7 @@ async function analyseClientLighting(dataUrl) {
           const noseRatio = faceHpx > 0 ? (noseTip.y - eyeMidY) / faceHpx : null;
           let angleSignal = 'ok'; // 'low' | 'high' | 'ok'
           if (noseRatio !== null) {
-            if (noseRatio < 0.25) {
+            if (noseRatio < 0.15) {
               angleSignal = 'low';  // nose too close to or above eye level — camera is below face
             } else if (noseRatio > 0.55) {
               angleSignal = 'high'; // nose far below eyes — camera is above face

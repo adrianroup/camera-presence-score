@@ -1,0 +1,9 @@
+{
+  "id": "BlurFail4",
+  "description": "BBC correspondent — digital blur background, glasses",
+  "image": "BlurFail4-12.jpg",
+  "expected": {
+    "background": "red"
+  },
+  "notes": "Digital/virtual background blur applied. Glasses must not cause false positive on presence or lighting. Background must be red (blur is public enemy #1 — false negatives are worse than false positives)."
+}

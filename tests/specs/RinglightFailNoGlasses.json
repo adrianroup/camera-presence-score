@@ -1,0 +1,9 @@
+{
+  "id": "RinglightFailNoGlasses",
+  "description": "Asian man — no glasses, small circular catch lights clearly visible in pupils",
+  "image": "RinglightFailNoGlasses-7.jpg",
+  "expected": {
+    "lighting": "red"
+  },
+  "notes": "No glasses. Small but clearly circular ring light reflections in pupils = lighting red. This is the pure ring-light-in-pupil case. Rule: perfect circular white reflection in pupils only triggers this failure."
+}

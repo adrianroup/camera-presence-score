@@ -1,0 +1,10 @@
+{
+  "id": "BlurFail2",
+  "description": "Dalia — digital blur background, sunglasses fully blocking eyes",
+  "image": "BlurFail2-14.jpg",
+  "expected": {
+    "background": "red",
+    "presence": "red"
+  },
+  "notes": "Double failure: digital blur background AND opaque sunglasses hiding eyes entirely. Presence red (eyes not visible = no eye contact possible). Background red (blur). Both must fail."
+}

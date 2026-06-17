@@ -1,0 +1,10 @@
+{
+  "id": "BackLit",
+  "description": "Lindsay Gardner — strong window backlight, face in shadow",
+  "image": "BackLit-18.jpg",
+  "expected": {
+    "lighting": "red",
+    "background": "red"
+  },
+  "notes": "Strong window backlight behind subject. Face underlit and in shadow. BgSpike rule: background pixels far exceed 2x face brightness. Both lighting and background must be red."
+}

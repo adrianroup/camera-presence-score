@@ -1,0 +1,9 @@
+{
+  "id": "TooFarFromCamera",
+  "description": "Brittany — full Zoom UI visible, subject tiny in frame, very far from camera",
+  "image": "TooFarFromCamera-4.jpg",
+  "expected": {
+    "framing": "red"
+  },
+  "notes": "Face occupies a tiny portion of the frame. Full Zoom interface visible around subject. Framing must be red. Other criteria not enforced — framing failure is the key signal."
+}

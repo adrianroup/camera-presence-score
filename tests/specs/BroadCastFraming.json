@@ -1,0 +1,10 @@
+{
+  "id": "BroadCastFraming",
+  "description": "CBS News anchor — broadcast lower third chyron, world map background, good framing",
+  "image": "BroadCastFraming-11.jpg",
+  "expected": {
+    "framing": "green",
+    "background": "red"
+  },
+  "notes": "Professional broadcast framing — face height and position are correct. However the busy world map background is a visual fail. Lower third chyron must not affect framing score. Framing green, background red."
+}

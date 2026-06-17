@@ -1,0 +1,15 @@
+{
+  "id": "ZoomNameBar",
+  "description": "Adrian — Zoom screenshot with name bar visible, direct gaze, controlled setup",
+  "image": "ZoomNameBar.jpg",
+  "expected": {
+    "lighting": "green",
+    "angle": "green",
+    "background": "green",
+    "framing": "green",
+    "presence": "green",
+    "overall_min": 75,
+    "overall_max": 100
+  },
+  "notes": "Real-world baseline. Name bar must not penalise angle (noseRatio fix 0.25→0.15) or framing. All criteria should be green."
+}

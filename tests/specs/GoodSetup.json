@@ -1,0 +1,15 @@
+{
+  "id": "GoodSetup",
+  "description": "Adrian — identical to ZoomNameBar, second copy of good baseline",
+  "image": "GoodSetup.jpg",
+  "expected": {
+    "lighting": "green",
+    "angle": "green",
+    "background": "green",
+    "framing": "green",
+    "presence": "green",
+    "overall_min": 75,
+    "overall_max": 100
+  },
+  "notes": "Same image as ZoomNameBar. Confirms consistent scoring across duplicate inputs."
+}

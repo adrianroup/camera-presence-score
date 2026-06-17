@@ -1,0 +1,10 @@
+{
+  "id": "RingLightReflectedInGlasses",
+  "description": "Woman — glasses with large ring light FULLY filling lenses, eyes completely obscured",
+  "image": "RingLightReflectedInGlasses-5.jpg",
+  "expected": {
+    "lighting": "red",
+    "presence": "red"
+  },
+  "notes": "Ring light reflection fills the entire lens surface — eyes are not visible. Lighting red (ring light obstruction). Presence red (eye contact impossible when eyes hidden). Ring light rule: only triggers on perfect circular catch light in PUPILS, but here eyes are fully obscured = presence failure regardless."
+}

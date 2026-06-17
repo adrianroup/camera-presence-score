@@ -357,6 +357,10 @@ async function main() {
     process.exit(1);
   }
 
+  // Ensure required directories exist
+  if (!fs.existsSync(DIRS.images))  fs.mkdirSync(DIRS.images,  { recursive: true });
+  if (!fs.existsSync(DIRS.reports)) fs.mkdirSync(DIRS.reports, { recursive: true });
+
   console.log(`\nRunning ${specs.length} spec(s)...\n${'─'.repeat(50)}`);
 
   const allResults = [];

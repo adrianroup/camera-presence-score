@@ -1,0 +1,10 @@
+{
+  "id": "TooLow2",
+  "description": "Kate Ramos — extreme upward camera tilt, looking at ceiling, very low placement",
+  "image": "TooLow2-2.jpg",
+  "expected": {
+    "angle": "red",
+    "presence": "red"
+  },
+  "notes": "Camera is far below eye level — extreme upward angle. Subject looking away from lens. Both angle and presence must fail."
+}

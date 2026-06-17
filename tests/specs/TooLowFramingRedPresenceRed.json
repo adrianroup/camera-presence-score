@@ -1,0 +1,11 @@
+{
+  "id": "TooLowFramingRedPresenceRed",
+  "description": "Colin — camera high above, subject looking away from lens, posters on wall",
+  "image": "TooLowFramingRedPresenceRed-3.jpg",
+  "expected": {
+    "angle": "red",
+    "background": "yellow",
+    "presence": "red"
+  },
+  "notes": "High camera position creates downward angle. Subject not looking at lens. Background has posters — should be yellow. Angle and presence must be red."
+}

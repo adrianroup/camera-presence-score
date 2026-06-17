@@ -1,0 +1,10 @@
+{
+  "id": "CameraAngleTooLow",
+  "description": "Woman — full Zoom toolbar visible, subject very far from camera, low angle",
+  "image": "CameraAngleTooLow-10.jpg",
+  "expected": {
+    "framing": "red",
+    "angle": "yellow"
+  },
+  "notes": "Full Zoom UI shows subject is far back. Camera angle is off. Framing must be red (tiny face). Angle should be at least yellow. Toolbar must not interfere with scoring."
+}

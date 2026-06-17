@@ -1,0 +1,9 @@
+{
+  "id": "GlassesPassWeCanSeeTheEyes",
+  "description": "Seth Godin — yellow-tinted glasses, eyes clearly visible through lenses, busy bookshelf",
+  "image": "GlassesPassWeCanSeeTheEyes-9.jpg",
+  "expected": {
+    "background": "red"
+  },
+  "notes": "Glasses do NOT block eyes — presence and lighting must not be penalised for the glasses. Bookshelf is visually competing with subject — background red. Key test: tinted glasses with visible eyes must pass presence."
+}

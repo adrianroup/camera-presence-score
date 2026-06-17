@@ -1,0 +1,9 @@
+{
+  "id": "BlurFail1",
+  "description": "BBC bookshelf woman — busy orange wall background, no blur",
+  "image": "BlurFail1-15.jpg",
+  "expected": {
+    "background": "red"
+  },
+  "notes": "No digital blur — this is a real busy background (orange wall, visible objects). Background must be red. Tests that the scorer catches distracting real-world backgrounds, not just digital blur."
+}

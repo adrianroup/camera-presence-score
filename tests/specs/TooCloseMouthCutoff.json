@@ -1,0 +1,10 @@
+{
+  "id": "TooCloseMouthCutoff",
+  "description": "Paul Puri — extreme close-up, top of head cut off, face fills entire frame, busy bookshelf",
+  "image": "TooClose_MouthCutoff-6.jpg",
+  "expected": {
+    "framing": "red",
+    "background": "red"
+  },
+  "notes": "Face too large — top of head clipped, chin likely also clipped. Bookshelf background is visually busy with high contrast. Both framing and background must fail."
+}

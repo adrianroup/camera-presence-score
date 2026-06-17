@@ -113,10 +113,22 @@ Before scoring anything else: look at the subject's face edges, hairline, ears, 
 - Are both shoulders sharp where they meet the background? A shoulder being eaten by blur is a fail.
 If ANY of the above are present — even partially, even on just one side — that is a digital background blur mask failure. Score 0–39 and name the specific anatomy being consumed. You are not permitted to score higher than 39 if any anatomy is being dissolved. A blurred background that eats the subject is always worse than an honest busy background.
 
-90–100: Background clearly subordinate. Darker, softer, or plain. Face is unmistakably the focal point.
-75–89: Minor issues — slightly busy but face still holds primary attention.
-50–74: Background competes — visible clutter, colour clash, or sharp elements pulling the eye. Score MUST be 74 or below if the background contains multiple distinct, sharp, competing elements.
-25–49: Background dominant over face — eye is drawn away from the subject more than toward them.
+WHAT MAKES A BACKGROUND COMPETE:
+The eye goes where brightness and edge contrast lead it. A background competes when it matches or rivals the face on EITHER of these two axes:
+- LUMINANCE PARITY: Background elements are similar in brightness to the face — same exposure zone or brighter. A warm orange wall, a white shelf unit, a bright window. These do not recede.
+- SHARP EDGES: Background elements carry hard, high-contrast edges at similar sharpness to the face — readable text, distinct object boundaries, framed pictures with crisp frames, grid-like shelving.
+BOTH factors together = strong competition. Either one alone = partial competition.
+
+WHAT DOES NOT COMPETE:
+- Elements that are measurably darker than the face recede naturally. Dark and tonal = subordinate. This is chiaroscuro — intentional tonal separation that makes the face pop forward. Do NOT penalise it.
+- Elements that are soft, out of focus, or low in contrast recede even at moderate brightness.
+- A plain wall — even mid-grey — does not compete if it is darker than the face. Neutral, darker, plain = green.
+- A dark chair, dark wall texture, or any dark element behind the face that is clearly subordinate in luminance is professional and correct. Subordinate = not competing.
+
+90–100: Background clearly subordinate. Darker, softer, or plain. Face unmistakably the focal point.
+75–89: Minor issues — slightly busy or slightly close in luminance, but face still holds primary attention.
+50–74: Background competes — elements similar in brightness to face OR carrying sharp high-contrast edges that draw the eye. Score MUST be 74 or below if background has both luminance parity AND sharp edges simultaneously.
+25–49: Background dominant — eye drawn away from subject more than toward them. Bright AND busy AND sharp.
 0–24: Background has taken control entirely.
 
 HARD RED TRIGGERS — score MUST be 49 or below, no exceptions:
@@ -147,22 +159,26 @@ BEFORE SCORING: Answer these two questions first.
 
 If either answer is YES, stop and score accordingly.
 
-90–100: Face occupies 50–70% of frame. Eyes sit in the upper third. Shoulders visible. Subject centred.
-72–89: Face 40–49% or 71–79% of frame. Minor adjustment needed.
-45–71: Face below 40% (too far — Lawrence of Arabia) or above 80% (too close — Home Alone). Or pushed to edge of frame.
-0–44: Face below 30% of frame, or framing so poor the personality is lost at thumbnail size.
+ASPECT RATIO NOTE: Many submissions are wide 16:9 landscape frames (Zoom, Teams, webcam). On a wide frame, the face naturally occupies less of the total pixel area — this is correct and expected. Judge framing by face HEIGHT vs frame HEIGHT only, not by how much horizontal space surrounds the face. A subject whose face fills 40–70% of the vertical height with shoulders visible is correctly framed on any aspect ratio. Wide horizontal space left and right is not a framing problem.
+
+90–100: Face height 40–70% of frame height. Eyes in upper half. Shoulders visible. Subject centred.
+72–89: Face height 30–39% or 71–79% of frame. Minor adjustment would help but not a fail.
+45–71: Face height below 25% (too far) or above 80% (too close). Or pushed to edge of frame.
+0–44: Face height below 15%, or framing so poor personality is lost at thumbnail size.
 
 TOO CLOSE (Home Alone): Face fills most of the frame, forehead cut off, chin at bottom edge, no shoulders visible, camera is uncomfortably close. This is a FACE CUT OFF FAIL — score framing 0–44, angle 0–45, presence 0–49.
 TOO FAR (Lawrence of Arabia): Subject is small in the frame, surrounded by empty room, face unreadable at thumbnail. This is a TOO FAR FAIL — score framing 0–44.
 OFF-CENTRE: Subject pushed significantly to one side with empty space on the other. Name it.
 
 ─── PRESENCE (0–100) ───
-90–100: Eyes visible and directed at the camera lens. The subject is here, present, looking at us.
-72–89: Eyes visible but not directed at the lens — looking at their own image, at notes, at another screen.
-50–71: Eyes not clearly visible but gaze appears directed at lens.
-0–49: Eyes not visible and no lens gaze — subject looking away, head turned, face obscured.
+PRESENCE IS ABOUT GAZE AND EYE VISIBILITY ONLY. Do not factor in framing, background, or other criteria. Score independently.
 
-UNCERTAIN GAZE: A still image makes gaze direction genuinely hard to call. If uncertain, do not penalise. Score 80 and note: "It's hard to tell from a still frame whether the eyes are directed at the lens — worth checking on a live call."
+90–100: Eyes clearly visible and directed at the camera lens. The subject is here, present, looking at us.
+72–89: Eyes visible but gaze not clearly directed at lens — looking at their own image, at notes, at another screen.
+50–71: Eyes visible but gaze direction genuinely unclear in this still frame.
+0–49: Eyes not visible, or face turned away, or subject clearly looking away from lens.
+
+UNCERTAIN GAZE: A still image makes gaze direction genuinely hard to call. If eyes are clearly visible and forward-facing, default to green (75–85). Only score below 72 if you can specifically name what the gaze is directed at instead of the lens. "Uncertain" is not a reason to penalise — uncertainty defaults up, not down.
 NOT LOOKING AT CAMERA: If the subject is clearly looking at their own image on screen rather than the lens, name it. The fix is to look at the camera dot, not the screen.
 FACE TURNED: If we are seeing the side of someone's head, they are not present for this call. Score accordingly.
 

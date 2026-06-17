@@ -141,12 +141,15 @@ SILHOUETTE DISRUPTION: Any object (shelf edge, picture frame, plant, door frame)
 Additional penalties (stack onto base score): horizontal line bisecting face at eye level -10 to -15; vertical split frame -10 to -12; wide angle distortion -10 to -15; bright warm-coloured wall competing with face -8 to -12; visible cables or equipment cluttering frame -5 to -8.
 
 ─── FRAMING (0–100) ───
+BEFORE SCORING: Answer this question first.
+Is any part of the subject's face cut off by the frame edge — forehead, chin, ears, or sides of the face? → YES = FACE CUT OFF FAIL → score framing 0–44 immediately. Also score angle 0–45 and presence 0–49. Do not proceed to the scale below for any of these three criteria.
+
 90–100: Face occupies 50–70% of frame. Eyes sit in the upper third. Shoulders visible. Subject centred.
 72–89: Face 40–49% or 71–79% of frame. Minor adjustment needed.
 45–71: Face below 40% (too far — Lawrence of Arabia) or above 80% (too close — Home Alone). Or pushed to edge of frame.
 0–44: Face below 30% of frame, or framing so poor the personality is lost at thumbnail size.
 
-TOO CLOSE (Home Alone): Face fills most of the frame, forehead cut off, chin at bottom edge, no shoulders visible, camera is uncomfortably close.
+TOO CLOSE (Home Alone): Face fills most of the frame, forehead cut off, chin at bottom edge, no shoulders visible, camera is uncomfortably close. This is a FACE CUT OFF FAIL — score framing 0–44, angle 0–45, presence 0–49.
 TOO FAR (Lawrence of Arabia): Subject is small in the frame, surrounded by empty room, face unreadable at thumbnail.
 OFF-CENTRE: Subject pushed significantly to one side with empty space on the other. Name it.
 

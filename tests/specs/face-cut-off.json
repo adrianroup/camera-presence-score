@@ -1,0 +1,15 @@
+{
+  "id": "face-cut-off",
+  "description": "Face partially cut off by frame edge — forehead or chin clipped",
+  "image": "face-cut-off.jpg",
+  "expected": {
+    "lighting": "green",
+    "angle": "red",
+    "background": "green",
+    "framing": "red",
+    "presence": "red",
+    "overall_min": 0,
+    "overall_max": 44
+  },
+  "notes": "Face cut off triggers framing 0-44, angle 0-45, presence 0-49 simultaneously."
+}

@@ -1,0 +1,15 @@
+{
+  "id": "low-angle",
+  "description": "Camera clearly below eye level — nostrils visible, chin prominent",
+  "image": "low-angle.jpg",
+  "expected": {
+    "lighting": "green",
+    "angle": "red",
+    "background": "green",
+    "framing": "green",
+    "presence": "yellow",
+    "overall_min": 0,
+    "overall_max": 49
+  },
+  "notes": "noseRatio must be < 0.15 (genuine chin-up shot). Angle red, presence capped by angle penalty. Must NOT trigger on borderline shots like Zoom name bar (noseRatio 0.15–0.25)."
+}

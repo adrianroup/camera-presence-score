@@ -1,7 +1,7 @@
 {
   "id": "BlurFail1",
   "description": "BBC bookshelf woman — busy orange wall background, no blur",
-  "image": "BlurFail1-15.jpg",
+  "image": "BlurFail1-15.png",
   "expected": {
     "background": "red"
   },

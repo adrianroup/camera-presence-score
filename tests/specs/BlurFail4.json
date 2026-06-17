@@ -1,7 +1,7 @@
 {
   "id": "BlurFail4",
   "description": "BBC correspondent — digital blur background, glasses",
-  "image": "BlurFail4-12.jpg",
+  "image": "BlurFail4-12.png",
   "expected": {
     "background": "red"
   },

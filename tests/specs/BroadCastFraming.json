@@ -1,7 +1,7 @@
 {
   "id": "BroadCastFraming",
   "description": "CBS News anchor — broadcast lower third chyron, world map background, good framing",
-  "image": "BroadCastFraming-11.jpg",
+  "image": "BroadCastFraming-11.png",
   "expected": {
     "framing": "green",
     "background": "red"

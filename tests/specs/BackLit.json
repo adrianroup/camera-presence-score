@@ -1,7 +1,7 @@
 {
   "id": "BackLit",
   "description": "Lindsay Gardner — strong window backlight, face in shadow",
-  "image": "BackLit-18.jpg",
+  "image": "BackLit-18.png",
   "expected": {
     "lighting": "red",
     "background": "red"

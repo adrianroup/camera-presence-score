@@ -1,7 +1,7 @@
 {
   "id": "TooLow2",
   "description": "Kate Ramos — extreme upward camera tilt, looking at ceiling, very low placement",
-  "image": "TooLow2-2.jpg",
+  "image": "TooLow2-2.png",
   "expected": {
     "angle": "red",
     "presence": "red"

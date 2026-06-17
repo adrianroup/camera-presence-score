@@ -1,7 +1,7 @@
 {
   "id": "RinglightFailNoGlasses",
   "description": "Asian man — no glasses, small circular catch lights clearly visible in pupils",
-  "image": "RinglightFailNoGlasses-7.jpg",
+  "image": "RinglightFailNoGlasses-7.png",
   "expected": {
     "lighting": "red"
   },

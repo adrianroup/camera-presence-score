@@ -1095,11 +1095,11 @@ function fStopSignal(faceLum, bgP90) {
   const ratio = bgP90 / faceLum;
   // Stops-based rubric:
   // Green:  ratio ≤ 0.71  (background 1+ stops darker than face — ideal)
-  // Amber:  ratio 0.71–1.41 (within ~0.5 stops either way — roughly equal brightness)
-  // Red:    ratio 1.41–5.66 (background brighter than face)
+  // Amber:  ratio 0.71–1.8  (within ~1 stop either way — roughly equal brightness)
+  // Red:    ratio 1.8–5.66  (background noticeably brighter than face)
   // Disqualification (bright_background): ratio > 5.66 (2.5+ stops brighter)
   if (ratio > 5.66)  return 'disqualify';
-  if (ratio > 1.41)  return 'red';
+  if (ratio > 1.8)   return 'red';
   if (ratio > 0.71)  return 'amber';
   return 'green';
 }

@@ -1468,6 +1468,11 @@ async function callVisionAPI(dataUrl) {
     }
     const parsed = await response.json();
     apiResult = parsed;
+    // Log raw GPT scores before any client-side caps
+    if (parsed?.criteria) {
+      const cr = parsed.criteria;
+      console.log('[GPT raw] angle:', cr.angle?.score, '| background:', cr.background?.score, '| framing:', cr.framing?.score, '| presence:', cr.presence?.score, '| overall:', parsed.overall);
+    }
 
     // ── Glasses eye obstruction — clamp presence score ──
     // Must run AFTER apiResult is populated from response.json()

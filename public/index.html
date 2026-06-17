@@ -1196,8 +1196,18 @@ async function analyseClientLighting(dataUrl) {
               }
               const bgP90Fallback = percentile90(bgLumValues);
               const fallbackSignal = fStopSignal(faceLumFallback, bgP90Fallback);
-              console.log('[FaceMesh-Fallback] face lum:', faceLumFallback?.toFixed(3), 'bg p90:', bgP90Fallback?.toFixed(3), '→', fallbackSignal);
-              resolve({ lighting: fallbackSignal, blur: null, bgSpike: null, faceArea: null, angleSignal: null, meanGrad: null, eyeDissolved: false });
+              // Also compute BgSpike: 1%+ pixels more than 2.5 stops brighter than face
+              let fallbackBgSpike = 'clean';
+              if (faceLumFallback !== null && faceLumFallback > 0) {
+                const spikeThresholdFB = Math.min(faceLumFallback * 5.66, 0.98);
+                let spikeCountFB = 0;
+                for (const lv of bgLumValues) { if (lv > spikeThresholdFB) spikeCountFB++; }
+                const spikeRatioFB = bgLumValues.length > 0 ? spikeCountFB / bgLumValues.length : 0;
+                console.log('[FaceMesh-Fallback BgSpike] spike%:', (spikeRatioFB * 100).toFixed(2), 'threshold:', spikeThresholdFB.toFixed(3));
+                if (spikeRatioFB >= 0.01) fallbackBgSpike = 'disqualify';
+              }
+              console.log('[FaceMesh-Fallback] face lum:', faceLumFallback?.toFixed(3), 'bg p90:', bgP90Fallback?.toFixed(3), '→', fallbackSignal, '| bgSpike:', fallbackBgSpike);
+              resolve({ lighting: fallbackSignal, blur: null, bgSpike: fallbackBgSpike, faceArea: null, angleSignal: null, meanGrad: null, eyeDissolved: false });
             } catch(e) {
               console.log('[FaceMesh] fallback luminance failed:', e.message);
               resolve({ lighting: null, blur: null });

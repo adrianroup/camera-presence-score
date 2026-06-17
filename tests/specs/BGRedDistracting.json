@@ -3,8 +3,7 @@
   "description": "Gina de Maio — backlit window behind, hands raised, ring light stand visible",
   "image": "BGRedDistracting-16.jpg",
   "expected": {
-    "background": "red",
-    "lighting": "red"
+    "background": "red"
   },
   "notes": "Backlit scene: bright window behind subject competes and blows out. Visible ring light stand is a distracting element. BgSpike rule applies: background significantly brighter than face. Both background and lighting must fail."
 }

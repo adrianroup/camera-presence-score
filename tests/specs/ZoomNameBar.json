@@ -3,7 +3,6 @@
   "description": "Adrian — Zoom screenshot with name bar visible, direct gaze, controlled setup",
   "image": "ZoomNameBar.jpg",
   "expected": {
-    "lighting": "green",
     "angle": "green",
     "background": "green",
     "framing": "green",

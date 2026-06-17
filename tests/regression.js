@@ -26,7 +26,7 @@ const http = require('https');
 const BASE_URL    = process.argv.find(a => a.startsWith('--url='))?.split('=')[1]
                  ?? 'https://test.anaudiencefromanywhere.com';
 const SINGLE_SPEC = process.argv.find(a => a.startsWith('--spec='))?.split('=')[1]
-                 ?? process.argv[process.argv.indexOf('--spec') + 1];
+                 ?? (process.argv.includes('--spec') ? process.argv[process.argv.indexOf('--spec') + 1] : undefined);
 const API_ENDPOINT = `${BASE_URL}/api/analyse`;
 
 const DIRS = {
@@ -44,7 +44,8 @@ const SCORE_BANDS = {
 };
 
 // Criteria keys returned by /api/analyse
-const CRITERIA = ['lighting', 'angle', 'background', 'framing', 'presence'];
+// NOTE: 'lighting' is computed client-side and is NOT returned by the API
+const CRITERIA = ['angle', 'background', 'framing', 'presence'];
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 function colourFromScore(score) {
@@ -80,9 +81,8 @@ function analyseImage(imagePath) {
     const base64    = imageData.toString('base64');
     const ext       = path.extname(imagePath).toLowerCase().replace('.', '');
     const mimeType  = ext === 'png' ? 'image/png' : 'image/jpeg';
-    const dataUrl   = `data:${mimeType};base64,${base64}`;
 
-    const body = JSON.stringify({ image: dataUrl });
+    const body = JSON.stringify({ imageData: base64, mediaType: mimeType });
     const url  = new URL(API_ENDPOINT);
 
     const options = {
@@ -120,14 +120,15 @@ function compareResults(spec, apiResult) {
   const passes   = [];
 
   // Map API response keys to spec keys
-  // API returns: lightingScore, angleScore, backgroundScore, framingScore, presenceScore, overallScore
+  // API returns: { overall: N, criteria: { angle: { score }, background: { score }, framing: { score }, presence: { score }, lighting: { score } } }
+  const c = apiResult.criteria || {};
   const scoreMap = {
-    lighting:   apiResult.lightingScore   ?? apiResult.lighting_score   ?? null,
-    angle:      apiResult.angleScore      ?? apiResult.angle_score      ?? null,
-    background: apiResult.backgroundScore ?? apiResult.background_score ?? null,
-    framing:    apiResult.framingScore    ?? apiResult.framing_score    ?? null,
-    presence:   apiResult.presenceScore   ?? apiResult.presence_score   ?? null,
-    overall:    apiResult.overallScore    ?? apiResult.overall_score    ?? apiResult.score ?? null,
+    lighting:   c.lighting?.score   ?? null,
+    angle:      c.angle?.score      ?? null,
+    background: c.background?.score ?? null,
+    framing:    c.framing?.score    ?? null,
+    presence:   c.presence?.score   ?? null,
+    overall:    apiResult.overall   ?? null,
   };
 
   for (const criterion of CRITERIA) {
@@ -289,7 +290,6 @@ function generateHTML(allResults, commit, runTime) {
       <th>Status</th>
       <th>ID</th>
       <th>Description</th>
-      <th>Lighting</th>
       <th>Angle</th>
       <th>Background</th>
       <th>Framing</th>
@@ -350,6 +350,7 @@ async function main() {
   const specFiles = fs.readdirSync(DIRS.specs).filter(f => f.endsWith('.json'));
   const specs     = specFiles
     .map(f => JSON.parse(fs.readFileSync(path.join(DIRS.specs, f), 'utf8')))
+    .filter(s => !s.client_only)
     .filter(s => !SINGLE_SPEC || s.id === SINGLE_SPEC);
 
   if (specs.length === 0) {

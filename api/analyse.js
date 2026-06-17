@@ -189,7 +189,7 @@ PRESENCE IS ABOUT GAZE AND EYE VISIBILITY ONLY. Do not factor in framing, backgr
 50–71: Eyes visible but gaze direction genuinely unclear in this still frame.
 0–49: Eyes not visible, or face turned away, or subject clearly looking away from lens.
 
-UNCERTAIN GAZE: A still image makes gaze direction genuinely hard to call. If eyes are clearly visible and forward-facing, default to green (75–85). Only score below 72 if you can specifically name what the gaze is directed at instead of the lens. "Uncertain" is not a reason to penalise — uncertainty defaults up, not down.
+UNCERTAIN GAZE: A still image makes gaze direction genuinely hard to call. If eyes are clearly visible and forward-facing, default to green — minimum score 78. Only score below 72 if you can specifically name what the gaze is directed at instead of the lens. "Uncertain" is not a reason to penalise — uncertainty defaults up, not down. You are not permitted to score below 78 when both eyes are clearly visible and facing forward, unless you can name a specific off-axis target.
 NOT LOOKING AT CAMERA: If the subject is clearly looking at their own image on screen rather than the lens, name it. The fix is to look at the camera dot, not the screen.
 FACE TURNED: If we are seeing the side of someone's head, they are not present for this call. Score accordingly.
 

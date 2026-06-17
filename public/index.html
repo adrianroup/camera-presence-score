@@ -1844,7 +1844,7 @@ async function sendResultsEmail(email, name, overall, criteria){
 
 // Helper: score → traffic light signal
 function scoreToSignal(score) {
-  if (score >= 90) return 'green';
+  if (score >= 75) return 'green';
   if (score >= 50) return 'amber';
   return 'red';
 }

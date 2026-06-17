@@ -1093,9 +1093,13 @@ function fStopSignal(faceLum, bgP90) {
   if (faceLum < 0.05 && bgP90 < 0.5) return null;
   if (faceLum < 0.05 && bgP90 >= 0.5) return 'disqualify';
   const ratio = bgP90 / faceLum;
-  // Stops-based rubric:
+  // Face luminance floor: if face is well-lit (≥ 0.45), lighting is green
+  // regardless of background ratio — provided BgSpike didn't fire.
+  // A face this bright is properly exposed; background colour ≠ lighting problem.
+  if (faceLum >= 0.45) return 'green';
+  // Stops-based rubric for darker faces:
   // Green:  ratio ≤ 0.71  (background 1+ stops darker than face — ideal)
-  // Amber:  ratio 0.71–1.8  (within ~1 stop either way — roughly equal brightness)
+  // Amber:  ratio 0.71–1.8  (background somewhat brighter than face)
   // Red:    ratio 1.8–5.66  (background noticeably brighter than face)
   // Disqualification (bright_background): ratio > 5.66 (2.5+ stops brighter)
   if (ratio > 5.66)  return 'disqualify';

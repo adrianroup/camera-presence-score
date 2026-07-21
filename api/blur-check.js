@@ -44,7 +44,7 @@ EYES: NONE`;
       body: JSON.stringify({
         model: 'gpt-4o',
         temperature: 0,
-        max_tokens: 20,
+        max_tokens: 15,
         messages: [{
           role: 'user',
           content: [

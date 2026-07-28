@@ -91,7 +91,7 @@ LOW ANGLE — MANDATORY FAIL TRIGGERS (score 0–45, no exceptions):
 - Ceiling visible above the subject's head and occupying more than 20% of the total frame height
 - Chin and neck dominating lower half of frame
 - Subject appears to be looking downward toward camera
-OVERRIDE NOTE: The cardinal rule ("when in doubt, do not penalise") does NOT apply to these mandatory fail triggers. To estimate ceiling coverage: visually divide the frame into 5 equal horizontal bands from top to bottom. If the ceiling occupies more than the top band, that is more than 20% — score 0–45. Do not give partial credit.
+OVERRIDE NOTE: The cardinal rule ("when in doubt, do not penalise") does NOT apply to these mandatory fail triggers. CEILING TEST: Look at the top edge of the frame. Is the ceiling (the room's upper surface, not the background wall) visible? If yes, estimate what fraction of the total frame height is ceiling. If the ceiling occupies more than 1/5 of the frame height from the top — meaning the ceiling-to-wall junction is below the top 20% of the frame — score 0–45 immediately. In Zoom and video call screenshots, any substantial ceiling visibility almost always means the camera is too low. Do not give partial credit.
 
 HIGH ANGLE TELL: Camera above eye level — top of head fills upper frame, face is compressed, subject appears small, too much floor or desk visible.
 
@@ -193,6 +193,7 @@ PRESENCE IS ABOUT GAZE AND EYE VISIBILITY ONLY. Do not factor in framing, backgr
 UNCERTAIN GAZE: A still image makes gaze direction genuinely hard to call. If eyes are clearly visible and forward-facing, default to green — minimum score 78. Only score below 72 if you can specifically name what the gaze is directed at instead of the lens. "Uncertain" is not a reason to penalise — uncertainty defaults up, not down. You are not permitted to score below 78 when both eyes are clearly visible and facing forward, unless you can name a specific off-axis target.
 NOT LOOKING AT CAMERA: If the subject is clearly looking at their own image on screen rather than the lens, name it. The fix is to look at the camera dot, not the screen.
 FACE TURNED: If we are seeing the side of someone's head, they are not present for this call. Score accordingly.
+ANGLE EXCEPTION: If the subject is looking downward because the camera is positioned below their eye level (a low camera angle problem), this is NOT a presence failure — it is an angle failure. The subject is still directing their gaze toward the camera. If both eyes are visible and facing the lens, score presence 72 or above regardless of vertical gaze direction.
 
 ─── GLASSES NOTE ───
 Glasses glare is a screenshot problem as much as a setup problem. A single frame can be a false positive — the slightest head movement changes everything. Assess with restraint.

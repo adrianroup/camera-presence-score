@@ -118,8 +118,6 @@ Before scoring anything else: look at the subject's face edges, hairline, ears, 
 - Is the hairline sharp? Hair strands dissolving into blur is a fail.
 - Are both shoulders sharp where they meet the background? A shoulder being eaten by blur is a fail.
 If ANY of the above are present — even partially, even on just one side — that is a digital background blur mask failure. Score 0–39 and name the specific anatomy being consumed. You are not permitted to score higher than 39 if any anatomy is being dissolved. A blurred background that eats the subject is always worse than an honest busy background.
-NOTE: Dark architectural elements (ceiling beams, structural columns) behind the subject do NOT count as blur anatomy failures — low contrast against a dark structure is not the same as being dissolved by blur. Only trigger this check for genuine uniform software blur.
-
 WHAT MAKES A BACKGROUND COMPETE:
 The eye goes where brightness and edge contrast lead it. A background competes when it matches or rivals the face on EITHER of these two axes:
 - LUMINANCE PARITY: Background elements are similar in brightness to the face — same exposure zone or brighter. A warm orange wall, a white shelf unit, a bright window. These do not recede.

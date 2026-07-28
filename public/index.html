@@ -1706,6 +1706,14 @@ function routeResult() {
       return;
     }
     if (disqValue === 'background_blur' || disqValue === 'background blur' || disqValue === 'bgblur') {
+      // GPT-4o is the sole authority on blur disqualification.
+      // If GPT-4o explicitly returned NO, ignore Claude's background_blur disqualification and fall through to scoring.
+      if (blurCheckResult?.blur === false) {
+        console.log('[BlurCheck] Claude flagged background_blur but GPT-4o said NO — deferring to GPT-4o, falling through to scoring');
+        delete apiResult.disqualification;
+        routeResult();
+        return;
+      }
       showScreen(document.getElementById('screenBgBlur'));
       sendDisqEmail('background_blur');
       return;
@@ -1759,8 +1767,9 @@ function routeResult() {
     console.log('[BgGradient] Sobel flagged blur but GPT-4o said clean — deferring to GPT-4o');
   }
   // ── Client-side safety net: bg score ≤35 = force background_blur disqualification ──
+  // Exception: if GPT-4o explicitly said NO, do not disqualify on score alone — the low score may be from angle-red cap, not genuine blur.
   const _bgScoreCheck = apiResult.criteria?.background?.score;
-  if (typeof _bgScoreCheck === 'number' && _bgScoreCheck <= 35 && !apiResult.disqualification && clientLightingSignal !== 'disqualify') {
+  if (typeof _bgScoreCheck === 'number' && _bgScoreCheck <= 35 && !apiResult.disqualification && clientLightingSignal !== 'disqualify' && blurCheckResult?.blur !== false) {
     showScreen(document.getElementById('screenBgBlur'));
     sendDisqEmail('background_blur');
     return;

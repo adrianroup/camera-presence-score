@@ -1472,7 +1472,6 @@ async function callVisionAPI(dataUrl) {
     if (parsed?.criteria) {
       const cr = parsed.criteria;
       console.log('[GPT raw] angle:', cr.angle?.score, '| background:', cr.background?.score, '| framing:', cr.framing?.score, '| presence:', cr.presence?.score, '| overall:', parsed.overall);
-      console.log('[GPT comments] angle:', cr.angle?.comment, '| background:', cr.background?.comment, '| framing:', cr.framing?.comment, '| presence:', cr.presence?.comment);
     }
 
     // ── Glasses eye obstruction — clamp presence score ──

@@ -20,6 +20,7 @@ Is the background digitally blurred by software such as Zoom, Teams, or Google M
 - Real rooms and optical lens blur show DEPTH GRADUATION — objects closer to the person are sharper than objects far away.
 - Digital blur often dissolves the edges of the person — ears, hairline, shoulders become soft or partially missing.
 - A plain flat wall, painted surface, or solid colour backdrop is NOT blur — it is a real background with no texture. Answer NO for plain walls.
+- A room with ceiling beams, exposed brick, architectural features, or visible room structure is a REAL background — not blur. Answer NO if you can see any walls, ceiling, floors, furniture, doors, windows, or architectural features, even if partially out of focus.
 - A bright window or overexposed background is NOT blur — it is a lighting problem. Answer NO.
 - Only answer YES if you can see the characteristic uniform software blur mush with dissolved edges.
 

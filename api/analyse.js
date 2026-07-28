@@ -48,6 +48,7 @@ Look at the edges of the subject where they meet the background:
 - Both shoulders: cleanly defined, or being eaten by blur?
 - Jawline and neck: clean edge, or melting into background?
 If ANY of these are dissolved, softened, or missing → return {"disqualification": "background_blur"} immediately. Stop.
+SAFE HARBOUR: If a dark architectural element (ceiling beam, structural column, door frame, exposed brick) sits directly behind the subject's head or shoulders, the apparent softening of edges in that zone is caused by low contrast between the subject and the dark structure — NOT by blur. Do not trigger TEST C for edges that appear soft only because they are adjacent to a dark structural element.
 
 TEST D — EDGE ARTEFACTS:
 Are there any unnatural artefacts at the boundary between the subject and the background — colour fringing, halo glow, pixel bleed, a hard mask line, or a green/white outline?
@@ -56,6 +57,7 @@ If YES → return {"disqualification": "background_blur"} immediately. Stop.
 SAFE HARBOURS — do NOT trigger for these:
 - A real room, wall, bookshelf, or artwork that is simply plain, low-contrast, or monochromatic. A plain wall is not blur.
 - Real optical lens blur where you can clearly see depth falloff (closer objects less blurred than farther ones) AND subject anatomy is clean and sharp at all edges.
+- A room with visible ceiling, ceiling beams, exposed brick, dark structural elements, or architectural features. Dark beams or structural elements behind the subject's head do NOT indicate blur — they are real room architecture. Only disqualify if the background is a uniform soft mush with no visible structure.
 Return: {"disqualification": "background_blur"}
 
 ─── DISQUALIFICATION 3: BRIGHT BACKGROUND (AI FALLBACK) ───

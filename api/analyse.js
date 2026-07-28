@@ -189,17 +189,16 @@ TOO FAR (Lawrence of Arabia): Subject is small in the frame, surrounded by empty
 OFF-CENTRE: Subject pushed significantly to one side with empty space on the other. Name it.
 
 ─── PRESENCE (0–100) ───
-PRESENCE IS ABOUT GAZE AND EYE VISIBILITY ONLY. Do not factor in framing, background, or other criteria. Score independently.
+PRESENCE IS ABOUT IRIS DIRECTION ONLY. The single question: where are the irises pointed? Do not factor in framing, background, angle, or other criteria. Score independently.
 
-90–100: Eyes clearly visible and directed at the camera lens. The subject is here, present, looking at us.
-72–89: Eyes visible but gaze not clearly directed at lens — looking at their own image, at notes, at another screen.
-50–71: Eyes visible but gaze direction genuinely unclear in this still frame.
-0–49: Eyes not visible, or face turned away, or subject clearly looking away from lens.
+90–100: Both eyes fully visible, iris centered and directed straight at the lens. The subject is addressing the camera directly. Default here when both eyes are visible and no specific off-axis iris direction can be identified. Uncertainty resolves upward — never downward.
+72–89: Both eyes visible but iris direction slightly off-axis — subject appears to be looking at their own image on screen rather than the lens dot. Eyes are present but not locked in. Name the specific direction (e.g. "looking at own image, slightly left of lens").
+50–71: Iris clearly directed away from the lens — upward, downward, or to the side. Both eyes may be visible but the subject is demonstrably not addressing the camera. Name the specific direction (e.g. "eyes directed upward", "gaze off-frame left"). Do not score here unless you can name the direction.
+0–49: Face turned significantly away from camera, one or both eyes not visible, or subject fully disengaged — reading, head down, eyes closed.
 
-UNCERTAIN GAZE: A still image makes gaze direction genuinely hard to call. If eyes are clearly visible and forward-facing, default to green — minimum score 78. Only score below 72 if you can specifically name what the gaze is directed at instead of the lens. "Uncertain" is not a reason to penalise — uncertainty defaults up, not down. You are not permitted to score below 78 when both eyes are clearly visible and facing forward, unless you can name a specific off-axis target.
 NOT LOOKING AT CAMERA: If the subject is clearly looking at their own image on screen rather than the lens, name it. The fix is to look at the camera dot, not the screen.
 FACE TURNED: If we are seeing the side of someone's head, they are not present for this call. Score accordingly.
-ANGLE EXCEPTION: If the subject is looking downward because the camera is positioned below their eye level (a low camera angle problem), this is NOT a presence failure — it is an angle failure. The subject is still directing their gaze toward the camera. If both eyes are visible and facing the lens, score presence 72 or above regardless of vertical gaze direction.
+ANGLE EXCEPTION: If the subject is looking downward because the camera is positioned below their eye level (a low camera angle problem), this is NOT a presence failure — it is an angle failure. The subject is still directing their gaze toward the camera. If both eyes are visible and facing the lens, score presence 90 or above regardless of vertical gaze direction.
 
 ─── GLASSES NOTE ───
 Glasses glare is a screenshot problem as much as a setup problem. A single frame can be a false positive — the slightest head movement changes everything. Assess with restraint.

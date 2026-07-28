@@ -91,6 +91,7 @@ LOW ANGLE — MANDATORY FAIL TRIGGERS (score 0–45, no exceptions):
 - Chin and neck dominating lower half of frame
 - Subject appears to be looking upward toward camera
 If you can see up someone's nose, the camera is below eye level. Score it 0–45. Do not give partial credit.
+OVERRIDE NOTE: The cardinal rule ("when in doubt, do not penalise") does NOT apply to these mandatory fail triggers. These are objective visual facts — nostrils visible from below is not a matter of interpretation. If you can see the inside of the nostrils, or if the ceiling occupies the upper third of the frame, score 0–45. Certainty is not required — visibility is the test.
 
 HIGH ANGLE TELL: Camera above eye level — top of head fills upper frame, face is compressed, subject appears small, too much floor or desk visible.
 

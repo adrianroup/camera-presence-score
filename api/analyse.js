@@ -28,7 +28,12 @@ DO NOT trigger for: single small dot catchlights, rectangular softbox reflection
 Return: {"disqualification": "ring_light"}
 
 ─── DISQUALIFICATION 2: DIGITAL BACKGROUND BLUR ───
-Before doing anything else, look at the background carefully. Answer these tests in order. If ANY test triggers, return {"disqualification": "background_blur"} immediately and stop.
+Before doing anything else, look at the background carefully.
+
+PRE-CHECK — REAL BACKGROUND:
+Does the background contain ANY of the following: ceiling, ceiling beams, walls, floors, doors, windows, structural columns, bookshelves?
+If YES — this is a real background. Skip TEST A, TEST B, TEST C, and TEST D entirely. Do not return a blur disqualification. Proceed directly to STEP 2 scoring.
+Only continue to TEST A if the background is a featureless uniform soft mush with none of the above identifiable elements.
 
 TEST A — UNIFORM BLUR (most reliable tell):
 Is the background a uniform soft mush — every part of it equally blurred with no depth graduation whatsoever? Real optical blur from a camera lens always graduates: objects closer to the subject are less blurred than objects further away. You can see the falloff. Digital background blur produced by Zoom, Teams, Meet, or similar tools is flat and uniform — everything behind the subject is blurred to the same identical degree regardless of distance. There is no depth falloff. If the background blur appears uniform and flat with no visible depth graduation, this is digital blur.

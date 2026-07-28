@@ -1519,13 +1519,12 @@ async function callVisionAPI(dataUrl) {
     if (apiResult?.criteria?.angle) {
       const angleScore = apiResult.criteria.angle.score;
       if (angleScore <= 44) {
-        // Angle is red — background capped at 50, or at 35 if Claude scored it above 60
+        // Angle is red — background capped at 39 (top of red)
         if (apiResult?.criteria?.background) {
           const originalBg = apiResult.criteria.background.score;
-          const bgCap = originalBg > 60 ? 35 : 50;
-          if (originalBg > bgCap) {
-            apiResult.criteria.background.score = bgCap;
-            console.log('[Background] angle red (' + angleScore + ') — background capped from', originalBg, 'to', bgCap);
+          if (originalBg > 39) {
+            apiResult.criteria.background.score = 39;
+            console.log('[Background] angle red (' + angleScore + ') — background capped from', originalBg, 'to 39');
           }
         }
         if (apiResult?.criteria?.framing) {

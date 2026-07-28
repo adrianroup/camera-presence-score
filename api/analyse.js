@@ -113,6 +113,7 @@ Before scoring anything else: look at the subject's face edges, hairline, ears, 
 - Is the hairline sharp? Hair strands dissolving into blur is a fail.
 - Are both shoulders sharp where they meet the background? A shoulder being eaten by blur is a fail.
 If ANY of the above are present — even partially, even on just one side — that is a digital background blur mask failure. Score 0–39 and name the specific anatomy being consumed. You are not permitted to score higher than 39 if any anatomy is being dissolved. A blurred background that eats the subject is always worse than an honest busy background.
+NOTE: Dark architectural elements (ceiling beams, structural columns) behind the subject do NOT count as blur anatomy failures — low contrast against a dark structure is not the same as being dissolved by blur. Only trigger this check for genuine uniform software blur.
 
 WHAT MAKES A BACKGROUND COMPETE:
 The eye goes where brightness and edge contrast lead it. A background competes when it matches or rivals the face on EITHER of these two axes:
@@ -142,6 +143,8 @@ If all four are true, the background is doing its job. Score 75–89. A dark off
 50–74: Background competes — elements similar in brightness to face OR carrying sharp high-contrast edges that draw the eye. Score MUST be 74 or below if background has both luminance parity AND sharp edges simultaneously.
 25–49: Background dominant — eye drawn away from subject more than toward them. Bright AND busy AND sharp.
 0–24: Background has taken control entirely.
+
+CEILING DOMINANCE — score MUST be 49 or below if ceiling occupies more than 20% of the frame height. A ceiling-dominated background means the camera is too low and the room's architecture is competing with the subject's face. This is always a red background.
 
 HARD RED TRIGGERS — score MUST be 49 or below, no exceptions:
 - GALLERY WALL / ART WALL: A chaotic or overwhelming collection of framed pictures, artwork, or photographs covering most of the wall behind the subject — so many that the eye is drawn away from the face. Score 35–49. DO NOT apply this trigger for a modest arrangement of 2–6 framed pictures that is clearly decorative and intentional — that is amber territory (50–64), not a hard red fail.

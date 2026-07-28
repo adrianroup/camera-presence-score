@@ -1515,6 +1515,27 @@ async function callVisionAPI(dataUrl) {
       console.log('[Angle] clientAngleSignal:', clientAngleSignal, '— no cap applied');
     }
 
+    // ── Framing cap: if angle is red or amber (< 75), framing cannot be green — cap at 55 ──
+    if (apiResult?.criteria?.angle && apiResult?.criteria?.framing) {
+      const angleScore = apiResult.criteria.angle.score;
+      if (angleScore < 75) {
+        const originalFraming = apiResult.criteria.framing.score;
+        if (originalFraming > 55) {
+          apiResult.criteria.framing.score = 55;
+          console.log('[Framing] angle red/amber (' + angleScore + ') — framing capped from', originalFraming, 'to 55');
+        }
+      }
+    }
+
+    // ── Presence floor: if both eyes intact, presence cannot be below 50 (amber) ──
+    if (lightingResult?.eyeDissolved !== true && apiResult?.criteria?.presence) {
+      const presenceScore = apiResult.criteria.presence.score;
+      if (presenceScore < 50) {
+        apiResult.criteria.presence.score = 50;
+        console.log('[Presence] eyes intact — presence floored from', presenceScore, 'to 50');
+      }
+    }
+
     // ── faceArea threshold cap removed — FaceMesh boxes are too tight for reliable measurement ──
     // True too-far cases caught by no-face path below. AI prompt handles borderline cases.
     const faceAreaVal = lightingResult?.faceArea ?? null;

@@ -86,12 +86,10 @@ Skip 46–69 entirely.
 When in doubt between 90–100 and 70–89, always choose 90–100. Reserve amber for cases where the deviation is unmistakable and you can describe it specifically.
 
 LOW ANGLE — MANDATORY FAIL TRIGGERS (score 0–45, no exceptions):
-- Nostrils visible from below
-- Ceiling or top of doorframe visible in upper portion of frame
+- Ceiling visible above the subject's head and occupying more than 20% of the total frame height
 - Chin and neck dominating lower half of frame
-- Subject appears to be looking upward toward camera
-If you can see up someone's nose, the camera is below eye level. Score it 0–45. Do not give partial credit.
-OVERRIDE NOTE: The cardinal rule ("when in doubt, do not penalise") does NOT apply to these mandatory fail triggers. These are objective visual facts — nostrils visible from below is not a matter of interpretation. If you can see the inside of the nostrils, or if the ceiling occupies the upper third of the frame, score 0–45. Certainty is not required — visibility is the test.
+- Subject appears to be looking downward toward camera
+OVERRIDE NOTE: The cardinal rule ("when in doubt, do not penalise") does NOT apply to these mandatory fail triggers. To estimate ceiling coverage: visually divide the frame into 5 equal horizontal bands from top to bottom. If the ceiling occupies more than the top band, that is more than 20% — score 0–45. Do not give partial credit.
 
 HIGH ANGLE TELL: Camera above eye level — top of head fills upper frame, face is compressed, subject appears small, too much floor or desk visible.
 

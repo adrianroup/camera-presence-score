@@ -1515,14 +1515,33 @@ async function callVisionAPI(dataUrl) {
       console.log('[Angle] clientAngleSignal:', clientAngleSignal, '— no cap applied');
     }
 
-    // ── Framing cap: if angle is red or amber (< 75), framing cannot be green — cap at 55 ──
-    if (apiResult?.criteria?.angle && apiResult?.criteria?.framing) {
+    // ── Angle red (0–44): cap background and framing at 50, framing cap at 55 for amber ──
+    if (apiResult?.criteria?.angle) {
       const angleScore = apiResult.criteria.angle.score;
-      if (angleScore < 75) {
-        const originalFraming = apiResult.criteria.framing.score;
-        if (originalFraming > 55) {
-          apiResult.criteria.framing.score = 55;
-          console.log('[Framing] angle red/amber (' + angleScore + ') — framing capped from', originalFraming, 'to 55');
+      if (angleScore <= 44) {
+        // Angle is red — background and framing both capped at 50
+        if (apiResult?.criteria?.background) {
+          const originalBg = apiResult.criteria.background.score;
+          if (originalBg > 50) {
+            apiResult.criteria.background.score = 50;
+            console.log('[Background] angle red (' + angleScore + ') — background capped from', originalBg, 'to 50');
+          }
+        }
+        if (apiResult?.criteria?.framing) {
+          const originalFraming = apiResult.criteria.framing.score;
+          if (originalFraming > 50) {
+            apiResult.criteria.framing.score = 50;
+            console.log('[Framing] angle red (' + angleScore + ') — framing capped from', originalFraming, 'to 50');
+          }
+        }
+      } else if (angleScore < 75) {
+        // Angle is amber — framing capped at 55 only
+        if (apiResult?.criteria?.framing) {
+          const originalFraming = apiResult.criteria.framing.score;
+          if (originalFraming > 55) {
+            apiResult.criteria.framing.score = 55;
+            console.log('[Framing] angle amber (' + angleScore + ') — framing capped from', originalFraming, 'to 55');
+          }
         }
       }
     }

@@ -329,7 +329,8 @@ export default async function handler(req, res) {
       <!-- Footer -->
       <tr><td style="padding:36px 40px 40px 40px;">
         <p style="font-family:Arial,sans-serif;font-size:11px;color:#cccccc;line-height:1.6;margin:0;">© 2026 An Audience From Anywhere · Adrian Roup · Santa Monica, CA<br>
-        <a href="https://anaudiencefromanywhere.com" style="color:#cccccc;text-decoration:none;">anaudiencefromanywhere.com</a></p>
+        <a href="https://anaudiencefromanywhere.com" style="color:#cccccc;text-decoration:none;">anaudiencefromanywhere.com</a><br>
+        <a href="https://afa-unsubscribe-worker.adrianroup.workers.dev/?source=score&email=${encodeURIComponent(email)}" style="color:#cccccc;text-decoration:none;">Unsubscribe</a></p>
       </td></tr>
 
     </table>

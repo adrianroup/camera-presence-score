@@ -362,6 +362,21 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
   .gauge-svg{width:190px;height:190px;}
   .gauge-number{font-size:52px;}
 }
+
+/* ── B2: SCORECARD + SHARE LAYER ── */
+.scorecard-section{margin-top:36px;padding-top:28px;border-top:1px solid rgba(24,22,15,0.12);}
+.scorecard-canvas-wrap{display:flex;justify-content:center;margin-bottom:16px;}
+#scorecardCanvas{border-radius:4px;max-width:100%;}
+.scorecard-download-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;background:transparent;border:1px solid rgba(24,22,15,0.25);border-radius:2px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-sec);cursor:pointer;transition:border-color 0.2s,color 0.2s,transform 0.2s;margin-bottom:20px;}
+.scorecard-download-btn:hover{border-color:rgba(24,22,15,0.5);color:var(--text);transform:translateY(-1px);}
+.share-row{display:flex;flex-direction:column;gap:10px;margin-bottom:16px;}
+.share-line-wrap{display:flex;gap:8px;align-items:stretch;}
+.share-line-input{flex:1;background:var(--surface);border:1px solid rgba(24,22,15,0.2);border-radius:2px;padding:11px 14px;font-family:'Barlow',sans-serif;font-size:14px;color:var(--text-sec);outline:none;cursor:default;user-select:all;}
+.share-copy-btn{background:transparent;border:1px solid rgba(24,22,15,0.2);border-radius:2px;padding:11px 18px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-sec);cursor:pointer;white-space:nowrap;transition:border-color 0.2s,color 0.2s,box-shadow 0.2s,transform 0.2s;}
+.share-copy-btn:hover{border-color:var(--red);color:var(--text);transform:translateY(-1px);}
+.share-copy-btn.copied{color:var(--red);border-color:var(--red);}
+.beat-link{display:block;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;padding:6px 0;transition:color 0.2s;}
+.beat-link:hover{color:var(--text);}
 </style>
   <!-- UTM Passthrough — captures UTM params on arrival, persists in sessionStorage,
        appends to all Shopify-bound links so attribution survives to checkout.
@@ -788,6 +803,25 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
       <div class="referral-error" id="referralError" style="display:none;"></div>
     </div>
 
+
+    <!-- B2: SCORECARD + SHARE LAYER -->
+    <div class="scorecard-section" id="scorecardSection">
+      <div class="scorecard-canvas-wrap">
+        <canvas id="scorecardCanvas" width="480" height="300"></canvas>
+      </div>
+      <button class="scorecard-download-btn" onclick="downloadScorecard()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download scorecard
+      </button>
+      <div class="share-row">
+        <div class="share-line-wrap">
+          <input class="share-line-input" id="shareLineInput" type="text" readonly />
+          <button class="share-copy-btn" id="shareCopyBtn" onclick="copyShareLine()">Copy</button>
+        </div>
+        <a class="beat-link" id="beatLink" href="#" target="_blank" rel="noopener">Beat my score →</a>
+      </div>
+    </div>
+
     <p class="disagree-invite">Disagree with your score? Send your screenshot and score to <a href="mailto:score@anaudiencefromanywhere.com">score@anaudiencefromanywhere.com</a> and tell us why. We read every one.</p>
 
   </div>
@@ -842,6 +876,20 @@ kbd{background:rgba(24,22,15,0.12);border-radius:2px;padding:2px 6px;font-family
 const SUPABASE_URL  = 'https://kqpggbyprotehkmqyvuo.supabase.co';
 const SUPABASE_KEY  = 'sb_publishable_nD0IYm0XRi4ER-Mi1l1Bgg_9k-r3rgi';
 const TOOL_URL      = window.location.href.split('?')[0];
+
+// ═══════════════════════════════════════
+// REF CAPTURE (B1)
+// Read ?ref= from URL, persist for share loop + Supabase write
+// ═══════════════════════════════════════
+(function(){
+  try{
+    const urlRef = new URLSearchParams(window.location.search).get('ref');
+    if(urlRef){ sessionStorage.setItem('afa_ref', urlRef); }
+  }catch(e){}
+})();
+function getRef(){ try{ return sessionStorage.getItem('afa_ref') || ''; }catch(e){ return ''; } }
+
+
 
 // ═══════════════════════════════════════
 // CONSTANTS & DATA
@@ -1826,6 +1874,11 @@ function showApiError(msg) {
 function goToBreakdown(){
   buildBreakdown(revealScore, currentCriteria);
   showScreen(document.getElementById('screenBreakdown'));
+  // B2: render canvas after DOM visible
+  setTimeout(()=>{
+    renderScorecard(revealScore, currentCriteria);
+    populateShareUI(revealScore);
+  }, 50);
 }
 
 async function sendDisqEmail(disqType) {
@@ -1972,6 +2025,130 @@ function buildBreakdown(score, criteria){
   }, criteria.length * 110 + 200);
 }
 
+
+// ═══════════════════════════════════════
+// B2: SCORECARD CANVAS + SHARE
+// ═══════════════════════════════════════
+function renderScorecard(score, criteria){
+  const canvas = document.getElementById('scorecardCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const tier = getTier(score);
+  const bandColor = tier.color;
+
+  // Background
+  ctx.fillStyle = '#0c0b0a';
+  ctx.fillRect(0, 0, W, H);
+
+  // Score number — large, centred top
+  ctx.textAlign = 'center';
+  ctx.fillStyle = bandColor;
+  ctx.font = 'bold 96px Barlow Condensed, sans-serif';
+  ctx.fillText(score, W/2, 110);
+
+  // /100 label
+  ctx.fillStyle = 'rgba(237,235,230,0.45)';
+  ctx.font = '600 22px Barlow Condensed, sans-serif';
+  ctx.fillText('/100', W/2, 138);
+
+  // Camera Score™ branding
+  ctx.fillStyle = '#C0392B';
+  ctx.font = '700 14px Barlow Condensed, sans-serif';
+  ctx.letterSpacing = '0.22em';
+  ctx.fillText('CAMERA SCORE™', W/2, 168);
+
+  // Criteria bars (5 criteria, excluding lighting which may be null)
+  const barCriteria = (criteria && criteria.length > 0) ? criteria : [];
+  const barW = 340, barH = 8, barX = (W - barW)/2;
+  let barY = 190;
+  const labelMap = {angle:'Angle', background:'Background', framing:'Framing', presence:'Presence', lighting:'Lighting'};
+  const barColors = {green:'#639922', amber:'#EF9F27', red:'#E24B4A'};
+
+  barCriteria.forEach((c) => {
+    const pct = Math.min(100, Math.max(0, c.score || 0)) / 100;
+    const sig = c.score >= 75 ? 'green' : c.score >= 50 ? 'amber' : 'red';
+    // Label
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(237,235,230,0.55)';
+    ctx.font = '500 11px Barlow, sans-serif';
+    ctx.fillText((labelMap[c.key] || c.label || c.key).toUpperCase(), barX, barY - 2);
+    // Track
+    ctx.fillStyle = 'rgba(237,235,230,0.1)';
+    ctx.beginPath();
+    ctx.roundRect(barX, barY, barW, barH, 4);
+    ctx.fill();
+    // Fill
+    ctx.fillStyle = barColors[sig];
+    ctx.beginPath();
+    ctx.roundRect(barX, barY, barW * pct, barH, 4);
+    ctx.fill();
+    barY += 20;
+  });
+
+  // afascore.com domain — bottom centre
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(237,235,230,0.3)';
+  ctx.font = '400 13px Barlow, sans-serif';
+  ctx.fillText('afascore.com', W/2, H - 14);
+}
+
+function buildShareRef(){
+  // Share ref = current user's email hashed short (or sessionStorage ref + user email stub)
+  const sess = getSession();
+  const existing = getRef();
+  if(existing) return existing;
+  if(sess && sess.email){
+    // Simple deterministic ref from email — first 8 chars of btoa
+    try{
+      return btoa(sess.email).replace(/[^a-zA-Z0-9]/g,'').substring(0,8);
+    }catch(e){}
+  }
+  return 'share';
+}
+
+function buildShareLine(score){
+  const ref = buildShareRef();
+  return `I scored ${score} on camera presence. The camera doesn’t lie. afascore.com/?ref=${ref}`;
+}
+
+function populateShareUI(score){
+  const shareInput = document.getElementById('shareLineInput');
+  const beatLink = document.getElementById('beatLink');
+  if(!shareInput || !beatLink) return;
+  const ref = buildShareRef();
+  const line = buildShareLine(score);
+  shareInput.value = line;
+  beatLink.href = 'https://afascore.com/?ref=' + encodeURIComponent(ref);
+}
+
+function copyShareLine(){
+  const input = document.getElementById('shareLineInput');
+  const btn = document.getElementById('shareCopyBtn');
+  if(!input || !btn) return;
+  try{
+    navigator.clipboard.writeText(input.value).then(()=>{
+      btn.textContent = 'Copied';
+      btn.classList.add('copied');
+      setTimeout(()=>{ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+    });
+  }catch(e){
+    input.select();
+    document.execCommand('copy');
+    btn.textContent = 'Copied';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  }
+}
+
+function downloadScorecard(){
+  const canvas = document.getElementById('scorecardCanvas');
+  if(!canvas) return;
+  const link = document.createElement('a');
+  link.download = 'camera-score.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
 // ═══════════════════════════════════════
 // DISQUALIFICATION SCREENS
 // ═══════════════════════════════════════
@@ -2108,7 +2285,7 @@ async function sbCreateUser(email, name, token, company, jobTitle, linkedIn){
   const res = await fetch(`${SUPABASE_URL}/rest/v1/camera_score_users`, {
     method:'POST',
     headers:{...SB_HEADERS, 'Prefer':'return=representation'},
-    body: JSON.stringify({email, name, verified:false, uses_remaining:3, verification_token:token})
+    body: JSON.stringify({email, name, verified:false, uses_remaining:3, verification_token:token, ref: getRef() || null})
   });
   const data = await res.json();
   return Array.isArray(data) ? data[0] : data;

@@ -4,7 +4,7 @@
   "description": "Camera Presence Score tool — An Audience From Anywhere by Adrian Roup",
   "private": true,
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
   "dependencies": {
     "heic-convert": "^2.1.0"

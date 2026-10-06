@@ -321,7 +321,7 @@ export default async function handler(req, res) {
       <tr><td style="padding:28px 40px 0 40px;">
         <table cellpadding="0" cellspacing="0" border="0">
           <tr><td style="background:#0c0b0a;border-radius:3px;">
-            <a href="https://anaudiencefromanywhere.com/preorder.html" style="display:inline-block;padding:13px 26px;font-family:Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#edebe6;text-decoration:none;">Pre-order the book →</a>
+            <a href="https://www.anaudiencefromanywhere.com/shop" style="display:inline-block;padding:13px 26px;font-family:Arial,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#edebe6;text-decoration:none;">Order the book →</a>
           </td></tr>
         </table>
       </td></tr>
